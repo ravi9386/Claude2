@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wisdom Test — AI &amp; Automation Roadmap 2026</title>
+<style>
+  :root {
+    --cat-yellow: #FFCD11;
+    --cat-black: #1A1A1A;
+    --cat-dark: #231F20;
+    --cat-gray: #54565A;
+    --cat-light: #F5F5F5;
+    --cat-mid: #E8E8E8;
+    --cat-white: #FFFFFF;
+    --cat-yellow-dark: #D4A800;
+    --cat-accent: #E8A900;
+    --section-pad: 80px 60px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--cat-white);
+    color: var(--cat-dark);
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--cat-dark);
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    gap: 0;
+    border-bottom: 3px solid var(--cat-yellow);
+  }
+
+  nav .brand {
+    color: var(--cat-yellow);
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 14px 0;
+    margin-right: 40px;
+    white-space: nowrap;
+  }
+
+  nav a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 18px 14px;
+    letter-spacing: 0.5px;
+    transition: color 0.2s, border-bottom 0.2s;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+  }
+
+  nav a:hover { color: var(--cat-yellow); border-bottom-color: var(--cat-yellow); }
+
+  /* ── HERO ── */
+  #hero {
+    background: var(--cat-dark);
+    color: white;
+    padding: 100px 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--cat-yellow);
+  }
+
+  #hero .tag {
+    display: inline-block;
+    background: var(--cat-yellow);
+    color: var(--cat-dark);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    padding: 5px 14px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  #hero h1 {
+    font-size: 3.2rem;
+    font-weight: 900;
+    line-height: 1.1;
+    max-width: 800px;
+    margin-bottom: 16px;
+  }
+
+  #hero h1 span { color: var(--cat-yellow); }
+
+  #hero .subtitle {
+    font-size: 1.1rem;
+    color: #aaa;
+    max-width: 600px;
+    margin-bottom: 40px;
+  }
+
+  #hero .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  #hero .hero-meta div {
+    border-left: 3px solid var(--cat-yellow);
+    padding-left: 12px;
+  }
+
+  #hero .hero-meta .label { font-size: 0.7rem; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+  #hero .hero-meta .value { font-size: 0.95rem; color: white; font-weight: 600; }
+
+  /* ── SECTION COMMON ── */
+  section { padding: var(--section-pad); }
+  section:nth-child(even) { background: var(--cat-light); }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cat-yellow-dark);
+    margin-bottom: 10px;
+  }
+
+  h2.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--cat-dark);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .section-intro {
+    font-size: 1rem;
+    color: var(--cat-gray);
+    max-width: 720px;
+    margin-bottom: 48px;
+    line-height: 1.7;
+  }
+
+  /* ── CONTENTS ── */
+  #contents {
+    background: var(--cat-dark);
+    color: white;
+    padding: 60px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2px;
+    margin-top: 40px;
+  }
+
+  .toc-item {
+    background: #2a2a2a;
+    padding: 28px 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+    display: block;
+  }
+
+  .toc-item:hover { background: #333; }
+
+  .toc-item .num {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--cat-yellow);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .toc-item .toc-title {
+    font-size: 0.9rem;
+    color: white;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .toc-item .toc-desc {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 6px;
+  }
+
+  /* ── PLATFORM ── */
+  .platform-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .platform-desc {
+    font-size: 1rem;
+    color: var(--cat-gray);
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  .platform-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .platform-card {
+    background: var(--cat-white);
+    border: 1px solid var(--cat-mid);
+    border-left: 4px solid var(--cat-yellow);
+    padding: 16px 18px;
+    border-radius: 2px;
+  }
+
+  .platform-card .pc-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--cat-dark);
+    margin-bottom: 5px;
+  }
+
+  .platform-card .pc-desc {
+    font-size: 0.75rem;
+    color: var(--cat-gray);
+    line-height: 1.5;
+  }
+
+  .integration-list {
+    background: var(--cat-dark);
+    color: white;
+    padding: 32px;
+    border-radius: 2px;
+  }
+
+  .integration-list h3 {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--cat-yellow);
+    margin-bottom: 20px;
+  }
+
+  .int-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+
+  .int-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--cat-yellow);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .int-name { font-size: 0.8rem; font-weight: 700; color: white; }
+  .int-desc { font-size: 0.73rem; color: #999; }
+
+  /* ── GOALS ── */
+  .goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .goal-card {
+    background: var(--cat-dark);
+    color: white;
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .goal-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 4px;
+    background: var(--cat-yellow);
+  }
+
+  .goal-num {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--cat-yellow);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .goal-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ccc;
+    line-height: 1.4;
+  }
+
+  .goal-note {
+    font-size: 0.68rem;
+    color: #777;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* ── JOURNEY ── */
+  .journey-phases {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin-bottom: 32px;
+    border: 1px solid var(--cat-mid);
+  }
+
+  .phase-col { border-right: 1px solid var(--cat-mid); }
+  .phase-col:last-child { border-right: none; }
+
+  .phase-header {
+    background: var(--cat-dark);
+    color: white;
+    padding: 14px 16px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 3px solid var(--cat-yellow);
+  }
+
+  .phase-body { padding: 20px 16px; }
+
+  .tool-chip {
+    display: inline-block;
+    background: var(--cat-yellow);
+    color: var(--cat-dark);
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+  }
+
+  .tool-chip.proposed {
+    background: #e0e0e0;
+    color: #444;
+  }
+
+  .phase-use-cases { list-style: none; }
+  .phase-use-cases li {
+    font-size: 0.73rem;
+    color: var(--cat-gray);
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .phase-use-cases li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--cat-yellow-dark);
+  }
+
+  .phase-efficiency {
+    margin-top: 16px;
+    padding: 10px;
+    background: var(--cat-light);
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--cat-dark);
+  }
+
+  /* ── OPERATE SCALE ── */
+  .scale-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .growth-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .growth-stat {
+    background: var(--cat-dark);
+    color: white;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .gs-num {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--cat-yellow);
+  }
+
+  .gs-label {
+    font-size: 0.7rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .data-table th {
+    background: var(--cat-dark);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.73rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--cat-mid);
+    color: var(--cat-gray);
+  }
+
+  .data-table tr:hover td { background: #f9f9f9; }
+
+  .trend-badge {
+    display: inline-block;
+    background: var(--cat-yellow);
+    color: var(--cat-dark);
+    font-weight: 800;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  /* ── EFFICIENCY PILLARS ── */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .pillar-card {
+    border: 1px solid var(--cat-mid);
+    padding: 32px;
+    position: relative;
+    background: white;
+  }
+
+  .pillar-card .pillar-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+
+  .pillar-card h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--cat-dark);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--cat-yellow);
+  }
+
+  .pillar-card ul { list-style: none; }
+  .pillar-card ul li {
+    font-size: 0.8rem;
+    color: var(--cat-gray);
+    padding: 7px 0;
+    border-bottom: 1px solid #f0f0f0;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .pillar-card ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--cat-yellow-dark);
+    font-size: 0.7rem;
+    top: 9px;
+  }
+
+  .pillar-outcome {
+    margin-top: 20px;
+    background: var(--cat-yellow);
+    color: var(--cat-dark);
+    padding: 12px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  /* ── LONG TERM ROADMAP ── */
+  .roadmap-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+  }
+
+  .roadmap-table thead th {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--cat-gray);
+    padding: 0 20px 8px;
+    text-align: left;
+    border-bottom: 2px solid var(--cat-mid);
+  }
+
+  .roadmap-table thead th:first-child { width: 25%; }
+  .roadmap-table thead th:nth-child(2) { width: 42%; }
+  .roadmap-table thead th:last-child { width: 33%; }
+
+  .roadmap-table tbody tr td {
+    background: white;
+    padding: 22px 20px;
+    font-size: 0.82rem;
+    color: var(--cat-gray);
+    line-height: 1.6;
+    border-top: 1px solid var(--cat-mid);
+    border-bottom: 1px solid var(--cat-mid);
+  }
+
+  .roadmap-table tbody tr td:first-child {
+    border-left: 4px solid var(--cat-yellow);
+    font-weight: 800;
+    color: var(--cat-dark);
+    font-size: 0.88rem;
+  }
+
+  .roadmap-table tbody tr td:last-child {
+    border-right: 1px solid var(--cat-mid);
+  }
+
+  .outcome-stat {
+    display: inline-block;
+    background: #f0f0f0;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-weight: 700;
+    color: var(--cat-dark);
+    font-size: 0.8rem;
+    margin: 3px 0;
+  }
+
+  /* ── NEW TOOLS ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .tool-card {
+    border: 1px solid var(--cat-mid);
+    background: white;
+    padding: 28px;
+  }
+
+  .tool-card .tc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .tc-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--cat-dark);
+  }
+
+  .tc-area {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--cat-dark);
+    color: white;
+    padding: 4px 10px;
+  }
+
+  .tc-efficiency {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--cat-yellow-dark);
+    margin-bottom: 10px;
+  }
+
+  .tc-cases {
+    font-size: 0.78rem;
+    color: var(--cat-gray);
+    line-height: 1.6;
+  }
+
+  /* ── KPIs ── */
+  .kpi-row {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+
+  .kpi-box {
+    flex: 1;
+    min-width: 160px;
+    background: var(--cat-dark);
+    color: white;
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+  }
+
+  .kpi-box::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 4px;
+    background: var(--cat-yellow);
+  }
+
+  .kpi-val {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--cat-yellow);
+  }
+
+  .kpi-label {
+    font-size: 0.7rem;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ── APPENDIX CARDS ── */
+  .appendix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .app-card {
+    border: 1px solid var(--cat-mid);
+    background: white;
+  }
+
+  .app-card-header {
+    background: var(--cat-dark);
+    color: white;
+    padding: 18px 24px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .app-card-header .badge {
+    background: var(--cat-yellow);
+    color: var(--cat-dark);
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 3px 10px;
+  }
+
+  .app-card-body { padding: 24px; }
+
+  .app-section-title {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--cat-yellow-dark);
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  .app-section-title:first-child { margin-top: 0; }
+
+  .app-list { list-style: none; }
+  .app-list li {
+    font-size: 0.78rem;
+    color: var(--cat-gray);
+    padding: 5px 0;
+    border-bottom: 1px solid #f5f5f5;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .app-list li::before { content: '•'; position: absolute; left: 0; color: var(--cat-yellow-dark); }
+
+  .benefit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .benefit-label { font-size: 0.78rem; color: var(--cat-gray); }
+  .benefit-val { font-size: 0.85rem; font-weight: 800; color: var(--cat-dark); }
+
+  /* ── GITHUB COPILOT TABLE ── */
+  .ghcp-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .ghcp-table th {
+    background: var(--cat-dark);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.73rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .ghcp-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--cat-mid);
+    font-size: 0.82rem;
+    color: var(--cat-gray);
+    vertical-align: top;
+  }
+
+  .ghcp-table td:first-child { font-weight: 700; color: var(--cat-dark); width: 8%; }
+  .ghcp-table td:nth-child(2) { font-weight: 700; color: var(--cat-dark); width: 18%; }
+  .ghcp-table td:nth-child(3) { width: 60%; }
+  .ghcp-table td:last-child { width: 14%; font-weight: 800; color: var(--cat-yellow-dark); }
+
+  .ghcp-table tr:hover td { background: #fafafa; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--cat-dark);
+    color: #666;
+    padding: 40px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 3px solid var(--cat-yellow);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  footer .brand { color: var(--cat-yellow); font-weight: 900; font-size: 1rem; }
+  footer .copy { font-size: 0.75rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    :root { --section-pad: 48px 24px; }
+    nav a { display: none; }
+    .platform-layout, .scale-layout { grid-template-columns: 1fr; }
+    .journey-phases { grid-template-columns: 1fr 1fr; }
+    #hero h1 { font-size: 2rem; }
+    footer { flex-direction: column; }
+  }
+
+  @media (max-width: 600px) {
+    .journey-phases { grid-template-columns: 1fr; }
+    .goals-grid { grid-template-columns: 1fr 1fr; }
+    .kpi-row { flex-direction: column; }
+  }
+
+  /* Divider */
+  .y-divider {
+    width: 48px;
+    height: 4px;
+    background: var(--cat-yellow);
+    margin-bottom: 28px;
+  }
+
+  .callout {
+    background: var(--cat-yellow);
+    color: var(--cat-dark);
+    padding: 20px 28px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 36px;
+    border-left: 6px solid var(--cat-dark);
+    line-height: 1.5;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="brand">Wisdom Test</div>
+  <a href="#contents">Overview</a>
+  <a href="#platform">Platform</a>
+  <a href="#goals">2026 Goals</a>
+  <a href="#journey">AI Across SDLC</a>
+  <a href="#operate">Operate Scale</a>
+  <a href="#pillars">Efficiency Drivers</a>
+  <a href="#roadmap">Long-Term AI</a>
+  <a href="#tools">New Tools</a>
+  <a href="#appendix">Appendix</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="tag">February 2026 · Confidential</div>
+  <h1>Wisdom <span>Test</span><br>AI &amp; Automation Roadmap</h1>
+  <p class="subtitle">AI &amp; Automation Tools, Use Cases, and Efficiencies — Delivering more for less across the dealer ordering platform</p>
+  <div class="hero-meta">
+    <div><div class="label">Program</div><div class="value">Wisdom Test (Order Navigation Experience)</div></div>
+    <div><div class="label">Horizon</div><div class="value">2026 Delivery Excellence + Long-Term Business Optimization</div></div>
+    <div><div class="label">Platform Scale</div><div class="value">$26B Revenue · 244 Dealers · 5 Regions · 105K+ Orders</div></div>
+  </div>
+</section>
+
+<!-- CONTENTS -->
+<section id="contents" style="padding:0">
+  <div id="contents" style="background: var(--cat-dark); color: white; padding: 60px;">
+    <div class="section-label" style="color: var(--cat-yellow);">Contents</div>
+    <h2 class="section-title" style="color: white;">What We Will Cover</h2>
+    <div class="toc-grid">
+      <a class="toc-item" href="#platform">
+        <div class="num">01</div>
+        <div class="toc-title">Test at the Center of Dealer Experience</div>
+        <div class="toc-desc">Platform architecture &amp; enterprise integrations</div>
+      </a>
+      <a class="toc-item" href="#goals">
+        <div class="num">02</div>
+        <div class="toc-title">Efficiency Areas Across Delivery Journey</div>
+        <div class="toc-desc">AI tools mapped to each SDLC phase</div>
+      </a>
+      <a class="toc-item" href="#goals">
+        <div class="num">03</div>
+        <div class="toc-title">2026 Efficiency Goals &amp; AI Use Cases</div>
+        <div class="toc-desc">Tangible targets for business outcomes</div>
+      </a>
+      <a class="toc-item" href="#operate">
+        <div class="num">04</div>
+        <div class="toc-title">Efficiencies Achieved So Far</div>
+        <div class="toc-desc">3-year operate performance vs platform growth</div>
+      </a>
+      <a class="toc-item" href="#roadmap">
+        <div class="num">05</div>
+        <div class="toc-title">Long-Term AI &amp; Automation Roadmap</div>
+        <div class="toc-desc">Business optimization use cases &amp; future capabilities</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM -->
+<section id="platform">
+  <div class="section-label">Test Platform</div>
+  <h2 class="section-title">Test is at the Center of Dealer Experience</h2>
+  <div class="y-divider"></div>
+
+  <div class="callout">
+    Order Navigation Experience (Test) is Wisdom's unified ordering platform — enabling dealers to find the right equipment and work tools, place orders, and track delivery while improving availability and accuracy through smarter inventory and configuration insights. With advancement in AI &amp; technology, we are now able to generate efficiencies across the Test platform.
+  </div>
+
+  <div class="platform-layout">
+    <div>
+      <p class="platform-desc">Test (SAP Commerce Cloud v2) serves as the primary digital B2B channel for dealer ordering and enables the B2C web channel through enterprise integrations. It is the unified commerce layer connecting experiences, products, pricing &amp; orders — <strong>enabled by AI-driven innovation</strong>.</p>
+
+      <div class="platform-grid">
+        <div class="platform-card">
+          <div class="pc-title">Web Channels</div>
+          <div class="pc-desc">B2B Storefronts — shop.wisdom.com, wisdom.com — powered by SAP Commerce</div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-title">Admin &amp; Backoffice</div>
+          <div class="pc-desc">Backoffice, Config Portal, Admin Console for governance &amp; ops</div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-title">Orders &amp; Pricing</div>
+          <div class="pc-desc">CMOPS Orders, Products, Pricing, Sales/Orders</div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-title">Analytics &amp; Reporting</div>
+          <div class="pc-desc">Dashboards &amp; insights across all channels</div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-title">Inventory &amp; Logistics</div>
+          <div class="pc-desc">Inventory visibility &amp; in-transit, fulfilment flows</div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-title">Security &amp; Identity</div>
+          <div class="pc-desc">Azure AD, edge protection, data privacy &amp; traffic controls</div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-title">Data</div>
+          <div class="pc-desc">Product/Customer data/Price — PIM, CDID, MACH1, S&amp;OP</div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-title">Web &amp; Mobile Devices</div>
+          <div class="pc-desc">Responsive storefronts &amp; device access</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="integration-list">
+      <h3>Enterprise Integrations</h3>
+      <div class="int-item"><div class="int-dot"></div><div><div class="int-name">Dealer ERP</div><div class="int-desc">Dealer SAP landscape, Wisdom BTP sub-account, Mach1</div></div></div>
+      <div class="int-item"><div class="int-dot"></div><div><div class="int-name">Order Fulfillment</div><div class="int-desc">CMOPS and MACH1</div></div></div>
+      <div class="int-item"><div class="int-dot"></div><div><div class="int-name">Content</div><div class="int-desc">Product brochures and images — CPC/Scene7</div></div></div>
+      <div class="int-item"><div class="int-dot"></div><div><div class="int-name">Data Layer</div><div class="int-desc">PIM, CDID, MACH1 — Product, customer &amp; pricing data</div></div></div>
+
+      <div style="margin-top:32px; border-top: 1px solid #444; padding-top: 24px;">
+        <h3 style="margin-bottom:16px;">Platform Growth (2023→2025)</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div style="text-align:center;padding:16px;background:#2a2a2a;">
+            <div style="font-size:1.6rem;font-weight:900;color:var(--cat-yellow);">4X</div>
+            <div style="font-size:0.7rem;color:#999;margin-top:4px;">Revenue Growth<br>$6B → $26B</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#2a2a2a;">
+            <div style="font-size:1.6rem;font-weight:900;color:var(--cat-yellow);">3X</div>
+            <div style="font-size:0.7rem;color:#999;margin-top:4px;">Order Volume<br>37K → 105K</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#2a2a2a;">
+            <div style="font-size:1.6rem;font-weight:900;color:var(--cat-yellow);">3X</div>
+            <div style="font-size:0.7rem;color:#999;margin-top:4px;">Unique Dealers<br>74 → 244</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#2a2a2a;">
+            <div style="font-size:1.6rem;font-weight:900;color:var(--cat-yellow);">2→5</div>
+            <div style="font-size:0.7rem;color:#999;margin-top:4px;">Regions Supported<br>Global Expansion</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE DRIVERS -->
+<section id="value-drivers" style="background:var(--cat-dark);color:white;padding:60px;">
+  <div class="section-label" style="color:var(--cat-yellow);">Strategic Framework</div>
+  <h2 class="section-title" style="color:white;">Two Primary Value Drivers</h2>
+  <div class="y-divider"></div>
+  <p style="color:#aaa;max-width:640px;margin-bottom:40px;font-size:0.95rem;">We have identified two primary value drivers to bring efficiency through the Test program. Today we focus on the <strong style="color:white;">Delivery Excellence</strong> roadmap based on approved tools.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="background:#2a2a2a;padding:36px;border-top:4px solid var(--cat-yellow);">
+      <div style="font-size:1.4rem;font-weight:900;color:white;margin-bottom:12px;">Delivery Excellence</div>
+      <div style="font-size:0.88rem;color:#bbb;line-height:1.6;">Optimizing the delivery journey through AI and Automation tools — across Discovery &amp; Design, Code Development, Testing, Documentation &amp; Planning, and Operate.</div>
+      <div style="margin-top:20px;background:var(--cat-yellow);color:var(--cat-dark);padding:10px 16px;font-size:0.8rem;font-weight:700;">✓ Primary focus — 2026 Approved Roadmap</div>
+    </div>
+    <div style="background:#2a2a2a;padding:36px;border-top:4px solid #555;">
+      <div style="font-size:1.4rem;font-weight:900;color:white;margin-bottom:12px;">Business Optimization</div>
+      <div style="font-size:0.88rem;color:#bbb;line-height:1.6;">Boosting business efficiencies by implementing AI-driven use cases — configuration management, conversational AI, multilingual support, and dealer productivity enhancements.</div>
+      <div style="margin-top:20px;background:#333;color:#ccc;padding:10px 16px;font-size:0.8rem;font-weight:700;">◷ Long-term roadmap — Future state</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2026 GOALS -->
+<section id="goals">
+  <div class="section-label">2026 Targets</div>
+  <h2 class="section-title">These Are Our 2026 Efficiency Goals for Tangible Business Outcomes</h2>
+  <div class="y-divider"></div>
+  <p class="section-intro">These efficiencies will allow increased throughput and faster time to market. Subject to timely approval of AI and automation tools and licenses.</p>
+
+  <div class="goals-grid" style="margin-bottom:48px;">
+    <div class="goal-card">
+      <div class="goal-num">10–12%</div>
+      <div class="goal-label">Reduction in Development Effort</div>
+      <div class="goal-note">via GitHub Copilot &amp; code generation tools</div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-num">8–9%</div>
+      <div class="goal-label">Increase in Delivery Velocity</div>
+      <div class="goal-note">via AI-assisted discovery, design &amp; planning</div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-num">8–10%</div>
+      <div class="goal-label">Operational Efficiency &amp; Ticket Avoidance</div>
+      <div class="goal-note">via automation, SCI integration &amp; ServiceNow</div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-num">50–55%</div>
+      <div class="goal-label">Testing Automation Coverage</div>
+      <div class="goal-note">Currently at 40% — growing with Selenium &amp; Playwright</div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY / AI ACROSS SDLC -->
+<section id="journey" style="background:var(--cat-light);">
+  <div class="section-label">AI-Enabled Delivery</div>
+  <h2 class="section-title">AI &amp; Automation Tools Across the Delivery Journey</h2>
+  <div class="y-divider"></div>
+  <p class="section-intro">Each step of the implementation and operate journey brings opportunities to generate efficiency. We have created a goal-based roadmap for the short and long term based on tool permissibility and business use cases.</p>
+
+  <div style="display:flex;gap:16px;margin-bottom:24px;font-size:0.75rem;align-items:center;">
+    <span class="tool-chip">Wisdom Approved</span>
+    <span class="tool-chip proposed">Deloitte Proposed New Tools</span>
+  </div>
+
+  <div class="journey-phases">
+    <div class="phase-col">
+      <div class="phase-header">Discovery &amp; Design</div>
+      <div class="phase-body">
+        <div><span class="tool-chip">AI Assist</span></div>
+        <div><span class="tool-chip proposed">FigJam</span></div>
+        <ul class="phase-use-cases">
+          <li>Intake-to-Action Summaries</li>
+          <li>Rapid FR/NFR, Stories &amp; Acceptance Criteria</li>
+          <li>Early Gap &amp; Edge-Case Detection</li>
+          <li>Goal-to-Test Traceability</li>
+          <li>User journey mapping &amp; CX Validation</li>
+        </ul>
+        <div class="phase-efficiency">~8–9% Velocity ↑</div>
+      </div>
+    </div>
+    <div class="phase-col">
+      <div class="phase-header">Code Development</div>
+      <div class="phase-body">
+        <div><span class="tool-chip">GitHub Copilot</span></div>
+        <div><span class="tool-chip proposed">Builder.io</span></div>
+        <ul class="phase-use-cases">
+          <li>Faster base data modelling</li>
+          <li>Quality code — latest standards</li>
+          <li>YAML and API spec generation</li>
+          <li>Optimizations &amp; performance tuning</li>
+          <li>Frontend design-to-production (Builder.io)</li>
+        </ul>
+        <div class="phase-efficiency">~10–12% Effort ↓</div>
+      </div>
+    </div>
+    <div class="phase-col">
+      <div class="phase-header">Testing</div>
+      <div class="phase-body">
+        <div><span class="tool-chip">Selenium</span></div>
+        <div><span class="tool-chip proposed">Playwright + AI Assist</span></div>
+        <ul class="phase-use-cases">
+          <li>Increased automation throughput</li>
+          <li>Reduced reruns &amp; maintenance effort</li>
+          <li>API + UI combined testing</li>
+          <li>Accelerated test case generation</li>
+          <li>Defect triage &amp; analysis summaries</li>
+        </ul>
+        <div class="phase-efficiency">~10–15% Automation ↑</div>
+      </div>
+    </div>
+    <div class="phase-col">
+      <div class="phase-header">Documentation &amp; Planning</div>
+      <div class="phase-body">
+        <div><span class="tool-chip proposed">Ascend PMO</span></div>
+        <div><span class="tool-chip proposed">Rovo Chat</span></div>
+        <ul class="phase-use-cases">
+          <li>Rapid docs &amp; process flow diagrams from code</li>
+          <li>Unified search &amp; Q&amp;A (JIRA/Confluence)</li>
+          <li>Efficient Sprint Planning</li>
+          <li>Faster meeting write-ups</li>
+        </ul>
+        <div class="phase-efficiency">~8–10% Efficiency ↑</div>
+      </div>
+    </div>
+    <div class="phase-col">
+      <div class="phase-header">Operate</div>
+      <div class="phase-body">
+        <div><span class="tool-chip">GitHub Copilot</span></div>
+        <ul class="phase-use-cases">
+          <li>Automated ServiceNow Incident Creation</li>
+          <li>Impex generation for data workarounds</li>
+          <li>Automated scripting jobs for recurring issues</li>
+          <li>Faster framework upgrades</li>
+          <li>Integration issue tracking &amp; resolution</li>
+        </ul>
+        <div class="phase-efficiency">~8–9% Ticket ↓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPERATE MULTI-DIM -->
+  <div style="margin-top:40px;">
+    <h3 style="font-size:1rem;font-weight:800;margin-bottom:24px;color:var(--cat-dark);">Operate: Multi-Dimensional Efficiency Approach</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+      <div style="background:white;border:1px solid var(--cat-mid);padding:24px;border-top:4px solid var(--cat-yellow);">
+        <div style="font-weight:900;font-size:1.1rem;color:var(--cat-dark);margin-bottom:8px;">①&nbsp;Framework Upgrade</div>
+        <div style="font-size:0.78rem;color:var(--cat-gray);line-height:1.5;">Faster upgrades by automating migration and adhering to dev guidelines through markdown files, ensuring minimal defects.</div>
+        <div style="margin-top:12px;font-weight:800;color:var(--cat-yellow-dark);">~12–15% efficiency</div>
+      </div>
+      <div style="background:white;border:1px solid var(--cat-mid);padding:24px;border-top:4px solid var(--cat-yellow);">
+        <div style="font-weight:900;font-size:1.1rem;color:var(--cat-dark);margin-bottom:8px;">②&nbsp;Gaps &amp; Break Fixes</div>
+        <div style="font-size:0.78rem;color:var(--cat-gray);line-height:1.5;">Accelerates coding for small changes and hotfixes by generating boilerplate and common patterns. Streamline test case creation.</div>
+        <div style="margin-top:12px;font-weight:800;color:var(--cat-yellow-dark);">~8–10% efficiency</div>
+      </div>
+      <div style="background:white;border:1px solid var(--cat-mid);padding:24px;border-top:4px solid var(--cat-yellow);">
+        <div style="font-weight:900;font-size:1.1rem;color:var(--cat-dark);margin-bottom:8px;">③&nbsp;Automations</div>
+        <div style="font-size:0.78rem;color:var(--cat-gray);line-height:1.5;">Auto impex generation for data correction. Auto ServiceNow Incident Creation &amp; Script Generation. Automated scripting jobs for recurring data issues.</div>
+        <div style="margin-top:12px;font-weight:800;color:var(--cat-yellow-dark);">~10–12% efficiency</div>
+      </div>
+      <div style="background:white;border:1px solid var(--cat-mid);padding:24px;border-top:4px solid var(--cat-yellow);">
+        <div style="font-weight:900;font-size:1.1rem;color:var(--cat-dark);margin-bottom:8px;">④&nbsp;Value Adds</div>
+        <div style="font-size:0.78rem;color:var(--cat-gray);line-height:1.5;">Additional minor enhancements delivered through increased efficiency. Optimize P1 regression suite for version upgrades and multiple cycle runs.</div>
+        <div style="margin-top:12px;font-weight:800;color:var(--cat-yellow-dark);">~8–10% efficiency</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPERATE SCALE -->
+<section id="operate">
+  <div class="section-label">Operate Performance</div>
+  <h2 class="section-title">Scaling Dealer Operations — Without Scaling Cost</h2>
+  <div class="y-divider"></div>
+
+  <div class="callout">
+    A disciplined operating model — combining AI, automation, retained expertise, and standardized processes — allowed the platform to scale 3X with no increase in operating cost. Operate cost reduced 15% while Enhancement Allocation increased 60% over 2 years.
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-box"><div class="kpi-val">3X</div><div class="kpi-label">Order Volume Growth<br>37K → 105K</div></div>
+    <div class="kpi-box"><div class="kpi-val">3X</div><div class="kpi-label">Unique Dealers<br>74 → 244</div></div>
+    <div class="kpi-box"><div class="kpi-val">~1.4X</div><div class="kpi-label">Ticket Growth<br>(vs 3X platform growth)</div></div>
+    <div class="kpi-box"><div class="kpi-val">15%↓</div><div class="kpi-label">Core Operate Cost<br>Reduction</div></div>
+    <div class="kpi-box"><div class="kpi-val">60%↑</div><div class="kpi-label">Enhancement Allocation<br>Increase</div></div>
+    <div class="kpi-box"><div class="kpi-val">$2M</div><div class="kpi-label">Operate Spend<br>Flat YoY</div></div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3 style="font-size:1rem;font-weight:800;margin-bottom:20px;color:var(--cat-dark);">Core Operate Tickets Trend (2023 → 2025)</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>2023</th>
+            <th>2025</th>
+            <th>Growth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Incidents</td><td>413</td><td>615</td><td><span class="trend-badge">1.5X</span></td></tr>
+          <tr><td>Service Requests</td><td>1,144</td><td>1,468</td><td><span class="trend-badge">1.3X</span></td></tr>
+          <tr><td>Stabilization Tasks</td><td>26</td><td>47</td><td><span class="trend-badge">1.8X</span></td></tr>
+          <tr><td>Problem Tickets</td><td>3</td><td>15</td><td><span class="trend-badge">5X</span></td></tr>
+          <tr style="background:#f9f9f9;"><td><strong>Total</strong></td><td><strong>1,586</strong></td><td><strong>2,145</strong></td><td><span class="trend-badge">~1.37X</span></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.75rem;color:#999;margin-top:12px;font-style:italic;">Platform grew 3X in orders &amp; complexity — tickets grew only 1.37X</p>
+    </div>
+    <div>
+      <h3 style="font-size:1rem;font-weight:800;margin-bottom:20px;color:var(--cat-dark);">2025 Operate Summary vs 2024</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
+          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">6</div>
+          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Releases to PROD</div>
+        </div>
+        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
+          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">615</div>
+          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Incidents</div>
+        </div>
+        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
+          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">100%</div>
+          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Incident SLA<br><span style="color:#666;">(Target: 85%)</span></div>
+        </div>
+        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
+          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">0/2</div>
+          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">P1/P2 Tickets</div>
+        </div>
+        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
+          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">26</div>
+          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Value Add<br>Enhancements</div>
+        </div>
+        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
+          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">36%</div>
+          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Team 2yr+ Tenure<br>18% at 3yr+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EFFICIENCY PILLARS -->
+<section id="pillars" style="background:var(--cat-light);">
+  <div class="section-label">How We Did It</div>
+  <h2 class="section-title">Automation, Process &amp; Talent Initiatives Drove Efficiency</h2>
+  <div class="y-divider"></div>
+  <p class="section-intro">Four interconnected pillars — AI &amp; Automation, Process Optimization, Talent Management, and Operating Model — combined to prevent cost escalation while delivering superior outcomes.</p>
+
+  <div class="pillars-grid">
+    <div class="pillar-card">
+      <div class="pillar-icon">⚙️</div>
+      <h3>AI &amp; Automation</h3>
+      <ul>
+        <li>40% overall testing automation with Selenium; 80% regression scenarios automated</li>
+        <li>Auto-failure detection: alerts/ticketing upon failure detection for rapid response</li>
+        <li>Automated data transfer process for live insights — Active User Report via Snap Logic &amp; Snowflake</li>
+        <li>BTP + ServiceNow integration for automatic incident creation</li>
+        <li>Kibana alerts for all API errors — saving ~25 hrs/month</li>
+        <li>GitHub Copilot: 5–7% improved turnaround via automated impex &amp; script generation</li>
+      </ul>
+      <div class="pillar-outcome">Saved 6 person-days monthly · 7–8% fewer PR iterations</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon">🔄</div>
+      <h3>Process Optimization</h3>
+      <ul>
+        <li>Node Separation: order placement time reduced from 4 mins → 30 secs</li>
+        <li>Partial sync — post every full sync to retrigger failed business processes (~10 hrs/month saved)</li>
+        <li>Resolved SOLR indexing issue — eliminated ~2 tickets/month</li>
+        <li>Power BI links added to Test portal — eliminated support tickets for reports</li>
+        <li>Automated order failure notifications — ~16 hrs/month saved</li>
+        <li>Docs creation standardized to single team — reduced order delay by 3–5 hours</li>
+        <li>Audit cleanup extension — ~16 hrs/month saved</li>
+      </ul>
+      <div class="pillar-outcome">56 hrs/month (7 person-days) saved through process changes</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon">👥</div>
+      <h3>Talent Management</h3>
+      <ul>
+        <li>High retention: avg 2.5+ years tenure per team member on Wisdom</li>
+        <li>Cross-trained team members for multi-module capability, increasing throughput</li>
+        <li>Module champions &amp; twin track-leads for knowledge continuity</li>
+        <li>Juniors now owning deliverables; role rotation ensures continuity</li>
+        <li>Delivered 12 enhancements vs. a plan of 10 (Flex team)</li>
+      </ul>
+      <div class="pillar-outcome">Higher throughput through deep Wisdom knowledge</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon">🏗️</div>
+      <h3>Operating Model</h3>
+      <ul>
+        <li>Structured KT &amp; weekly sync with IT &amp; business — early risk mitigation &amp; smooth transition</li>
+        <li>Quarterly patch upgrade cadence; added guardrails for data protection</li>
+        <li>Environment strategy for parallel releases &amp; zero-downtime feature additions</li>
+        <li>Zero downtime deployments — weekly business &amp; technical connects</li>
+        <li>Standardized Power BI reporting, user guides &amp; order failure alerts</li>
+        <li>Scheduled platform patch upgrades &amp; data clean-up activity</li>
+      </ul>
+      <div class="pillar-outcome">99%+ incidents within SLA vs 85% target · Zero P1 tickets</div>
+    </div>
+  </div>
+</section>
+
+<!-- LONG TERM ROADMAP -->
+<section id="roadmap">
+  <div class="section-label">Long-Term Vision</div>
+  <h2 class="section-title">Long-Term AI &amp; Automation Roadmap — Business Optimization</h2>
+  <div class="y-divider"></div>
+  <p class="section-intro">This is just the beginning. We have formulated a long-term plan to bring business optimization in addition to delivery excellence — moving from operational efficiency to AI-driven competitive differentiation.</p>
+
+  <table class="roadmap-table">
+    <thead>
+      <tr>
+        <th>Initiative</th>
+        <th>Capabilities</th>
+        <th>Business Outcome</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>AI-Powered Configuration Management</td>
+        <td>AI suggestion engine embedded in configuration workflows; learns from historical builds, option/part compatibility, and dealer ordering patterns; recommends create/edit/duplicate actions and closest valid substitutes in real time.</td>
+        <td><span class="outcome-stat">8–15% faster</span> configuration build time<br><span class="outcome-stat">10–15% fewer</span> incompatible builds<br><span class="outcome-stat">8–12% lower</span> order rework ("order grief")</td>
+      </tr>
+      <tr>
+        <td>Automated Compatibility Fixes &amp; Mass Updates</td>
+        <td>Continuously scans configs/orders for incompatibilities; uses a trained compatibility model to recommend &amp; apply fixes; supports bulk updates across product lines, price books, and open orders; audit trail + exception handling.</td>
+        <td><span class="outcome-stat">10–18% reduction</span> in manual engineering clean-up<br><span class="outcome-stat">12–18% faster</span> rule change rollout<br><span class="outcome-stat">8–15% fewer</span> downstream fulfillment issues</td>
+      </tr>
+      <tr>
+        <td>Conversational Configuration Creation (GenAI)</td>
+        <td>Natural-language assistant ("quarry use, advanced safety") that captures intent, proposes a valid configuration, explains selections, and offers alternatives/tradeoffs; guided Q&amp;A to resolve missing requirements; export to quote/order.</td>
+        <td><span class="outcome-stat">15–20% faster</span> config creation<br><span class="outcome-stat">10–18% faster</span> new dealer user onboarding ramp<br><span class="outcome-stat">8–15% higher</span> quote-to-order conversion</td>
+      </tr>
+      <tr>
+        <td>Multilingual Translation + Dealer Assist</td>
+        <td>End-to-end multilingual UX (UI + guided prompts + spec terms) with domain glossary; real-time compatibility checking during build; proactive dealer notifications post-order when rules/parts change with localized explanations.</td>
+        <td><span class="outcome-stat">10–18% faster</span> ordering across regions<br><span class="outcome-stat">10–18% reduction</span> in "order grief"<br><span class="outcome-stat">8–15% fewer</span> support tickets via proactive alerts</td>
+      </tr>
+      <tr>
+        <td>Automated Configuration Creation &amp; Management</td>
+        <td>Enable Excel-based uploads with similarity detection and AI-assisted suggestions to significantly reduce manual effort. Convert technical specs into dealer-friendly language and automatically generate master specification lists.</td>
+        <td>Improved configuration accuracy and consistency at scale; reduced manual engineering effort across product lines</td>
+      </tr>
+      <tr>
+        <td>Chatbot for Pricing &amp; Product Information</td>
+        <td>Deliver instant part pricing and product guidance by enabling a chatbot to read and respond from price lists (PDF/Excel), like top B2B e-commerce experiences.</td>
+        <td>Reduced dealer support tickets; faster quote turnaround; improved dealer self-service capability</td>
+      </tr>
+      <tr>
+        <td>AI-Driven Dealer Pain Point Identification</td>
+        <td>Analyze one year of incident data to pinpoint recurring failure patterns and remove consistent blockers across the dealer journey. Integrate feedback from service, manufacturing, and sales to continuously refine rules.</td>
+        <td>Proactive resolution of systemic issues before they escalate; continuous improvement loop for dealer experience</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- NEW TOOLS -->
+<section id="tools" style="background:var(--cat-light);">
+  <div class="section-label">Proposed Tools</div>
+  <h2 class="section-title">New AI Tools Identified for Additional Efficiency &amp; Business Value</h2>
+  <div class="y-divider"></div>
+  <p class="section-intro">Beyond currently approved tools, these additional platforms could bring significant additional efficiency across testing, delivery orchestration, frontend development, and sprint management.</p>
+
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tc-header">
+        <div class="tc-name">Playwright</div>
+        <div class="tc-area">Testing</div>
+      </div>
+      <div class="tc-efficiency">Up to ~15–20% faster</div>
+      <div class="tc-cases">test execution and setup time. API + UI combined testing; cross-browser automation (Chrome, Edge, Firefox, Safari); mobile and iPad automation expansion; screenshot and visual regression testing.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-header">
+        <div class="tc-name">AI Assist</div>
+        <div class="tc-area">Delivery Optimization</div>
+      </div>
+      <div class="tc-efficiency">Up to ~15–20% efficiency</div>
+      <div class="tc-cases">across majority of project activities including functional, development and testing. Accelerates Requirements-to-User Story creation, Test Case generation, Defect triage, Functional Grooming, and Sprint Activities.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-header">
+        <div class="tc-name">Ascend PMO</div>
+        <div class="tc-area">Delivery Orchestration</div>
+      </div>
+      <div class="tc-efficiency">Up to ~12–15% faster</div>
+      <div class="tc-cases">delivery. Enterprise delivery orchestration for large programs including Ticket management, ERP digital transformation, Finance operations, test automation. Rapid generation of docs and end-to-end process flow diagrams from code structure.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-header">
+        <div class="tc-name">Builder.io</div>
+        <div class="tc-area">Frontend Development</div>
+      </div>
+      <div class="tc-efficiency">Up to ~18–20% faster</div>
+      <div class="tc-cases">delivery on building UI components &amp; templates. Design-to-production acceleration; marketing landing pages without dev cycles; frontend development acceleration with AI-assisted code generation.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-header">
+        <div class="tc-name">FigJam</div>
+        <div class="tc-area">UX Design</div>
+      </div>
+      <div class="tc-efficiency">Up to ~15–18% reduction</div>
+      <div class="tc-cases">in manual efforts. Discovery facilitation; journey mapping and service blueprints; 20–30% faster journey-to-validation; 15–30% faster persona + journey draft creation; 20–35% faster user-flow iteration cycles.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tc-header">
+        <div class="tc-name">Rovo Chat</div>
+        <div class="tc-area">Chatbot / Knowledge</div>
+      </div>
+      <div class="tc-efficiency">15–20% efficiency</div>
+      <div class="tc-cases">in Sprint Planning &amp; Reporting. Unified search &amp; Q&amp;A across Atlassian + connected apps (JIRA/Confluence); reduces context-switching for developers; accelerates sprint ceremonies and backlog management.</div>
+    </div>
+  </div>
+</section>
+
+<!-- APPENDIX -->
+<section id="appendix">
+  <div class="section-label">Appendix</div>
+  <h2 class="section-title">Detailed Use Cases &amp; Operational Endeavors</h2>
+  <div class="y-divider"></div>
+
+  <!-- GITHUB COPILOT USE CASES -->
+  <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:20px;color:var(--cat-dark);">GitHub Copilot — Active Use Cases &amp; Efficiencies</h3>
+  <p style="font-size:0.85rem;color:var(--cat-gray);margin-bottom:24px;">Currently we have a pilot team of 6 people with GitHub Copilot licenses using the following use cases:</p>
+
+  <table class="ghcp-table" style="margin-bottom:48px;">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Use Case</th>
+        <th>Description</th>
+        <th>Efficiency</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Framework Upgrade</td>
+        <td>Streamlines major Java and Spring upgrades by highlighting required code changes, accelerating repetitive library migrations, and using Markdown guidance as quality guardrails.</td>
+        <td>15%</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Quality Check</td>
+        <td>Addresses Sonar-reported issues earlier by suggesting compliant patterns and safer refactors during feature and defect work, reducing rework and improving code quality consistency.</td>
+        <td>8%</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Script Generation</td>
+        <td>Accelerates Groovy and Impex script creation by generating solid templates and common patterns, reducing manual effort while improving consistency and lowering syntax or mapping errors.</td>
+        <td>12%</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Pair Programmer</td>
+        <td>Speeds up daily feature development by generating boilerplate, scaffolding components, and suggesting common implementations. Frees developers to focus on requirements and integration while reducing avoidable defects.</td>
+        <td>10%</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Performance Issue Fixes</td>
+        <td>Performance considerations addressed as part of new feature development to avoid introducing bottlenecks and ensure new capabilities scale appropriately.</td>
+        <td>10%</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Dev Standards as Guardrails</td>
+        <td>Using Markdown rule files, GitHub Copilot adheres to defined coding standards. Ensures auto-generated code matches team guidelines and project conventions.</td>
+        <td>8%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- OPERATIONAL ENDEAVORS -->
+  <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:24px;color:var(--cat-dark);">Key Operational Efficiency Endeavors</h3>
+  <div class="appendix-grid">
+    <div class="app-card">
+      <div class="app-card-header">
+        Endeavor 1 · Functional BA (AI Assist)
+        <span class="badge">Approved</span>
+      </div>
+      <div class="app-card-body">
+        <div class="app-section-title">Solution</div>
+        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">Stand up an "AI-Augmented Business Analysis" capability by embedding Microsoft Copilot (M365), Sidekick, and Figma Make into the BA-to-delivery lifecycle.</p>
+        <div class="app-section-title">Capabilities</div>
+        <ul class="app-list">
+          <li>AI summarizes intake/meetings into decisions, actions, open items</li>
+          <li>AI drafts FR/NFR, user stories, and acceptance criteria faster</li>
+          <li>AI flags gaps, ambiguities, and edge cases early</li>
+          <li>AI maintains traceability (goal → requirement → story → test)</li>
+          <li>AI accelerates process maps, wireframes, and clickable prototypes</li>
+        </ul>
+        <div class="app-section-title">Benefits</div>
+        <div class="benefit-row"><span class="benefit-label">Requirements cycle time reduction</span><span class="benefit-val">~10–20%</span></div>
+        <div class="benefit-row"><span class="benefit-label">Grooming time reduction</span><span class="benefit-val">1–2 weeks</span></div>
+        <div class="benefit-row"><span class="benefit-label">Design feedback turnaround</span><span class="benefit-val">1–2 weeks faster</span></div>
+        <div class="benefit-row"><span class="benefit-label">Fewer requirement-driven defects</span><span class="benefit-val">~10–20%</span></div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-header">
+        Endeavor 2 · Hybris/Spartacus Dev (GHCP)
+        <span class="badge">Active Pilot</span>
+      </div>
+      <div class="app-card-body">
+        <div class="app-section-title">Solution</div>
+        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">Integrate AI-driven productivity improvements within backend development by utilizing automated code generation, performance tuning, patch updates, and smart model recommendations.</p>
+        <div class="app-section-title">Capabilities</div>
+        <ul class="app-list">
+          <li>Consistent code delivery aligned with project standards</li>
+          <li>Faster feature &amp; component development using existing patterns</li>
+          <li>Improved API &amp; data integration quality</li>
+          <li>Sanity assistance — additional check before code push</li>
+          <li>Automated PR and code review assistance</li>
+        </ul>
+        <div class="app-section-title">Benefits</div>
+        <div class="benefit-row"><span class="benefit-label">Reduced cycle time</span><span class="benefit-val">~8–10%</span></div>
+        <div class="benefit-row"><span class="benefit-label">Fewer PR iterations</span><span class="benefit-val">~7–9%</span></div>
+        <div class="benefit-row"><span class="benefit-label">Consistent implementations</span><span class="benefit-val">~8–10%</span></div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-header">
+        Endeavor 3 · Operate Automation (GHCP)
+        <span class="badge">In Progress</span>
+      </div>
+      <div class="app-card-body">
+        <div class="app-section-title">Solution</div>
+        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">The Operate team occasionally performs data updates or temporary workarounds to resolve critical business issues without formal deployment (e.g., via Impex's or scripting jobs). Using GitHub Copilot, these can be developed and executed more quickly.</p>
+        <div class="app-section-title">Capabilities</div>
+        <ul class="app-list">
+          <li>Automatically generate Impex's for data correction</li>
+          <li>Create and automate scripting jobs for recurring data issues</li>
+          <li>Faster framework upgrades with minimal defects</li>
+          <li>Faster fixes for small code changes and hotfixes via boilerplate generation</li>
+        </ul>
+        <div class="app-section-title">Benefits</div>
+        <div class="benefit-row"><span class="benefit-label">Manual effort saved</span><span class="benefit-val">~120 mins/month</span></div>
+        <div class="benefit-row"><span class="benefit-label">Faster fixes for hotfixes</span><span class="benefit-val">~10%</span></div>
+        <div class="benefit-row"><span class="benefit-label">Improved INC turnaround</span><span class="benefit-val">~6–8%</span></div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-header">
+        Endeavor 4 · Automated ServiceNow Incidents
+        <span class="badge">Delivered</span>
+      </div>
+      <div class="app-card-body">
+        <div class="app-section-title">Solution</div>
+        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">When SCI detects an error, it triggers the Alert Notification Service. The service both emails the support team and automatically generates a ServiceNow incident — ensuring every error is formally tracked and accelerating resolution times.</p>
+        <div class="app-section-title">Capabilities</div>
+        <ul class="app-list">
+          <li>Rapid incident response — eliminates manual ticket creation</li>
+          <li>Seamless SAP + ServiceNow integration for error handling</li>
+          <li>Enhanced visibility with real-time insights and actionable notifications</li>
+          <li>Streamlined prioritization and workflow routing for critical alerts</li>
+        </ul>
+        <div class="app-section-title">Benefits</div>
+        <div class="benefit-row"><span class="benefit-label">Tickets reduced per month</span><span class="benefit-val">10–15 tickets</span></div>
+        <div class="benefit-row"><span class="benefit-label">Resolution time reduction</span><span class="benefit-val">40–50%</span></div>
+        <div class="benefit-row"><span class="benefit-label">SLA improvement</span><span class="benefit-val">~15%</span></div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-header">
+        GenAI eCommerce Document Automation
+        <span class="badge">2026 Planned</span>
+      </div>
+      <div class="app-card-body">
+        <div class="app-section-title">Solution</div>
+        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">A production-grade pipeline that extracts and validates data from eCommerce documents (PDFs/forms) and converts it into trusted structured outputs. Governed GPT workflows that transform extracted content into narratives. Optional SAP-native path to extract top product features and translate to French (FR) and Spanish (ES).</p>
+        <div class="app-section-title">Tools</div>
+        <ul class="app-list">
+          <li>Azure AI Document Intelligence</li>
+          <li>Azure OpenAI / OpenAI Studio, Prompt Flow SDK</li>
+          <li>SAP BTP Tools</li>
+        </ul>
+        <div class="app-section-title">Benefits</div>
+        <div class="benefit-row"><span class="benefit-label">Manual effort reduction</span><span class="benefit-val">10–15 mins/config</span></div>
+        <div class="benefit-row"><span class="benefit-label">Higher accuracy &amp; consistency</span><span class="benefit-val">80%</span></div>
+        <div class="benefit-row"><span class="benefit-label">Faster cycle time</span><span class="benefit-val">Reduced rework</span></div>
+      </div>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-header">
+        GenAI: The New Productivity Layer
+        <span class="badge">Strategic</span>
+      </div>
+      <div class="app-card-body">
+        <div class="app-section-title">Our Aim</div>
+        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">Leverage GenAI tools across two broad verticals: Business Value and Operational Value — touching People, Process, and Platform.</p>
+        <div class="app-section-title">Business Value Examples</div>
+        <ul class="app-list">
+          <li>Implementing business solutions leveraging AI/GenAI as part of solutioning</li>
+          <li>Creating uniform landscape utilizing GenAI</li>
+          <li>Building scalable and future-ready solutions with GenAI</li>
+        </ul>
+        <div class="app-section-title">Operational Value Examples</div>
+        <ul class="app-list">
+          <li>Leverage GenAI to generate code for on-going initiatives</li>
+          <li>Utilize Sidekick, PO Assist (Deloitte proprietary) for functional user story generation</li>
+          <li>Automated test coverage, defect density, escaped defects and rework rate</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="brand">Wisdom Test</div>
+    <div class="copy" style="margin-top:4px;">AI &amp; Automation Roadmap 2026 · February 2026</div>
+  </div>
+  <div class="copy" style="text-align:right;">
+    Delivery Excellence · Business Optimization<br>
+    Confidential — For Executive Leadership Review
+  </div>
+</footer>
+
+</body>
+</html>
