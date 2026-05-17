@@ -1,1601 +1,2298 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wisdom Test — AI &amp; Automation Roadmap 2026</title>
-<style>
-  :root {
-    --cat-yellow: #FFCD11;
-    --cat-black: #1A1A1A;
-    --cat-dark: #231F20;
-    --cat-gray: #54565A;
-    --cat-light: #F5F5F5;
-    --cat-mid: #E8E8E8;
-    --cat-white: #FFFFFF;
-    --cat-yellow-dark: #D4A800;
-    --cat-accent: #E8A900;
-    --section-pad: 80px 60px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: var(--cat-white);
-    color: var(--cat-dark);
-    line-height: 1.6;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--cat-dark);
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
-    gap: 0;
-    border-bottom: 3px solid var(--cat-yellow);
-  }
-
-  nav .brand {
-    color: var(--cat-yellow);
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    padding: 14px 0;
-    margin-right: 40px;
-    white-space: nowrap;
-  }
-
-  nav a {
-    color: #ccc;
-    text-decoration: none;
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 18px 14px;
-    letter-spacing: 0.5px;
-    transition: color 0.2s, border-bottom 0.2s;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -3px;
-  }
-
-  nav a:hover { color: var(--cat-yellow); border-bottom-color: var(--cat-yellow); }
-
-  /* ── HERO ── */
-  #hero {
-    background: var(--cat-dark);
-    color: white;
-    padding: 100px 60px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  #hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 6px;
-    height: 100%;
-    background: var(--cat-yellow);
-  }
-
-  #hero .tag {
-    display: inline-block;
-    background: var(--cat-yellow);
-    color: var(--cat-dark);
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    padding: 5px 14px;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-  }
-
-  #hero h1 {
-    font-size: 3.2rem;
-    font-weight: 900;
-    line-height: 1.1;
-    max-width: 800px;
-    margin-bottom: 16px;
-  }
-
-  #hero h1 span { color: var(--cat-yellow); }
-
-  #hero .subtitle {
-    font-size: 1.1rem;
-    color: #aaa;
-    max-width: 600px;
-    margin-bottom: 40px;
-  }
-
-  #hero .hero-meta {
-    display: flex;
-    gap: 32px;
-    flex-wrap: wrap;
-  }
-
-  #hero .hero-meta div {
-    border-left: 3px solid var(--cat-yellow);
-    padding-left: 12px;
-  }
-
-  #hero .hero-meta .label { font-size: 0.7rem; color: #888; letter-spacing: 1px; text-transform: uppercase; }
-  #hero .hero-meta .value { font-size: 0.95rem; color: white; font-weight: 600; }
-
-  /* ── SECTION COMMON ── */
-  section { padding: var(--section-pad); }
-  section:nth-child(even) { background: var(--cat-light); }
-
-  .section-label {
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--cat-yellow-dark);
-    margin-bottom: 10px;
-  }
-
-  h2.section-title {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--cat-dark);
-    margin-bottom: 12px;
-    line-height: 1.2;
-  }
-
-  .section-intro {
-    font-size: 1rem;
-    color: var(--cat-gray);
-    max-width: 720px;
-    margin-bottom: 48px;
-    line-height: 1.7;
-  }
-
-  /* ── CONTENTS ── */
-  #contents {
-    background: var(--cat-dark);
-    color: white;
-    padding: 60px;
-  }
-
-  .toc-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 2px;
-    margin-top: 40px;
-  }
-
-  .toc-item {
-    background: #2a2a2a;
-    padding: 28px 24px;
-    cursor: pointer;
-    transition: background 0.2s;
-    text-decoration: none;
-    display: block;
-  }
-
-  .toc-item:hover { background: #333; }
-
-  .toc-item .num {
-    font-size: 2.5rem;
-    font-weight: 900;
-    color: var(--cat-yellow);
-    line-height: 1;
-    margin-bottom: 10px;
-  }
-
-  .toc-item .toc-title {
-    font-size: 0.9rem;
-    color: white;
-    font-weight: 700;
-    line-height: 1.3;
-  }
-
-  .toc-item .toc-desc {
-    font-size: 0.75rem;
-    color: #888;
-    margin-top: 6px;
-  }
-
-  /* ── PLATFORM ── */
-  .platform-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: start;
-  }
-
-  .platform-desc {
-    font-size: 1rem;
-    color: var(--cat-gray);
-    line-height: 1.8;
-    margin-bottom: 24px;
-  }
-
-  .platform-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .platform-card {
-    background: var(--cat-white);
-    border: 1px solid var(--cat-mid);
-    border-left: 4px solid var(--cat-yellow);
-    padding: 16px 18px;
-    border-radius: 2px;
-  }
-
-  .platform-card .pc-title {
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--cat-dark);
-    margin-bottom: 5px;
-  }
-
-  .platform-card .pc-desc {
-    font-size: 0.75rem;
-    color: var(--cat-gray);
-    line-height: 1.5;
-  }
-
-  .integration-list {
-    background: var(--cat-dark);
-    color: white;
-    padding: 32px;
-    border-radius: 2px;
-  }
-
-  .integration-list h3 {
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--cat-yellow);
-    margin-bottom: 20px;
-  }
-
-  .int-item {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 14px;
-    align-items: flex-start;
-  }
-
-  .int-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--cat-yellow);
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 5px;
-  }
-
-  .int-name { font-size: 0.8rem; font-weight: 700; color: white; }
-  .int-desc { font-size: 0.73rem; color: #999; }
-
-  /* ── GOALS ── */
-  .goals-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-  }
-
-  .goal-card {
-    background: var(--cat-dark);
-    color: white;
-    padding: 36px 28px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .goal-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 100%; height: 4px;
-    background: var(--cat-yellow);
-  }
-
-  .goal-num {
-    font-size: 3.5rem;
-    font-weight: 900;
-    color: var(--cat-yellow);
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-
-  .goal-label {
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #ccc;
-    line-height: 1.4;
-  }
-
-  .goal-note {
-    font-size: 0.68rem;
-    color: #777;
-    margin-top: 10px;
-    font-style: italic;
-  }
-
-  /* ── JOURNEY ── */
-  .journey-phases {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0;
-    margin-bottom: 32px;
-    border: 1px solid var(--cat-mid);
-  }
-
-  .phase-col { border-right: 1px solid var(--cat-mid); }
-  .phase-col:last-child { border-right: none; }
-
-  .phase-header {
-    background: var(--cat-dark);
-    color: white;
-    padding: 14px 16px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-align: center;
-    border-bottom: 3px solid var(--cat-yellow);
-  }
-
-  .phase-body { padding: 20px 16px; }
-
-  .tool-chip {
-    display: inline-block;
-    background: var(--cat-yellow);
-    color: var(--cat-dark);
-    font-size: 0.65rem;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 2px;
-    margin-bottom: 12px;
-    letter-spacing: 0.3px;
-  }
-
-  .tool-chip.proposed {
-    background: #e0e0e0;
-    color: #444;
-  }
-
-  .phase-use-cases { list-style: none; }
-  .phase-use-cases li {
-    font-size: 0.73rem;
-    color: var(--cat-gray);
-    padding: 4px 0;
-    border-bottom: 1px solid #eee;
-    padding-left: 12px;
-    position: relative;
-  }
-
-  .phase-use-cases li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--cat-yellow-dark);
-  }
-
-  .phase-efficiency {
-    margin-top: 16px;
-    padding: 10px;
-    background: var(--cat-light);
-    text-align: center;
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: var(--cat-dark);
-  }
-
-  /* ── OPERATE SCALE ── */
-  .scale-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: start;
-  }
-
-  .growth-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 24px;
-  }
-
-  .growth-stat {
-    background: var(--cat-dark);
-    color: white;
-    padding: 24px 20px;
-    text-align: center;
-  }
-
-  .gs-num {
-    font-size: 2rem;
-    font-weight: 900;
-    color: var(--cat-yellow);
-  }
-
-  .gs-label {
-    font-size: 0.7rem;
-    color: #aaa;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 4px;
-  }
-
-  /* ── TABLE ── */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-  }
-
-  .data-table th {
-    background: var(--cat-dark);
-    color: white;
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 0.73rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-  }
-
-  .data-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--cat-mid);
-    color: var(--cat-gray);
-  }
-
-  .data-table tr:hover td { background: #f9f9f9; }
-
-  .trend-badge {
-    display: inline-block;
-    background: var(--cat-yellow);
-    color: var(--cat-dark);
-    font-weight: 800;
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 2px;
-  }
-
-  /* ── EFFICIENCY PILLARS ── */
-  .pillars-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-  }
-
-  .pillar-card {
-    border: 1px solid var(--cat-mid);
-    padding: 32px;
-    position: relative;
-    background: white;
-  }
-
-  .pillar-card .pillar-icon {
-    font-size: 2rem;
-    margin-bottom: 16px;
-  }
-
-  .pillar-card h3 {
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--cat-dark);
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--cat-yellow);
-  }
-
-  .pillar-card ul { list-style: none; }
-  .pillar-card ul li {
-    font-size: 0.8rem;
-    color: var(--cat-gray);
-    padding: 7px 0;
-    border-bottom: 1px solid #f0f0f0;
-    padding-left: 16px;
-    position: relative;
-    line-height: 1.4;
-  }
-
-  .pillar-card ul li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    color: var(--cat-yellow-dark);
-    font-size: 0.7rem;
-    top: 9px;
-  }
-
-  .pillar-outcome {
-    margin-top: 20px;
-    background: var(--cat-yellow);
-    color: var(--cat-dark);
-    padding: 12px 16px;
-    font-size: 0.78rem;
-    font-weight: 700;
-  }
-
-  /* ── LONG TERM ROADMAP ── */
-  .roadmap-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 12px;
-  }
-
-  .roadmap-table thead th {
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--cat-gray);
-    padding: 0 20px 8px;
-    text-align: left;
-    border-bottom: 2px solid var(--cat-mid);
-  }
-
-  .roadmap-table thead th:first-child { width: 25%; }
-  .roadmap-table thead th:nth-child(2) { width: 42%; }
-  .roadmap-table thead th:last-child { width: 33%; }
-
-  .roadmap-table tbody tr td {
-    background: white;
-    padding: 22px 20px;
-    font-size: 0.82rem;
-    color: var(--cat-gray);
-    line-height: 1.6;
-    border-top: 1px solid var(--cat-mid);
-    border-bottom: 1px solid var(--cat-mid);
-  }
-
-  .roadmap-table tbody tr td:first-child {
-    border-left: 4px solid var(--cat-yellow);
-    font-weight: 800;
-    color: var(--cat-dark);
-    font-size: 0.88rem;
-  }
-
-  .roadmap-table tbody tr td:last-child {
-    border-right: 1px solid var(--cat-mid);
-  }
-
-  .outcome-stat {
-    display: inline-block;
-    background: #f0f0f0;
-    padding: 3px 10px;
-    border-radius: 2px;
-    font-weight: 700;
-    color: var(--cat-dark);
-    font-size: 0.8rem;
-    margin: 3px 0;
-  }
-
-  /* ── NEW TOOLS ── */
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-  }
-
-  .tool-card {
-    border: 1px solid var(--cat-mid);
-    background: white;
-    padding: 28px;
-  }
-
-  .tool-card .tc-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-  }
-
-  .tc-name {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--cat-dark);
-  }
-
-  .tc-area {
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background: var(--cat-dark);
-    color: white;
-    padding: 4px 10px;
-  }
-
-  .tc-efficiency {
-    font-size: 1.6rem;
-    font-weight: 900;
-    color: var(--cat-yellow-dark);
-    margin-bottom: 10px;
-  }
-
-  .tc-cases {
-    font-size: 0.78rem;
-    color: var(--cat-gray);
-    line-height: 1.6;
-  }
-
-  /* ── KPIs ── */
-  .kpi-row {
-    display: flex;
-    gap: 2px;
-    flex-wrap: wrap;
-    margin-bottom: 48px;
-  }
-
-  .kpi-box {
-    flex: 1;
-    min-width: 160px;
-    background: var(--cat-dark);
-    color: white;
-    padding: 24px 20px;
-    text-align: center;
-    position: relative;
-  }
-
-  .kpi-box::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 100%; height: 4px;
-    background: var(--cat-yellow);
-  }
-
-  .kpi-val {
-    font-size: 2.4rem;
-    font-weight: 900;
-    color: var(--cat-yellow);
-  }
-
-  .kpi-label {
-    font-size: 0.7rem;
-    color: #bbb;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 4px;
-  }
-
-  /* ── APPENDIX CARDS ── */
-  .appendix-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-  }
-
-  .app-card {
-    border: 1px solid var(--cat-mid);
-    background: white;
-  }
-
-  .app-card-header {
-    background: var(--cat-dark);
-    color: white;
-    padding: 18px 24px;
-    font-weight: 800;
-    font-size: 0.85rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .app-card-header .badge {
-    background: var(--cat-yellow);
-    color: var(--cat-dark);
-    font-size: 0.7rem;
-    font-weight: 800;
-    padding: 3px 10px;
-  }
-
-  .app-card-body { padding: 24px; }
-
-  .app-section-title {
-    font-size: 0.65rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--cat-yellow-dark);
-    margin-bottom: 8px;
-    margin-top: 16px;
-  }
-
-  .app-section-title:first-child { margin-top: 0; }
-
-  .app-list { list-style: none; }
-  .app-list li {
-    font-size: 0.78rem;
-    color: var(--cat-gray);
-    padding: 5px 0;
-    border-bottom: 1px solid #f5f5f5;
-    padding-left: 14px;
-    position: relative;
-  }
-
-  .app-list li::before { content: '•'; position: absolute; left: 0; color: var(--cat-yellow-dark); }
-
-  .benefit-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #f5f5f5;
-  }
-
-  .benefit-label { font-size: 0.78rem; color: var(--cat-gray); }
-  .benefit-val { font-size: 0.85rem; font-weight: 800; color: var(--cat-dark); }
-
-  /* ── GITHUB COPILOT TABLE ── */
-  .ghcp-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .ghcp-table th {
-    background: var(--cat-dark);
-    color: white;
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 0.73rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .ghcp-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--cat-mid);
-    font-size: 0.82rem;
-    color: var(--cat-gray);
-    vertical-align: top;
-  }
-
-  .ghcp-table td:first-child { font-weight: 700; color: var(--cat-dark); width: 8%; }
-  .ghcp-table td:nth-child(2) { font-weight: 700; color: var(--cat-dark); width: 18%; }
-  .ghcp-table td:nth-child(3) { width: 60%; }
-  .ghcp-table td:last-child { width: 14%; font-weight: 800; color: var(--cat-yellow-dark); }
-
-  .ghcp-table tr:hover td { background: #fafafa; }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--cat-dark);
-    color: #666;
-    padding: 40px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 3px solid var(--cat-yellow);
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  footer .brand { color: var(--cat-yellow); font-weight: 900; font-size: 1rem; }
-  footer .copy { font-size: 0.75rem; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    :root { --section-pad: 48px 24px; }
-    nav a { display: none; }
-    .platform-layout, .scale-layout { grid-template-columns: 1fr; }
-    .journey-phases { grid-template-columns: 1fr 1fr; }
-    #hero h1 { font-size: 2rem; }
-    footer { flex-direction: column; }
-  }
-
-  @media (max-width: 600px) {
-    .journey-phases { grid-template-columns: 1fr; }
-    .goals-grid { grid-template-columns: 1fr 1fr; }
-    .kpi-row { flex-direction: column; }
-  }
-
-  /* Divider */
-  .y-divider {
-    width: 48px;
-    height: 4px;
-    background: var(--cat-yellow);
-    margin-bottom: 28px;
-  }
-
-  .callout {
-    background: var(--cat-yellow);
-    color: var(--cat-dark);
-    padding: 20px 28px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 36px;
-    border-left: 6px solid var(--cat-dark);
-    line-height: 1.5;
-  }
-
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
-  @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUMINO — Style Beyond Seasons</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── CSS Variables ─────────────────────────────────────────── */
+    :root {
+      --color-primary: #0a0a0a;
+      --color-bg: #fafaf8;
+      --color-gold: #c8a96e;
+      --color-text-muted: #888;
+      --color-border: #e5e5e5;
+      --color-white: #ffffff;
+      --color-error: #c0392b;
+      --header-height: 64px;
+      --cat-nav-height: 40px;
+      --drawer-width: 280px;
+      --transition-fast: 200ms ease;
+      --transition-med: 300ms ease;
+    }
+
+    /* ─── Reset ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--color-primary);
+      background: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      animation: pageFadeIn 400ms ease forwards;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul, ol { list-style: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input, textarea, select { font-family: inherit; }
+
+    /* ─── Typography ─────────────────────────────────────────────── */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', serif;
+      line-height: 1.25;
+      font-weight: 500;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+    h3 { font-size: clamp(1.2rem, 2vw, 1.6rem); }
+    h4 { font-size: 1.15rem; }
+    h5 { font-size: 1rem; }
+    h6 { font-size: 0.875rem; }
+    p { margin-bottom: 0.75rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ─── Page Fade-In ───────────────────────────────────────────── */
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Header ─────────────────────────────────────────────────── */
+    #lumino-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .header-main {
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .header-left, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .header-right { justify-content: flex-end; }
+    .header-center {
+      flex: 0 0 auto;
+      text-align: center;
+    }
+    .header-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--color-primary);
+      transition: opacity var(--transition-fast);
+    }
+    .header-brand:hover { opacity: 0.75; }
+    .header-icon-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: transparent;
+      font-size: 1.1rem;
+      transition: background var(--transition-fast), transform var(--transition-fast);
+      position: relative;
+    }
+    .header-icon-btn:hover { background: var(--color-border); }
+    .header-icon-btn:active { transform: scale(0.92); }
+    .cart-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--color-gold);
+      color: var(--color-white);
+      font-size: 0.6rem;
+      font-weight: 600;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+      transform-origin: center;
+      transition: transform var(--transition-fast);
+    }
+    .cart-badge.bounce {
+      animation: cartBounce 400ms ease;
+    }
+    @keyframes cartBounce {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(1.45); }
+      60%  { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    /* ─── Inline Search Bar ──────────────────────────────────────── */
+    .search-bar-wrapper {
+      position: absolute;
+      top: var(--header-height);
+      left: 0;
+      right: 0;
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-border);
+      padding: 12px 24px;
+      z-index: 999;
+      display: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .search-bar-wrapper.open { display: block; }
+    .search-bar-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .search-bar-input {
+      width: 100%;
+      padding: 10px 40px 10px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+    .search-bar-input:focus { border-color: var(--color-gold); }
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: none;
+    }
+    .search-dropdown.open { display: block; }
+    .search-dropdown-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: background var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .search-dropdown-item:hover { background: var(--color-bg); }
+    .search-dropdown-item img {
+      width: 36px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .search-see-all {
+      display: block;
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-gold);
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+      transition: background var(--transition-fast);
+      cursor: pointer;
+    }
+    .search-see-all:hover { background: var(--color-bg); }
+
+    /* ─── Category Nav Bar ───────────────────────────────────────── */
+    .category-nav {
+      height: var(--cat-nav-height);
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .category-nav::-webkit-scrollbar { display: none; }
+    .category-nav a {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      padding: 0 16px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .category-nav a:hover { color: var(--color-gold); border-bottom-color: var(--color-gold); }
+    .category-nav a.sale { color: var(--color-error); }
+    .category-nav a.sale:hover { border-bottom-color: var(--color-error); }
+
+    @media (max-width: 768px) {
+      .category-nav { display: none; }
+    }
+
+    /* ─── Side Drawer ────────────────────────────────────────────── */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-med);
+    }
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--drawer-width);
+      background: var(--color-primary);
+      color: var(--color-white);
+      z-index: 1200;
+      transform: translateX(-100%);
+      transition: transform var(--transition-med);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .drawer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--color-white);
+    }
+    .drawer-close {
+      color: var(--color-white);
+      font-size: 1.3rem;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background var(--transition-fast);
+    }
+    .drawer-close:hover { background: rgba(255,255,255,0.1); }
+    .drawer-nav { padding: 8px 0; flex: 1; }
+    .drawer-category {
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .drawer-category-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 20px;
+      color: var(--color-white);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: background var(--transition-fast);
+      cursor: pointer;
+    }
+    .drawer-category-toggle:hover { background: rgba(255,255,255,0.06); }
+    .drawer-chevron {
+      font-size: 0.7rem;
+      transition: transform var(--transition-fast);
+    }
+    .drawer-category.expanded .drawer-chevron { transform: rotate(180deg); }
+    .drawer-subcategory {
+      display: none;
+      padding: 0 0 8px;
+    }
+    .drawer-category.expanded .drawer-subcategory { display: block; }
+    .drawer-subcategory a {
+      display: block;
+      padding: 9px 20px 9px 32px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.65);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .drawer-subcategory a:hover { color: var(--color-gold); background: rgba(255,255,255,0.04); }
+    .drawer-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+      margin: 8px 0;
+    }
+    .drawer-link {
+      display: block;
+      padding: 12px 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.04em;
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .drawer-link:hover { color: var(--color-gold); background: rgba(255,255,255,0.04); }
+
+    /* ─── Footer ─────────────────────────────────────────────────── */
+    #lumino-footer {
+      background: var(--color-primary);
+      color: rgba(255,255,255,0.75);
+      padding: 60px 24px 0;
+    }
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.6fr;
+      gap: 48px;
+      padding-bottom: 48px;
+    }
+    @media (max-width: 1024px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+    .footer-brand-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--color-white);
+      margin-bottom: 12px;
+    }
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+    .footer-social a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      transition: border-color var(--transition-fast), background var(--transition-fast);
+    }
+    .footer-social a:hover { border-color: var(--color-gold); background: rgba(200,169,110,0.1); }
+    .footer-social svg { width: 15px; height: 15px; fill: rgba(255,255,255,0.7); }
+    .footer-col h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-white);
+      margin-bottom: 16px;
+    }
+    .footer-col ul li + li { margin-top: 10px; }
+    .footer-col ul a {
+      font-size: 0.83rem;
+      color: rgba(255,255,255,0.55);
+      transition: color var(--transition-fast);
+    }
+    .footer-col ul a:hover { color: var(--color-gold); }
+    .footer-newsletter-desc {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 14px;
+      line-height: 1.55;
+    }
+    .footer-newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-newsletter-input {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 3px;
+      padding: 10px 14px;
+      color: var(--color-white);
+      font-size: 0.83rem;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+    .footer-newsletter-input::placeholder { color: rgba(255,255,255,0.3); }
+    .footer-newsletter-input:focus { border-color: var(--color-gold); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.35);
+    }
+    .footer-bottom-links {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-bottom-links a {
+      color: rgba(255,255,255,0.35);
+      transition: color var(--transition-fast);
+    }
+    .footer-bottom-links a:hover { color: rgba(255,255,255,0.7); }
+
+    /* ─── Buttons ─────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 28px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border-color: var(--color-primary);
+    }
+    .btn-primary:hover { background: #2a2a2a; border-color: #2a2a2a; }
+    .btn-outlined {
+      background: transparent;
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+    .btn-outlined:hover { background: var(--color-primary); color: var(--color-white); }
+    .btn-gold {
+      background: var(--color-gold);
+      color: var(--color-white);
+      border-color: var(--color-gold);
+    }
+    .btn-gold:hover { background: #b8945a; border-color: #b8945a; }
+    .btn-sm { padding: 8px 18px; font-size: 0.72rem; }
+    .btn-lg { padding: 16px 40px; font-size: 0.85rem; }
+    .btn-full { width: 100%; }
+
+    /* ─── Product Cards ──────────────────────────────────────────── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 1200px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 900px)  { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+    @media (max-width: 480px)  { .product-grid { grid-template-columns: 1fr; } }
+
+    .product-card {
+      position: relative;
+      cursor: pointer;
+    }
+    .product-card-image-wrap {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      border-radius: 2px;
+      background: #f0eeea;
+    }
+    .product-card-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 500ms ease, opacity var(--transition-med);
+    }
+    .product-card-image-wrap img.img-hover {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+    }
+    .product-card:hover .product-card-image-wrap img.img-main { opacity: 0; }
+    .product-card:hover .product-card-image-wrap img.img-hover { opacity: 1; }
+    .product-card:hover .product-card-image-wrap img { transform: scale(1.04); }
+    .product-card-actions {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      gap: 8px;
+      transform: translateY(8px);
+      opacity: 0;
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+    }
+    .product-card:hover .product-card-actions {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .product-card-wishlist {
+      width: 38px;
+      height: 38px;
+      background: var(--color-white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      flex-shrink: 0;
+      transition: background var(--transition-fast);
+    }
+    .product-card-wishlist:hover { background: #fef0f0; }
+    .product-badges {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 1px;
+    }
+    .badge-new { background: var(--color-primary); color: var(--color-white); }
+    .badge-sale { background: var(--color-error); color: var(--color-white); }
+    .badge-bestseller { background: var(--color-gold); color: var(--color-white); }
+    .product-card-info { padding: 12px 4px 0; }
+    .product-card-brand {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 4px;
+    }
+    .product-card-name {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--color-primary);
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+    .product-card-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .price-current { font-size: 0.9rem; font-weight: 600; color: var(--color-primary); }
+    .price-original {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      text-decoration: line-through;
+    }
+    .price-sale { color: var(--color-error); }
+
+    /* ─── Form Inputs ────────────────────────────────────────────── */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: var(--color-primary);
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      font-size: 0.875rem;
+      background: var(--color-white);
+      color: var(--color-primary);
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 3px rgba(200,169,110,0.15);
+    }
+    .form-input.error, .form-select.error, .form-textarea.error {
+      border-color: var(--color-error);
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+    }
+    .form-error-msg {
+      font-size: 0.72rem;
+      color: var(--color-error);
+      margin-top: 4px;
+    }
+
+    /* ─── Toast ──────────────────────────────────────────────────── */
+    #toast-container {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 12px 24px;
+      border-radius: 3px;
+      font-size: 0.83rem;
+      font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      animation: toastSlideIn 300ms ease forwards;
+      pointer-events: all;
+    }
+    .toast.removing { animation: toastSlideOut 250ms ease forwards; }
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastSlideOut {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* ─── Back to Top ────────────────────────────────────────────── */
+    #back-to-top {
+      position: fixed;
+      bottom: 32px;
+      right: 28px;
+      width: 42px;
+      height: 42px;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      z-index: 800;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      cursor: pointer;
+    }
+    #back-to-top.visible {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+    #back-to-top:hover { background: #333; }
+    #back-to-top:active { transform: scale(0.93); }
+
+    /* ─── Skeleton / Loading Shimmer ─────────────────────────────── */
+    .skeleton {
+      background: linear-gradient(90deg, #f0eeea 25%, #e8e5e0 50%, #f0eeea 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .skeleton-image {
+      aspect-ratio: 3/4;
+      width: 100%;
+    }
+    .skeleton-line {
+      height: 12px;
+      width: 100%;
+    }
+    .skeleton-line.short { width: 55%; }
+
+    /* ─── Chat Widget ────────────────────────────────────────────── */
+    #chat-root { position: fixed; bottom: 28px; right: 80px; z-index: 850; }
+    .chat-fab {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--color-gold);
+      color: var(--color-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 4px 20px rgba(200,169,110,0.45);
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      border: none;
+    }
+    .chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(200,169,110,0.55); }
+    .chat-fab:active { transform: scale(0.96); }
+    .chat-window {
+      position: absolute;
+      bottom: 68px;
+      right: 0;
+      width: 360px;
+      height: 520px;
+      background: var(--color-white);
+      border-radius: 8px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.16);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(16px) scale(0.97);
+      transform-origin: bottom right;
+      transition: opacity var(--transition-med), transform var(--transition-med);
+    }
+    .chat-window.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0) scale(1);
+    }
+    .chat-window-header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .chat-window-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+    }
+    .chat-window-close {
+      color: rgba(255,255,255,0.7);
+      font-size: 1.1rem;
+      transition: color var(--transition-fast);
+    }
+    .chat-window-close:hover { color: var(--color-white); }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--color-bg);
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 9px 13px;
+      border-radius: 16px;
+      font-size: 0.83rem;
+      line-height: 1.45;
+    }
+    .chat-bubble.agent {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-bubble.user {
+      background: var(--color-gold);
+      color: var(--color-white);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-input-bar {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid var(--color-border);
+      flex-shrink: 0;
+      background: var(--color-white);
+    }
+    .chat-input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      font-size: 0.83rem;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+    .chat-input:focus { border-color: var(--color-gold); }
+    .chat-send-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--color-gold);
+      color: var(--color-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      transition: background var(--transition-fast);
+    }
+    .chat-send-btn:hover { background: #b8945a; }
+
+    /* ─── Layout Utilities ───────────────────────────────────────── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section { padding: 60px 0; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 36px;
+    }
+    .divider { height: 1px; background: var(--color-border); margin: 32px 0; }
+
+    /* ─── Responsive Helpers ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hide-mobile { display: none !important; }
+      .container { padding: 0 16px; }
+      .section { padding: 40px 0; }
+      #back-to-top { bottom: 24px; right: 16px; }
+      #chat-root { right: 16px; }
+      .chat-window { width: calc(100vw - 32px); right: 0; }
+    }
+    @media (min-width: 769px) { .show-mobile-only { display: none !important; } }
+    @media (max-width: 1024px) { .hide-tablet { display: none !important; } }
+  </style>
 </head>
 <body>
+<div id="app">
+  <div id="header-root"></div>
+  <div id="drawer-root"></div>
+  <main id="app-content" style="margin-top:104px; min-height:80vh;"></main>
+  <div id="footer-root"></div>
+  <div id="chat-root"></div>
+  <div id="toast-container"></div>
+</div>
 
-<!-- NAV -->
-<nav>
-  <div class="brand">Wisdom Test</div>
-  <a href="#contents">Overview</a>
-  <a href="#platform">Platform</a>
-  <a href="#goals">2026 Goals</a>
-  <a href="#journey">AI Across SDLC</a>
-  <a href="#operate">Operate Scale</a>
-  <a href="#pillars">Efficiency Drivers</a>
-  <a href="#roadmap">Long-Term AI</a>
-  <a href="#tools">New Tools</a>
-  <a href="#appendix">Appendix</a>
-</nav>
+<button id="back-to-top" aria-label="Back to top">&#8593;</button>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="tag">February 2026 · Confidential</div>
-  <h1>Wisdom <span>Test</span><br>AI &amp; Automation Roadmap</h1>
-  <p class="subtitle">AI &amp; Automation Tools, Use Cases, and Efficiencies — Delivering more for less across the dealer ordering platform</p>
-  <div class="hero-meta">
-    <div><div class="label">Program</div><div class="value">Wisdom Test (Order Navigation Experience)</div></div>
-    <div><div class="label">Horizon</div><div class="value">2026 Delivery Excellence + Long-Term Business Optimization</div></div>
-    <div><div class="label">Platform Scale</div><div class="value">$26B Revenue · 244 Dealers · 5 Regions · 105K+ Orders</div></div>
-  </div>
-</section>
+<script>
+  /* ─── Global State ─────────────────────────────────────────────── */
+  window.PRODUCTS     = [];
+  window.CART         = [];
+  window.ORDERS       = [];
+  window.USERS        = [];
+  window.CURRENT_USER = null;
+  window.SEARCH_QUERY = "";
+  window.CHAT_HISTORY = [];
 
-<!-- CONTENTS -->
-<section id="contents" style="padding:0">
-  <div id="contents" style="background: var(--cat-dark); color: white; padding: 60px;">
-    <div class="section-label" style="color: var(--cat-yellow);">Contents</div>
-    <h2 class="section-title" style="color: white;">What We Will Cover</h2>
-    <div class="toc-grid">
-      <a class="toc-item" href="#platform">
-        <div class="num">01</div>
-        <div class="toc-title">Test at the Center of Dealer Experience</div>
-        <div class="toc-desc">Platform architecture &amp; enterprise integrations</div>
-      </a>
-      <a class="toc-item" href="#goals">
-        <div class="num">02</div>
-        <div class="toc-title">Efficiency Areas Across Delivery Journey</div>
-        <div class="toc-desc">AI tools mapped to each SDLC phase</div>
-      </a>
-      <a class="toc-item" href="#goals">
-        <div class="num">03</div>
-        <div class="toc-title">2026 Efficiency Goals &amp; AI Use Cases</div>
-        <div class="toc-desc">Tangible targets for business outcomes</div>
-      </a>
-      <a class="toc-item" href="#operate">
-        <div class="num">04</div>
-        <div class="toc-title">Efficiencies Achieved So Far</div>
-        <div class="toc-desc">3-year operate performance vs platform growth</div>
-      </a>
-      <a class="toc-item" href="#roadmap">
-        <div class="num">05</div>
-        <div class="toc-title">Long-Term AI &amp; Automation Roadmap</div>
-        <div class="toc-desc">Business optimization use cases &amp; future capabilities</div>
-      </a>
-    </div>
-  </div>
-</section>
+  /* ─── Router ───────────────────────────────────────────────────── */
+  function navigate(hash) { window.location.hash = hash; }
 
-<!-- PLATFORM -->
-<section id="platform">
-  <div class="section-label">Test Platform</div>
-  <h2 class="section-title">Test is at the Center of Dealer Experience</h2>
-  <div class="y-divider"></div>
+  window.addEventListener('hashchange', renderPage);
 
-  <div class="callout">
-    Order Navigation Experience (Test) is Wisdom's unified ordering platform — enabling dealers to find the right equipment and work tools, place orders, and track delivery while improving availability and accuracy through smarter inventory and configuration insights. With advancement in AI &amp; technology, we are now able to generate efficiencies across the Test platform.
-  </div>
+  function renderPage() {
+    const hash = window.location.hash || '#/';
+    const content = document.getElementById('app-content');
+    if (!content) return;
 
-  <div class="platform-layout">
-    <div>
-      <p class="platform-desc">Test (SAP Commerce Cloud v2) serves as the primary digital B2B channel for dealer ordering and enables the B2C web channel through enterprise integrations. It is the unified commerce layer connecting experiences, products, pricing &amp; orders — <strong>enabled by AI-driven innovation</strong>.</p>
+    if (hash === '#/' || hash === '') {
+      renderHome();
+    } else if (hash.startsWith('#/category/')) {
+      const slug = hash.replace('#/category/', '');
+      renderPLP(slug);
+    } else if (hash.startsWith('#/product/')) {
+      const id = hash.replace('#/product/', '');
+      renderPDP(id);
+    } else if (hash === '#/cart') {
+      renderCart();
+    } else if (hash === '#/checkout') {
+      renderCheckout();
+    } else if (hash.startsWith('#/order/')) {
+      const id = hash.replace('#/order/', '');
+      renderOrderConfirmation(id);
+    } else if (hash === '#/register') {
+      renderRegister();
+    } else if (hash === '#/login') {
+      renderLogin();
+    } else if (hash === '#/account') {
+      renderAccount();
+    } else if (hash === '#/search') {
+      renderSearch();
+    } else {
+      content.innerHTML = '<div class="container section"><p>Page not found.</p></div>';
+    }
+  }
 
-      <div class="platform-grid">
-        <div class="platform-card">
-          <div class="pc-title">Web Channels</div>
-          <div class="pc-desc">B2B Storefronts — shop.wisdom.com, wisdom.com — powered by SAP Commerce</div>
-        </div>
-        <div class="platform-card">
-          <div class="pc-title">Admin &amp; Backoffice</div>
-          <div class="pc-desc">Backoffice, Config Portal, Admin Console for governance &amp; ops</div>
-        </div>
-        <div class="platform-card">
-          <div class="pc-title">Orders &amp; Pricing</div>
-          <div class="pc-desc">CMOPS Orders, Products, Pricing, Sales/Orders</div>
-        </div>
-        <div class="platform-card">
-          <div class="pc-title">Analytics &amp; Reporting</div>
-          <div class="pc-desc">Dashboards &amp; insights across all channels</div>
-        </div>
-        <div class="platform-card">
-          <div class="pc-title">Inventory &amp; Logistics</div>
-          <div class="pc-desc">Inventory visibility &amp; in-transit, fulfilment flows</div>
-        </div>
-        <div class="platform-card">
-          <div class="pc-title">Security &amp; Identity</div>
-          <div class="pc-desc">Azure AD, edge protection, data privacy &amp; traffic controls</div>
-        </div>
-        <div class="platform-card">
-          <div class="pc-title">Data</div>
-          <div class="pc-desc">Product/Customer data/Price — PIM, CDID, MACH1, S&amp;OP</div>
-        </div>
-        <div class="platform-card">
-          <div class="pc-title">Web &amp; Mobile Devices</div>
-          <div class="pc-desc">Responsive storefronts &amp; device access</div>
-        </div>
-      </div>
-    </div>
+  function renderHome()              { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderPLP(slug)           { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderPDP(id)             { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderCart()              { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderCheckout()          { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderOrderConfirmation(id){ document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderRegister()          { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderLogin()             { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderAccount()           { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderSearch()            { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
 
-    <div class="integration-list">
-      <h3>Enterprise Integrations</h3>
-      <div class="int-item"><div class="int-dot"></div><div><div class="int-name">Dealer ERP</div><div class="int-desc">Dealer SAP landscape, Wisdom BTP sub-account, Mach1</div></div></div>
-      <div class="int-item"><div class="int-dot"></div><div><div class="int-name">Order Fulfillment</div><div class="int-desc">CMOPS and MACH1</div></div></div>
-      <div class="int-item"><div class="int-dot"></div><div><div class="int-name">Content</div><div class="int-desc">Product brochures and images — CPC/Scene7</div></div></div>
-      <div class="int-item"><div class="int-dot"></div><div><div class="int-name">Data Layer</div><div class="int-desc">PIM, CDID, MACH1 — Product, customer &amp; pricing data</div></div></div>
-
-      <div style="margin-top:32px; border-top: 1px solid #444; padding-top: 24px;">
-        <h3 style="margin-bottom:16px;">Platform Growth (2023→2025)</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <div style="text-align:center;padding:16px;background:#2a2a2a;">
-            <div style="font-size:1.6rem;font-weight:900;color:var(--cat-yellow);">4X</div>
-            <div style="font-size:0.7rem;color:#999;margin-top:4px;">Revenue Growth<br>$6B → $26B</div>
+  /* ─── Header ───────────────────────────────────────────────────── */
+  function renderHeader() {
+    const root = document.getElementById('header-root');
+    if (!root) return;
+    root.innerHTML = `
+      <header id="lumino-header">
+        <div class="header-main">
+          <div class="header-left">
+            <button class="header-icon-btn" onclick="openDrawer()" aria-label="Menu">
+              <span style="font-size:1.2rem;">&#9776;</span>
+            </button>
           </div>
-          <div style="text-align:center;padding:16px;background:#2a2a2a;">
-            <div style="font-size:1.6rem;font-weight:900;color:var(--cat-yellow);">3X</div>
-            <div style="font-size:0.7rem;color:#999;margin-top:4px;">Order Volume<br>37K → 105K</div>
+          <div class="header-center">
+            <a href="#/" class="header-brand">LUMINO</a>
           </div>
-          <div style="text-align:center;padding:16px;background:#2a2a2a;">
-            <div style="font-size:1.6rem;font-weight:900;color:var(--cat-yellow);">3X</div>
-            <div style="font-size:0.7rem;color:#999;margin-top:4px;">Unique Dealers<br>74 → 244</div>
-          </div>
-          <div style="text-align:center;padding:16px;background:#2a2a2a;">
-            <div style="font-size:1.6rem;font-weight:900;color:var(--cat-yellow);">2→5</div>
-            <div style="font-size:0.7rem;color:#999;margin-top:4px;">Regions Supported<br>Global Expansion</div>
+          <div class="header-right">
+            <button class="header-icon-btn" onclick="toggleSearch()" aria-label="Search">&#128269;</button>
+            <a href="${window.CURRENT_USER ? '#/account' : '#/login'}" class="header-icon-btn" aria-label="Account">&#128100;</a>
+            <a href="#/cart" class="header-icon-btn" aria-label="Cart" style="position:relative;">
+              &#128717;
+              <span class="cart-badge" id="cart-badge">0</span>
+            </a>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- VALUE DRIVERS -->
-<section id="value-drivers" style="background:var(--cat-dark);color:white;padding:60px;">
-  <div class="section-label" style="color:var(--cat-yellow);">Strategic Framework</div>
-  <h2 class="section-title" style="color:white;">Two Primary Value Drivers</h2>
-  <div class="y-divider"></div>
-  <p style="color:#aaa;max-width:640px;margin-bottom:40px;font-size:0.95rem;">We have identified two primary value drivers to bring efficiency through the Test program. Today we focus on the <strong style="color:white;">Delivery Excellence</strong> roadmap based on approved tools.</p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-    <div style="background:#2a2a2a;padding:36px;border-top:4px solid var(--cat-yellow);">
-      <div style="font-size:1.4rem;font-weight:900;color:white;margin-bottom:12px;">Delivery Excellence</div>
-      <div style="font-size:0.88rem;color:#bbb;line-height:1.6;">Optimizing the delivery journey through AI and Automation tools — across Discovery &amp; Design, Code Development, Testing, Documentation &amp; Planning, and Operate.</div>
-      <div style="margin-top:20px;background:var(--cat-yellow);color:var(--cat-dark);padding:10px 16px;font-size:0.8rem;font-weight:700;">✓ Primary focus — 2026 Approved Roadmap</div>
-    </div>
-    <div style="background:#2a2a2a;padding:36px;border-top:4px solid #555;">
-      <div style="font-size:1.4rem;font-weight:900;color:white;margin-bottom:12px;">Business Optimization</div>
-      <div style="font-size:0.88rem;color:#bbb;line-height:1.6;">Boosting business efficiencies by implementing AI-driven use cases — configuration management, conversational AI, multilingual support, and dealer productivity enhancements.</div>
-      <div style="margin-top:20px;background:#333;color:#ccc;padding:10px 16px;font-size:0.8rem;font-weight:700;">◷ Long-term roadmap — Future state</div>
-    </div>
-  </div>
-</section>
-
-<!-- 2026 GOALS -->
-<section id="goals">
-  <div class="section-label">2026 Targets</div>
-  <h2 class="section-title">These Are Our 2026 Efficiency Goals for Tangible Business Outcomes</h2>
-  <div class="y-divider"></div>
-  <p class="section-intro">These efficiencies will allow increased throughput and faster time to market. Subject to timely approval of AI and automation tools and licenses.</p>
-
-  <div class="goals-grid" style="margin-bottom:48px;">
-    <div class="goal-card">
-      <div class="goal-num">10–12%</div>
-      <div class="goal-label">Reduction in Development Effort</div>
-      <div class="goal-note">via GitHub Copilot &amp; code generation tools</div>
-    </div>
-    <div class="goal-card">
-      <div class="goal-num">8–9%</div>
-      <div class="goal-label">Increase in Delivery Velocity</div>
-      <div class="goal-note">via AI-assisted discovery, design &amp; planning</div>
-    </div>
-    <div class="goal-card">
-      <div class="goal-num">8–10%</div>
-      <div class="goal-label">Operational Efficiency &amp; Ticket Avoidance</div>
-      <div class="goal-note">via automation, SCI integration &amp; ServiceNow</div>
-    </div>
-    <div class="goal-card">
-      <div class="goal-num">50–55%</div>
-      <div class="goal-label">Testing Automation Coverage</div>
-      <div class="goal-note">Currently at 40% — growing with Selenium &amp; Playwright</div>
-    </div>
-  </div>
-</section>
-
-<!-- JOURNEY / AI ACROSS SDLC -->
-<section id="journey" style="background:var(--cat-light);">
-  <div class="section-label">AI-Enabled Delivery</div>
-  <h2 class="section-title">AI &amp; Automation Tools Across the Delivery Journey</h2>
-  <div class="y-divider"></div>
-  <p class="section-intro">Each step of the implementation and operate journey brings opportunities to generate efficiency. We have created a goal-based roadmap for the short and long term based on tool permissibility and business use cases.</p>
-
-  <div style="display:flex;gap:16px;margin-bottom:24px;font-size:0.75rem;align-items:center;">
-    <span class="tool-chip">Wisdom Approved</span>
-    <span class="tool-chip proposed">Deloitte Proposed New Tools</span>
-  </div>
-
-  <div class="journey-phases">
-    <div class="phase-col">
-      <div class="phase-header">Discovery &amp; Design</div>
-      <div class="phase-body">
-        <div><span class="tool-chip">AI Assist</span></div>
-        <div><span class="tool-chip proposed">FigJam</span></div>
-        <ul class="phase-use-cases">
-          <li>Intake-to-Action Summaries</li>
-          <li>Rapid FR/NFR, Stories &amp; Acceptance Criteria</li>
-          <li>Early Gap &amp; Edge-Case Detection</li>
-          <li>Goal-to-Test Traceability</li>
-          <li>User journey mapping &amp; CX Validation</li>
-        </ul>
-        <div class="phase-efficiency">~8–9% Velocity ↑</div>
-      </div>
-    </div>
-    <div class="phase-col">
-      <div class="phase-header">Code Development</div>
-      <div class="phase-body">
-        <div><span class="tool-chip">GitHub Copilot</span></div>
-        <div><span class="tool-chip proposed">Builder.io</span></div>
-        <ul class="phase-use-cases">
-          <li>Faster base data modelling</li>
-          <li>Quality code — latest standards</li>
-          <li>YAML and API spec generation</li>
-          <li>Optimizations &amp; performance tuning</li>
-          <li>Frontend design-to-production (Builder.io)</li>
-        </ul>
-        <div class="phase-efficiency">~10–12% Effort ↓</div>
-      </div>
-    </div>
-    <div class="phase-col">
-      <div class="phase-header">Testing</div>
-      <div class="phase-body">
-        <div><span class="tool-chip">Selenium</span></div>
-        <div><span class="tool-chip proposed">Playwright + AI Assist</span></div>
-        <ul class="phase-use-cases">
-          <li>Increased automation throughput</li>
-          <li>Reduced reruns &amp; maintenance effort</li>
-          <li>API + UI combined testing</li>
-          <li>Accelerated test case generation</li>
-          <li>Defect triage &amp; analysis summaries</li>
-        </ul>
-        <div class="phase-efficiency">~10–15% Automation ↑</div>
-      </div>
-    </div>
-    <div class="phase-col">
-      <div class="phase-header">Documentation &amp; Planning</div>
-      <div class="phase-body">
-        <div><span class="tool-chip proposed">Ascend PMO</span></div>
-        <div><span class="tool-chip proposed">Rovo Chat</span></div>
-        <ul class="phase-use-cases">
-          <li>Rapid docs &amp; process flow diagrams from code</li>
-          <li>Unified search &amp; Q&amp;A (JIRA/Confluence)</li>
-          <li>Efficient Sprint Planning</li>
-          <li>Faster meeting write-ups</li>
-        </ul>
-        <div class="phase-efficiency">~8–10% Efficiency ↑</div>
-      </div>
-    </div>
-    <div class="phase-col">
-      <div class="phase-header">Operate</div>
-      <div class="phase-body">
-        <div><span class="tool-chip">GitHub Copilot</span></div>
-        <ul class="phase-use-cases">
-          <li>Automated ServiceNow Incident Creation</li>
-          <li>Impex generation for data workarounds</li>
-          <li>Automated scripting jobs for recurring issues</li>
-          <li>Faster framework upgrades</li>
-          <li>Integration issue tracking &amp; resolution</li>
-        </ul>
-        <div class="phase-efficiency">~8–9% Ticket ↓</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- OPERATE MULTI-DIM -->
-  <div style="margin-top:40px;">
-    <h3 style="font-size:1rem;font-weight:800;margin-bottom:24px;color:var(--cat-dark);">Operate: Multi-Dimensional Efficiency Approach</h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
-      <div style="background:white;border:1px solid var(--cat-mid);padding:24px;border-top:4px solid var(--cat-yellow);">
-        <div style="font-weight:900;font-size:1.1rem;color:var(--cat-dark);margin-bottom:8px;">①&nbsp;Framework Upgrade</div>
-        <div style="font-size:0.78rem;color:var(--cat-gray);line-height:1.5;">Faster upgrades by automating migration and adhering to dev guidelines through markdown files, ensuring minimal defects.</div>
-        <div style="margin-top:12px;font-weight:800;color:var(--cat-yellow-dark);">~12–15% efficiency</div>
-      </div>
-      <div style="background:white;border:1px solid var(--cat-mid);padding:24px;border-top:4px solid var(--cat-yellow);">
-        <div style="font-weight:900;font-size:1.1rem;color:var(--cat-dark);margin-bottom:8px;">②&nbsp;Gaps &amp; Break Fixes</div>
-        <div style="font-size:0.78rem;color:var(--cat-gray);line-height:1.5;">Accelerates coding for small changes and hotfixes by generating boilerplate and common patterns. Streamline test case creation.</div>
-        <div style="margin-top:12px;font-weight:800;color:var(--cat-yellow-dark);">~8–10% efficiency</div>
-      </div>
-      <div style="background:white;border:1px solid var(--cat-mid);padding:24px;border-top:4px solid var(--cat-yellow);">
-        <div style="font-weight:900;font-size:1.1rem;color:var(--cat-dark);margin-bottom:8px;">③&nbsp;Automations</div>
-        <div style="font-size:0.78rem;color:var(--cat-gray);line-height:1.5;">Auto impex generation for data correction. Auto ServiceNow Incident Creation &amp; Script Generation. Automated scripting jobs for recurring data issues.</div>
-        <div style="margin-top:12px;font-weight:800;color:var(--cat-yellow-dark);">~10–12% efficiency</div>
-      </div>
-      <div style="background:white;border:1px solid var(--cat-mid);padding:24px;border-top:4px solid var(--cat-yellow);">
-        <div style="font-weight:900;font-size:1.1rem;color:var(--cat-dark);margin-bottom:8px;">④&nbsp;Value Adds</div>
-        <div style="font-size:0.78rem;color:var(--cat-gray);line-height:1.5;">Additional minor enhancements delivered through increased efficiency. Optimize P1 regression suite for version upgrades and multiple cycle runs.</div>
-        <div style="margin-top:12px;font-weight:800;color:var(--cat-yellow-dark);">~8–10% efficiency</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- OPERATE SCALE -->
-<section id="operate">
-  <div class="section-label">Operate Performance</div>
-  <h2 class="section-title">Scaling Dealer Operations — Without Scaling Cost</h2>
-  <div class="y-divider"></div>
-
-  <div class="callout">
-    A disciplined operating model — combining AI, automation, retained expertise, and standardized processes — allowed the platform to scale 3X with no increase in operating cost. Operate cost reduced 15% while Enhancement Allocation increased 60% over 2 years.
-  </div>
-
-  <div class="kpi-row">
-    <div class="kpi-box"><div class="kpi-val">3X</div><div class="kpi-label">Order Volume Growth<br>37K → 105K</div></div>
-    <div class="kpi-box"><div class="kpi-val">3X</div><div class="kpi-label">Unique Dealers<br>74 → 244</div></div>
-    <div class="kpi-box"><div class="kpi-val">~1.4X</div><div class="kpi-label">Ticket Growth<br>(vs 3X platform growth)</div></div>
-    <div class="kpi-box"><div class="kpi-val">15%↓</div><div class="kpi-label">Core Operate Cost<br>Reduction</div></div>
-    <div class="kpi-box"><div class="kpi-val">60%↑</div><div class="kpi-label">Enhancement Allocation<br>Increase</div></div>
-    <div class="kpi-box"><div class="kpi-val">$2M</div><div class="kpi-label">Operate Spend<br>Flat YoY</div></div>
-  </div>
-
-  <div class="two-col">
-    <div>
-      <h3 style="font-size:1rem;font-weight:800;margin-bottom:20px;color:var(--cat-dark);">Core Operate Tickets Trend (2023 → 2025)</h3>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>2023</th>
-            <th>2025</th>
-            <th>Growth</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Incidents</td><td>413</td><td>615</td><td><span class="trend-badge">1.5X</span></td></tr>
-          <tr><td>Service Requests</td><td>1,144</td><td>1,468</td><td><span class="trend-badge">1.3X</span></td></tr>
-          <tr><td>Stabilization Tasks</td><td>26</td><td>47</td><td><span class="trend-badge">1.8X</span></td></tr>
-          <tr><td>Problem Tickets</td><td>3</td><td>15</td><td><span class="trend-badge">5X</span></td></tr>
-          <tr style="background:#f9f9f9;"><td><strong>Total</strong></td><td><strong>1,586</strong></td><td><strong>2,145</strong></td><td><span class="trend-badge">~1.37X</span></td></tr>
-        </tbody>
-      </table>
-      <p style="font-size:0.75rem;color:#999;margin-top:12px;font-style:italic;">Platform grew 3X in orders &amp; complexity — tickets grew only 1.37X</p>
-    </div>
-    <div>
-      <h3 style="font-size:1rem;font-weight:800;margin-bottom:20px;color:var(--cat-dark);">2025 Operate Summary vs 2024</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
-          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">6</div>
-          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Releases to PROD</div>
+        <nav class="category-nav" aria-label="Category navigation">
+          <a href="#/category/women">Women</a>
+          <a href="#/category/men">Men</a>
+          <a href="#/category/kids">Kids</a>
+          <a href="#/category/shoes">Shoes</a>
+          <a href="#/category/bags">Bags</a>
+          <a href="#/category/accessories">Accessories</a>
+          <a href="#/sale" class="sale">Sale</a>
+        </nav>
+        <div class="search-bar-wrapper" id="search-bar-wrapper">
+          <div class="search-bar-inner">
+            <input
+              class="search-bar-input"
+              id="search-bar-input"
+              type="text"
+              placeholder="Search for styles, brands, or looks..."
+              autocomplete="off"
+              oninput="handleSearchInput(this.value)"
+            />
+            <div class="search-dropdown" id="search-dropdown"></div>
+          </div>
         </div>
-        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
-          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">615</div>
-          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Incidents</div>
+      </header>
+    `;
+  }
+
+  function toggleSearch() {
+    const wrapper = document.getElementById('search-bar-wrapper');
+    if (!wrapper) return;
+    const isOpen = wrapper.classList.toggle('open');
+    if (isOpen) {
+      setTimeout(() => {
+        const inp = document.getElementById('search-bar-input');
+        if (inp) inp.focus();
+      }, 50);
+    } else {
+      const dd = document.getElementById('search-dropdown');
+      if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+    }
+  }
+
+  function handleSearchInput(query) {
+    window.SEARCH_QUERY = query.trim();
+    const dd = document.getElementById('search-dropdown');
+    if (!dd) return;
+    if (!query.trim()) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+
+    const q = query.toLowerCase();
+    const matches = window.PRODUCTS.filter(p =>
+      p.name.toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q)
+    ).slice(0, 5);
+
+    if (!matches.length) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+
+    dd.innerHTML = matches.map(p => `
+      <div class="search-dropdown-item" onclick="navigate('#/product/${p.id}'); toggleSearch();">
+        ${p.image ? `<img src="${p.image}" alt="${p.name}" />` : ''}
+        <span>${p.name}</span>
+        <span style="margin-left:auto;font-weight:600;font-size:0.8rem;">${formatPrice(p.price)}</span>
+      </div>
+    `).join('') + `
+      <span class="search-see-all" onclick="navigate('#/search'); toggleSearch();">See all results &rarr;</span>
+    `;
+    dd.classList.add('open');
+  }
+
+  /* ─── Drawer ───────────────────────────────────────────────────── */
+  function renderDrawer() {
+    const root = document.getElementById('drawer-root');
+    if (!root) return;
+
+    const categories = [
+      { label: 'Women',       slug: 'women',       subs: ['Tops', 'Dresses', 'Bottoms', 'Outerwear'] },
+      { label: 'Men',         slug: 'men',         subs: ['Shirts', 'Trousers', 'Jackets', 'Suits'] },
+      { label: 'Kids',        slug: 'kids',        subs: ['Girls', 'Boys', 'Baby'] },
+      { label: 'Shoes',       slug: 'shoes',       subs: ['Heels', 'Flats', 'Sneakers', 'Boots'] },
+      { label: 'Bags',        slug: 'bags',        subs: ['Totes', 'Clutches', 'Backpacks'] },
+      { label: 'Accessories', slug: 'accessories', subs: ['Jewellery', 'Scarves', 'Belts', 'Hats'] },
+    ];
+
+    root.innerHTML = `
+      <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+      <nav class="drawer" id="drawer" aria-label="Side navigation">
+        <div class="drawer-header">
+          <span class="drawer-logo">LUMINO</span>
+          <button class="drawer-close" onclick="closeDrawer()" aria-label="Close menu">&#10005;</button>
         </div>
-        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
-          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">100%</div>
-          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Incident SLA<br><span style="color:#666;">(Target: 85%)</span></div>
+        <div class="drawer-nav">
+          ${categories.map(cat => `
+            <div class="drawer-category" id="drawer-cat-${cat.slug}">
+              <button class="drawer-category-toggle" onclick="toggleDrawerCategory('${cat.slug}')">
+                <span>${cat.label}</span>
+                <span class="drawer-chevron">&#9660;</span>
+              </button>
+              <div class="drawer-subcategory">
+                ${cat.subs.map(sub => `
+                  <a href="#/category/${cat.slug}-${sub.toLowerCase()}" onclick="closeDrawer()">${sub}</a>
+                `).join('')}
+                <a href="#/category/${cat.slug}" onclick="closeDrawer()" style="color:var(--color-gold);font-weight:600;">View All ${cat.label}</a>
+              </div>
+            </div>
+          `).join('')}
+          <div class="drawer-category">
+            <a class="drawer-link" href="#/sale" onclick="closeDrawer()" style="color:#e74c3c;">Sale</a>
+          </div>
+          <div class="drawer-divider"></div>
+          <a class="drawer-link" href="#/" onclick="closeDrawer()">New Arrivals</a>
+          <a class="drawer-link" href="#/" onclick="closeDrawer()">Trending</a>
+          <div class="drawer-divider"></div>
+          <a class="drawer-link" href="${window.CURRENT_USER ? '#/account' : '#/login'}" onclick="closeDrawer()">My Account</a>
+          <a class="drawer-link" href="#/account" onclick="closeDrawer()">Orders</a>
+          <a class="drawer-link" href="#/">Help &amp; Contact</a>
         </div>
-        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
-          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">0/2</div>
-          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">P1/P2 Tickets</div>
+      </nav>
+    `;
+  }
+
+  function toggleDrawerCategory(slug) {
+    const el = document.getElementById('drawer-cat-' + slug);
+    if (el) el.classList.toggle('expanded');
+  }
+
+  function openDrawer() {
+    const drawer  = document.getElementById('drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    if (drawer)  drawer.classList.add('open');
+    if (overlay) overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    const drawer  = document.getElementById('drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    if (drawer)  drawer.classList.remove('open');
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  /* ─── Footer ───────────────────────────────────────────────────── */
+  function renderFooter() {
+    const root = document.getElementById('footer-root');
+    if (!root) return;
+    root.innerHTML = `
+      <footer id="lumino-footer">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand-logo">LUMINO</div>
+            <p class="footer-tagline">Style beyond seasons.</p>
+            <div class="footer-social">
+              <a href="#" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </a>
+              <a href="#" aria-label="X / Twitter">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <a href="#" aria-label="Pinterest">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0c-6.627 0-12 5.372-12 12 0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z"/></svg>
+              </a>
+              <a href="#" aria-label="TikTok">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.77a4.85 4.85 0 0 1-1.01-.08z"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h4>Shop</h4>
+            <ul>
+              <li><a href="#/category/women">Women</a></li>
+              <li><a href="#/category/men">Men</a></li>
+              <li><a href="#/category/kids">Kids</a></li>
+              <li><a href="#/category/shoes">Shoes</a></li>
+              <li><a href="#/category/bags">Bags</a></li>
+              <li><a href="#/category/accessories">Accessories</a></li>
+              <li><a href="#/sale">Sale</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Help</h4>
+            <ul>
+              <li><a href="#/">Customer Service</a></li>
+              <li><a href="#/">Shipping &amp; Returns</a></li>
+              <li><a href="#/">Size Guide</a></li>
+              <li><a href="#/">Track My Order</a></li>
+              <li><a href="#/">FAQs</a></li>
+              <li><a href="#/">Store Locator</a></li>
+              <li><a href="#/">Contact Us</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Newsletter</h4>
+            <p class="footer-newsletter-desc">Be the first to hear about new arrivals, exclusive offers, and style inspiration.</p>
+            <div class="footer-newsletter-form">
+              <input class="footer-newsletter-input" type="email" placeholder="Your email address" />
+              <button class="btn btn-gold btn-sm" onclick="handleNewsletterSignup(event)">Subscribe</button>
+            </div>
+          </div>
         </div>
-        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
-          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">26</div>
-          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Value Add<br>Enhancements</div>
+        <div class="footer-bottom">
+          <span>&copy; 2025 LUMINO. All rights reserved.</span>
+          <div class="footer-bottom-links">
+            <a href="#/">Privacy Policy</a>
+            <a href="#/">Terms &amp; Conditions</a>
+            <a href="#/">Cookie Settings</a>
+          </div>
         </div>
-        <div style="background:var(--cat-dark);color:white;padding:20px;text-align:center;">
-          <div style="font-size:1.8rem;font-weight:900;color:var(--cat-yellow);">36%</div>
-          <div style="font-size:0.7rem;color:#aaa;margin-top:4px;text-transform:uppercase;">Team 2yr+ Tenure<br>18% at 3yr+</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </footer>
+    `;
+  }
 
-<!-- EFFICIENCY PILLARS -->
-<section id="pillars" style="background:var(--cat-light);">
-  <div class="section-label">How We Did It</div>
-  <h2 class="section-title">Automation, Process &amp; Talent Initiatives Drove Efficiency</h2>
-  <div class="y-divider"></div>
-  <p class="section-intro">Four interconnected pillars — AI &amp; Automation, Process Optimization, Talent Management, and Operating Model — combined to prevent cost escalation while delivering superior outcomes.</p>
+  function handleNewsletterSignup(e) {
+    const form = e.target.closest('.footer-newsletter-form');
+    const input = form ? form.querySelector('input') : null;
+    if (!input) return;
+    const email = input.value.trim();
+    if (!email || !email.includes('@')) {
+      showToast('Please enter a valid email address.');
+      return;
+    }
+    input.value = '';
+    showToast('Thanks for subscribing! Welcome to LUMINO.');
+  }
 
-  <div class="pillars-grid">
-    <div class="pillar-card">
-      <div class="pillar-icon">⚙️</div>
-      <h3>AI &amp; Automation</h3>
-      <ul>
-        <li>40% overall testing automation with Selenium; 80% regression scenarios automated</li>
-        <li>Auto-failure detection: alerts/ticketing upon failure detection for rapid response</li>
-        <li>Automated data transfer process for live insights — Active User Report via Snap Logic &amp; Snowflake</li>
-        <li>BTP + ServiceNow integration for automatic incident creation</li>
-        <li>Kibana alerts for all API errors — saving ~25 hrs/month</li>
-        <li>GitHub Copilot: 5–7% improved turnaround via automated impex &amp; script generation</li>
-      </ul>
-      <div class="pillar-outcome">Saved 6 person-days monthly · 7–8% fewer PR iterations</div>
-    </div>
-    <div class="pillar-card">
-      <div class="pillar-icon">🔄</div>
-      <h3>Process Optimization</h3>
-      <ul>
-        <li>Node Separation: order placement time reduced from 4 mins → 30 secs</li>
-        <li>Partial sync — post every full sync to retrigger failed business processes (~10 hrs/month saved)</li>
-        <li>Resolved SOLR indexing issue — eliminated ~2 tickets/month</li>
-        <li>Power BI links added to Test portal — eliminated support tickets for reports</li>
-        <li>Automated order failure notifications — ~16 hrs/month saved</li>
-        <li>Docs creation standardized to single team — reduced order delay by 3–5 hours</li>
-        <li>Audit cleanup extension — ~16 hrs/month saved</li>
-      </ul>
-      <div class="pillar-outcome">56 hrs/month (7 person-days) saved through process changes</div>
-    </div>
-    <div class="pillar-card">
-      <div class="pillar-icon">👥</div>
-      <h3>Talent Management</h3>
-      <ul>
-        <li>High retention: avg 2.5+ years tenure per team member on Wisdom</li>
-        <li>Cross-trained team members for multi-module capability, increasing throughput</li>
-        <li>Module champions &amp; twin track-leads for knowledge continuity</li>
-        <li>Juniors now owning deliverables; role rotation ensures continuity</li>
-        <li>Delivered 12 enhancements vs. a plan of 10 (Flex team)</li>
-      </ul>
-      <div class="pillar-outcome">Higher throughput through deep Wisdom knowledge</div>
-    </div>
-    <div class="pillar-card">
-      <div class="pillar-icon">🏗️</div>
-      <h3>Operating Model</h3>
-      <ul>
-        <li>Structured KT &amp; weekly sync with IT &amp; business — early risk mitigation &amp; smooth transition</li>
-        <li>Quarterly patch upgrade cadence; added guardrails for data protection</li>
-        <li>Environment strategy for parallel releases &amp; zero-downtime feature additions</li>
-        <li>Zero downtime deployments — weekly business &amp; technical connects</li>
-        <li>Standardized Power BI reporting, user guides &amp; order failure alerts</li>
-        <li>Scheduled platform patch upgrades &amp; data clean-up activity</li>
-      </ul>
-      <div class="pillar-outcome">99%+ incidents within SLA vs 85% target · Zero P1 tickets</div>
-    </div>
-  </div>
-</section>
+  /* ─── Utilities ─────────────────────────────────────────────────── */
+  function updateCartBadge() {
+    const badge = document.getElementById('cart-badge');
+    if (!badge) return;
+    const count = window.CART.reduce((acc, item) => acc + (item.qty || 1), 0);
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+    if (count > 0) {
+      badge.classList.remove('bounce');
+      void badge.offsetWidth;
+      badge.classList.add('bounce');
+    }
+  }
 
-<!-- LONG TERM ROADMAP -->
-<section id="roadmap">
-  <div class="section-label">Long-Term Vision</div>
-  <h2 class="section-title">Long-Term AI &amp; Automation Roadmap — Business Optimization</h2>
-  <div class="y-divider"></div>
-  <p class="section-intro">This is just the beginning. We have formulated a long-term plan to bring business optimization in addition to delivery excellence — moving from operational efficiency to AI-driven competitive differentiation.</p>
+  function showToast(message) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('removing');
+      setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 260);
+    }, 2500);
+  }
 
-  <table class="roadmap-table">
-    <thead>
-      <tr>
-        <th>Initiative</th>
-        <th>Capabilities</th>
-        <th>Business Outcome</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>AI-Powered Configuration Management</td>
-        <td>AI suggestion engine embedded in configuration workflows; learns from historical builds, option/part compatibility, and dealer ordering patterns; recommends create/edit/duplicate actions and closest valid substitutes in real time.</td>
-        <td><span class="outcome-stat">8–15% faster</span> configuration build time<br><span class="outcome-stat">10–15% fewer</span> incompatible builds<br><span class="outcome-stat">8–12% lower</span> order rework ("order grief")</td>
-      </tr>
-      <tr>
-        <td>Automated Compatibility Fixes &amp; Mass Updates</td>
-        <td>Continuously scans configs/orders for incompatibilities; uses a trained compatibility model to recommend &amp; apply fixes; supports bulk updates across product lines, price books, and open orders; audit trail + exception handling.</td>
-        <td><span class="outcome-stat">10–18% reduction</span> in manual engineering clean-up<br><span class="outcome-stat">12–18% faster</span> rule change rollout<br><span class="outcome-stat">8–15% fewer</span> downstream fulfillment issues</td>
-      </tr>
-      <tr>
-        <td>Conversational Configuration Creation (GenAI)</td>
-        <td>Natural-language assistant ("quarry use, advanced safety") that captures intent, proposes a valid configuration, explains selections, and offers alternatives/tradeoffs; guided Q&amp;A to resolve missing requirements; export to quote/order.</td>
-        <td><span class="outcome-stat">15–20% faster</span> config creation<br><span class="outcome-stat">10–18% faster</span> new dealer user onboarding ramp<br><span class="outcome-stat">8–15% higher</span> quote-to-order conversion</td>
-      </tr>
-      <tr>
-        <td>Multilingual Translation + Dealer Assist</td>
-        <td>End-to-end multilingual UX (UI + guided prompts + spec terms) with domain glossary; real-time compatibility checking during build; proactive dealer notifications post-order when rules/parts change with localized explanations.</td>
-        <td><span class="outcome-stat">10–18% faster</span> ordering across regions<br><span class="outcome-stat">10–18% reduction</span> in "order grief"<br><span class="outcome-stat">8–15% fewer</span> support tickets via proactive alerts</td>
-      </tr>
-      <tr>
-        <td>Automated Configuration Creation &amp; Management</td>
-        <td>Enable Excel-based uploads with similarity detection and AI-assisted suggestions to significantly reduce manual effort. Convert technical specs into dealer-friendly language and automatically generate master specification lists.</td>
-        <td>Improved configuration accuracy and consistency at scale; reduced manual engineering effort across product lines</td>
-      </tr>
-      <tr>
-        <td>Chatbot for Pricing &amp; Product Information</td>
-        <td>Deliver instant part pricing and product guidance by enabling a chatbot to read and respond from price lists (PDF/Excel), like top B2B e-commerce experiences.</td>
-        <td>Reduced dealer support tickets; faster quote turnaround; improved dealer self-service capability</td>
-      </tr>
-      <tr>
-        <td>AI-Driven Dealer Pain Point Identification</td>
-        <td>Analyze one year of incident data to pinpoint recurring failure patterns and remove consistent blockers across the dealer journey. Integrate feedback from service, manufacturing, and sales to continuously refine rules.</td>
-        <td>Proactive resolution of systemic issues before they escalate; continuous improvement loop for dealer experience</td>
-      </tr>
-    </tbody>
-  </table>
-</section>
+  function formatPrice(num) {
+    return '£' + Number(num).toFixed(2);
+  }
 
-<!-- NEW TOOLS -->
-<section id="tools" style="background:var(--cat-light);">
-  <div class="section-label">Proposed Tools</div>
-  <h2 class="section-title">New AI Tools Identified for Additional Efficiency &amp; Business Value</h2>
-  <div class="y-divider"></div>
-  <p class="section-intro">Beyond currently approved tools, these additional platforms could bring significant additional efficiency across testing, delivery orchestration, frontend development, and sprint management.</p>
+  /* ─── Back to Top ───────────────────────────────────────────────── */
+  (function initBackToTop() {
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
+    window.addEventListener('scroll', () => {
+      btn.classList.toggle('visible', window.scrollY > 300);
+    });
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
 
-  <div class="tools-grid">
-    <div class="tool-card">
-      <div class="tc-header">
-        <div class="tc-name">Playwright</div>
-        <div class="tc-area">Testing</div>
-      </div>
-      <div class="tc-efficiency">Up to ~15–20% faster</div>
-      <div class="tc-cases">test execution and setup time. API + UI combined testing; cross-browser automation (Chrome, Edge, Firefox, Safari); mobile and iPad automation expansion; screenshot and visual regression testing.</div>
-    </div>
-    <div class="tool-card">
-      <div class="tc-header">
-        <div class="tc-name">AI Assist</div>
-        <div class="tc-area">Delivery Optimization</div>
-      </div>
-      <div class="tc-efficiency">Up to ~15–20% efficiency</div>
-      <div class="tc-cases">across majority of project activities including functional, development and testing. Accelerates Requirements-to-User Story creation, Test Case generation, Defect triage, Functional Grooming, and Sprint Activities.</div>
-    </div>
-    <div class="tool-card">
-      <div class="tc-header">
-        <div class="tc-name">Ascend PMO</div>
-        <div class="tc-area">Delivery Orchestration</div>
-      </div>
-      <div class="tc-efficiency">Up to ~12–15% faster</div>
-      <div class="tc-cases">delivery. Enterprise delivery orchestration for large programs including Ticket management, ERP digital transformation, Finance operations, test automation. Rapid generation of docs and end-to-end process flow diagrams from code structure.</div>
-    </div>
-    <div class="tool-card">
-      <div class="tc-header">
-        <div class="tc-name">Builder.io</div>
-        <div class="tc-area">Frontend Development</div>
-      </div>
-      <div class="tc-efficiency">Up to ~18–20% faster</div>
-      <div class="tc-cases">delivery on building UI components &amp; templates. Design-to-production acceleration; marketing landing pages without dev cycles; frontend development acceleration with AI-assisted code generation.</div>
-    </div>
-    <div class="tool-card">
-      <div class="tc-header">
-        <div class="tc-name">FigJam</div>
-        <div class="tc-area">UX Design</div>
-      </div>
-      <div class="tc-efficiency">Up to ~15–18% reduction</div>
-      <div class="tc-cases">in manual efforts. Discovery facilitation; journey mapping and service blueprints; 20–30% faster journey-to-validation; 15–30% faster persona + journey draft creation; 20–35% faster user-flow iteration cycles.</div>
-    </div>
-    <div class="tool-card">
-      <div class="tc-header">
-        <div class="tc-name">Rovo Chat</div>
-        <div class="tc-area">Chatbot / Knowledge</div>
-      </div>
-      <div class="tc-efficiency">15–20% efficiency</div>
-      <div class="tc-cases">in Sprint Planning &amp; Reporting. Unified search &amp; Q&amp;A across Atlassian + connected apps (JIRA/Confluence); reduces context-switching for developers; accelerates sprint ceremonies and backlog management.</div>
-    </div>
-  </div>
-</section>
+  /* ─── Chat Button Stub ──────────────────────────────────────────── */
+  function renderChatButton() {}
 
-<!-- APPENDIX -->
-<section id="appendix">
-  <div class="section-label">Appendix</div>
-  <h2 class="section-title">Detailed Use Cases &amp; Operational Endeavors</h2>
-  <div class="y-divider"></div>
+  /* ─── Init ──────────────────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    renderHeader();
+    renderFooter();
+    renderDrawer();
+    renderChatButton();
+    renderPage();
+    updateCartBadge();
+  });
+</script>
 
-  <!-- GITHUB COPILOT USE CASES -->
-  <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:20px;color:var(--cat-dark);">GitHub Copilot — Active Use Cases &amp; Efficiencies</h3>
-  <p style="font-size:0.85rem;color:var(--cat-gray);margin-bottom:24px;">Currently we have a pilot team of 6 people with GitHub Copilot licenses using the following use cases:</p>
+<script>
+window.PRODUCTS = [
+  /* ── WOMEN (20) ──────────────────────────────────────────────── */
+  {
+    id:"prod_001", name:"Silk Wrap Midi Dress", brand:"& Other Stories",
+    category:"women", subcategory:"dresses",
+    price:189.99, originalPrice:null, discount:null,
+    description:"An elegant wrap midi dress cut from fluid silk-blend fabric. The deep V-neckline and self-tie waist create a deeply flattering silhouette perfect for evening occasions.",
+    sizes:["XS","S","M","L","XL"], colors:["Ivory","Black","Blush"],
+    images:["https://images.unsplash.com/photo-1496747679638-9f48b9f20f82?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1539008835657-9e8e5f8e3a0f?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:312, inStock:true, tags:["new"], featured:true
+  },
+  {
+    id:"prod_002", name:"Floral Chiffon Maxi Dress", brand:"Mango",
+    category:"women", subcategory:"dresses",
+    price:129.99, originalPrice:null, discount:null,
+    description:"A romantic maxi dress featuring an all-over floral print on lightweight chiffon. Adjustable straps and a tiered hem give this piece a graceful, effortless feel.",
+    sizes:["XS","S","M","L","XL"], colors:["Floral Multi","Navy","Sage"],
+    images:["https://images.unsplash.com/photo-1502716119720-aecd46570e47?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:187, inStock:true, tags:["new"], featured:true
+  },
+  {
+    id:"prod_003", name:"Ribbed Cropped Top", brand:"COS",
+    category:"women", subcategory:"tops",
+    price:49.99, originalPrice:null, discount:null,
+    description:"A minimalist ribbed-knit cropped top with a slim-fit silhouette and subtle dropped shoulders. Pairs effortlessly with high-waisted trousers or midi skirts.",
+    sizes:["XS","S","M","L","XL"], colors:["Ecru","Black","Taupe"],
+    images:["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:254, inStock:true, tags:["new"], featured:true
+  },
+  {
+    id:"prod_004", name:"Oversized Linen Blouse", brand:"Arket",
+    category:"women", subcategory:"blouses",
+    price:89.99, originalPrice:null, discount:null,
+    description:"An oversized linen blouse with a relaxed fit and subtle drop-shoulder cut. Finished with mother-of-pearl buttons and a gentle mandarin collar for understated refinement.",
+    sizes:["XS","S","M","L","XL"], colors:["White","Dusty Blue","Terracotta"],
+    images:["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:141, inStock:true, tags:["new"], featured:true
+  },
+  {
+    id:"prod_005", name:"Wide-Leg Crepe Trousers", brand:"Reiss",
+    category:"women", subcategory:"trousers",
+    price:149.99, originalPrice:null, discount:null,
+    description:"Tailored wide-leg trousers in fluid crepe fabric with a high-rise waistband and invisible side zip. A wardrobe cornerstone that transitions from office to evening.",
+    sizes:["6","8","10","12","14","16"], colors:["Black","Stone","Burgundy"],
+    images:["https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:98, inStock:true, tags:["new"], featured:true
+  },
+  {
+    id:"prod_006", name:"Pleated Satin Midi Skirt", brand:"Whistles",
+    category:"women", subcategory:"skirts",
+    price:119.99, originalPrice:null, discount:null,
+    description:"A flowing pleated midi skirt in lustrous satin fabric with a comfortable elasticated waist. The knife-pleat detailing adds movement and a polished, feminine edge.",
+    sizes:["XS","S","M","L","XL"], colors:["Champagne","Midnight","Blush"],
+    images:["https://images.unsplash.com/photo-1496747679638-9f48b9f20f82?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1502716119720-aecd46570e47?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:76, inStock:true, tags:["new"], featured:true
+  },
+  {
+    id:"prod_007", name:"Linen-Blend Utility Jumpsuit", brand:"Zara",
+    category:"women", subcategory:"jumpsuits",
+    price:99.99, originalPrice:null, discount:null,
+    description:"A sophisticated utility jumpsuit in breathable linen-blend fabric with functional patch pockets and a belted waist. The wide-leg cut and square neckline make this a versatile season staple.",
+    sizes:["XS","S","M","L","XL"], colors:["Khaki","White","Black"],
+    images:["https://images.unsplash.com/photo-1539008835657-9e8e5f8e3a0f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:203, inStock:true, tags:["new"], featured:true
+  },
+  {
+    id:"prod_008", name:"Wool-Blend Oversized Coat", brand:"Massimo Dutti",
+    category:"women", subcategory:"coats",
+    price:349.99, originalPrice:null, discount:null,
+    description:"A sculptural oversized coat in a premium wool-blend with a clean notch lapel and single-button closure. Fully lined with a smooth satin interior for effortless layering.",
+    sizes:["XS","S","M","L","XL"], colors:["Camel","Charcoal","Oatmeal"],
+    images:["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop"],
+    rating:4.9, reviews:87, inStock:true, tags:["new"], featured:true
+  },
+  {
+    id:"prod_009", name:"Merino V-Neck Jumper", brand:"Uniqlo",
+    category:"women", subcategory:"knitwear",
+    price:79.99, originalPrice:null, discount:null,
+    description:"A classic V-neck jumper knitted from 100% extra-fine merino wool. Naturally temperature-regulating and supremely soft against the skin, it works for any occasion.",
+    sizes:["XS","S","M","L","XL"], colors:["Navy","Cream","Forest Green"],
+    images:["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:421, inStock:true, tags:["trending"], featured:false
+  },
+  {
+    id:"prod_010", name:"Broderie Anglaise Sundress", brand:"Selected Femme",
+    category:"women", subcategory:"dresses",
+    price:109.99, originalPrice:null, discount:null,
+    description:"A charming sundress featuring intricate broderie anglaise embroidery throughout. The tiered silhouette and elasticated bodice provide all-day comfort with effortless style.",
+    sizes:["XS","S","M","L","XL"], colors:["White","Ivory"],
+    images:["https://images.unsplash.com/photo-1502716119720-aecd46570e47?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1496747679638-9f48b9f20f82?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:134, inStock:true, tags:["trending"], featured:false
+  },
+  {
+    id:"prod_011", name:"Tie-Front Crop Blouse", brand:"Vero Moda",
+    category:"women", subcategory:"tops",
+    price:44.99, originalPrice:null, discount:null,
+    description:"A playful tie-front crop blouse in a lightweight woven fabric. The puffed short sleeves and gathered neckline add a feminine flourish to any casual ensemble.",
+    sizes:["XS","S","M","L","XL"], colors:["White","Sage","Yellow"],
+    images:["https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop"],
+    rating:4.1, reviews:89, inStock:true, tags:["trending"], featured:false
+  },
+  {
+    id:"prod_012", name:"Sheer Georgette Blouse", brand:"& Other Stories",
+    category:"women", subcategory:"blouses",
+    price:69.99, originalPrice:null, discount:null,
+    description:"An elevated sheer blouse in delicate georgette fabric with a relaxed drape and subtle tonal piping. Ideal layered over a slip or with tailored trousers for a refined finish.",
+    sizes:["XS","S","M","L","XL"], colors:["Blush","Black","Ecru"],
+    images:["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:62, inStock:true, tags:["trending"], featured:false
+  },
+  {
+    id:"prod_013", name:"High-Waist Cigarette Trousers", brand:"Reiss",
+    category:"women", subcategory:"trousers",
+    price:139.99, originalPrice:null, discount:null,
+    description:"Perfectly cut cigarette trousers in a stretch-wool blend that holds its shape all day. The high-waist construction and tapered ankle create a sleek, elongating silhouette.",
+    sizes:["6","8","10","12","14","16"], colors:["Black","Navy","Ivory"],
+    images:["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:117, inStock:true, tags:["trending"], featured:false
+  },
+  {
+    id:"prod_014", name:"Asymmetric Hem Mini Skirt", brand:"Monki",
+    category:"women", subcategory:"skirts",
+    price:39.99, originalPrice:null, discount:null,
+    description:"A statement mini skirt with an asymmetric hemline and a smooth woven fabric. The concealed side zip and slightly flared cut make for an effortlessly cool silhouette.",
+    sizes:["XS","S","M","L","XL"], colors:["Black","White","Denim Blue"],
+    images:["https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1539008835657-9e8e5f8e3a0f?w=600&h=800&fit=crop"],
+    rating:4.0, reviews:55, inStock:true, tags:["trending"], featured:false
+  },
+  {
+    id:"prod_015", name:"Halterneck Satin Jumpsuit", brand:"Weekday",
+    category:"women", subcategory:"jumpsuits",
+    price:89.99, originalPrice:null, discount:null,
+    description:"A sleek halterneck jumpsuit in satin-finish fabric with wide-leg trousers and a strappy tie-back closure. Perfect for elevated evenings requiring minimal but impactful dressing.",
+    sizes:["XS","S","M","L","XL"], colors:["Black","Champagne","Emerald"],
+    images:["https://images.unsplash.com/photo-1496747679638-9f48b9f20f82?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1502716119720-aecd46570e47?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:78, inStock:true, tags:["trending"], featured:false
+  },
+  {
+    id:"prod_016", name:"Double-Breasted Blazer Coat", brand:"Mango",
+    category:"women", subcategory:"coats",
+    price:229.99, originalPrice:null, discount:null,
+    description:"A sharp double-breasted blazer coat in a structured fabric blend with gold-tone buttons and welt pockets. Equally polished worn open as a duster or fastened for a tailored look.",
+    sizes:["XS","S","M","L","XL"], colors:["Black","Camel","Houndstooth"],
+    images:["https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:92, inStock:true, tags:["trending"], featured:false
+  },
+  {
+    id:"prod_017", name:"Chunky Ribbed Turtleneck", brand:"COS",
+    category:"women", subcategory:"knitwear",
+    price:95.99, originalPrice:null, discount:null,
+    description:"A generously oversized turtleneck knit in a chunky-rib construction from a premium cotton-wool blend. The dropped shoulders and relaxed body offer luxurious comfort in colder months.",
+    sizes:["XS","S","M","L","XL"], colors:["Oatmeal","Black","Rust"],
+    images:["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:176, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_018", name:"Smocked Bodice Midi Dress", brand:"Only",
+    category:"women", subcategory:"dresses",
+    price:74.99, originalPrice:null, discount:null,
+    description:"A romantic midi dress with a smocked elasticated bodice and delicate floral-print fabric. The flared skirt and short flutter sleeves give this piece a timeless summer appeal.",
+    sizes:["XS","S","M","L","XL"], colors:["Floral Pink","Blue Floral","White"],
+    images:["https://images.unsplash.com/photo-1539008835657-9e8e5f8e3a0f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop"],
+    rating:4.2, reviews:103, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_019", name:"Modal Off-Shoulder Top", brand:"Vero Moda",
+    category:"women", subcategory:"tops",
+    price:34.99, originalPrice:null, discount:null,
+    description:"A soft off-shoulder top in lightweight modal jersey that drapes beautifully against the body. The elasticated neckline sits comfortably and the relaxed fit ensures all-day ease.",
+    sizes:["XS","S","M","L","XL"], colors:["Black","Ivory","Dusty Rose"],
+    images:["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop"],
+    rating:4.0, reviews:67, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_020", name:"Puff-Sleeve Poplin Blouse", brand:"Zara",
+    category:"women", subcategory:"blouses",
+    price:55.99, originalPrice:null, discount:null,
+    description:"A statement blouse featuring dramatic puff sleeves in crisp cotton poplin. The relaxed boxy fit and gathered cuff detail make it a versatile piece that elevates any outfit.",
+    sizes:["XS","S","M","L","XL"], colors:["White","Black","Sky Blue"],
+    images:["https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:145, inStock:true, tags:[], featured:false
+  },
 
-  <table class="ghcp-table" style="margin-bottom:48px;">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Use Case</th>
-        <th>Description</th>
-        <th>Efficiency</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>Framework Upgrade</td>
-        <td>Streamlines major Java and Spring upgrades by highlighting required code changes, accelerating repetitive library migrations, and using Markdown guidance as quality guardrails.</td>
-        <td>15%</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>Quality Check</td>
-        <td>Addresses Sonar-reported issues earlier by suggesting compliant patterns and safer refactors during feature and defect work, reducing rework and improving code quality consistency.</td>
-        <td>8%</td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td>Script Generation</td>
-        <td>Accelerates Groovy and Impex script creation by generating solid templates and common patterns, reducing manual effort while improving consistency and lowering syntax or mapping errors.</td>
-        <td>12%</td>
-      </tr>
-      <tr>
-        <td>4</td>
-        <td>Pair Programmer</td>
-        <td>Speeds up daily feature development by generating boilerplate, scaffolding components, and suggesting common implementations. Frees developers to focus on requirements and integration while reducing avoidable defects.</td>
-        <td>10%</td>
-      </tr>
-      <tr>
-        <td>5</td>
-        <td>Performance Issue Fixes</td>
-        <td>Performance considerations addressed as part of new feature development to avoid introducing bottlenecks and ensure new capabilities scale appropriately.</td>
-        <td>10%</td>
-      </tr>
-      <tr>
-        <td>6</td>
-        <td>Dev Standards as Guardrails</td>
-        <td>Using Markdown rule files, GitHub Copilot adheres to defined coding standards. Ensures auto-generated code matches team guidelines and project conventions.</td>
-        <td>8%</td>
-      </tr>
-    </tbody>
-  </table>
+  /* ── MEN (18) ─────────────────────────────────────────────────── */
+  {
+    id:"prod_021", name:"Oxford Button-Down Shirt", brand:"Massimo Dutti",
+    category:"men", subcategory:"shirts",
+    price:89.99, originalPrice:null, discount:null,
+    description:"A classic Oxford button-down shirt woven from pure cotton with a regular fit and button-down collar. A refined essential that transitions seamlessly from desk to dinner.",
+    sizes:["XS","S","M","L","XL"], colors:["White","Light Blue","Pink"],
+    images:["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:289, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_022", name:"Pique Cotton Polo Shirt", brand:"Uniqlo",
+    category:"men", subcategory:"polos",
+    price:39.99, originalPrice:null, discount:null,
+    description:"A heritage polo shirt knitted in premium pique cotton for superior breathability and structure. The ribbed collar and cuffs maintain their shape wash after wash.",
+    sizes:["XS","S","M","L","XL"], colors:["Navy","White","Forest"],
+    images:["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:412, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_023", name:"Slim-Fit Wool Trousers", brand:"Reiss",
+    category:"men", subcategory:"trousers",
+    price:169.99, originalPrice:null, discount:null,
+    description:"Impeccably tailored slim-fit trousers in a fine wool blend with a flat-front waistband and tapered leg. These are a boardroom essential that works equally well at weekend events.",
+    sizes:["28","30","32","34","36","38"], colors:["Charcoal","Navy","Black"],
+    images:["https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:134, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_024", name:"Slim Selvedge Jeans", brand:"Arket",
+    category:"men", subcategory:"jeans",
+    price:119.99, originalPrice:null, discount:null,
+    description:"Crafted from Japanese selvedge denim, these slim-fit jeans develop a unique patina over time. The clean five-pocket styling and subtle taper ensure a modern, versatile silhouette.",
+    sizes:["28","30","32","34","36"], colors:["Indigo","Black","Raw"],
+    images:["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:203, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_025", name:"Two-Piece Wool Suit", brand:"Massimo Dutti",
+    category:"men", subcategory:"suits",
+    price:349.99, originalPrice:null, discount:null,
+    description:"A refined two-piece suit tailored from pure new wool with a half-canvas construction for natural drape. The single-breasted jacket pairs with flat-front slim trousers for a timeless silhouette.",
+    sizes:["36","38","40","42","44","46"], colors:["Navy","Charcoal","Mid Grey"],
+    images:["https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617952236317-0bd127407984?w=600&h=800&fit=crop"],
+    rating:4.9, reviews:68, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_026", name:"Quilted Leather Biker Jacket", brand:"AllSaints",
+    category:"men", subcategory:"jackets",
+    price:279.99, originalPrice:null, discount:null,
+    description:"A sleek biker jacket in quilted nappa leather with an asymmetric zip closure and ribbed hem panels. The clean hardware and slim silhouette keep this a wardrobe classic.",
+    sizes:["XS","S","M","L","XL"], colors:["Black"],
+    images:["https://images.unsplash.com/photo-1551537073-f73e3a6bee56?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617952236317-0bd127407984?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:97, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_027", name:"Fleece-Lined Sweatshirt", brand:"COS",
+    category:"men", subcategory:"sweatshirts",
+    price:79.99, originalPrice:null, discount:null,
+    description:"A heavyweight sweatshirt cut from an exceptionally soft brushed-back fleece fabric. The clean crew-neck design and minimal branding make it a versatile layering essential.",
+    sizes:["XS","S","M","L","XL"], colors:["Ecru","Charcoal","Washed Black"],
+    images:["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:178, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_028", name:"Linen Bermuda Shorts", brand:"H&M",
+    category:"men", subcategory:"shorts",
+    price:34.99, originalPrice:null, discount:null,
+    description:"Relaxed Bermuda shorts in breathable pure linen with a drawstring waist and two side pockets. A summer holiday essential that balances comfort with understated style.",
+    sizes:["XS","S","M","L","XL"], colors:["Sand","Navy","Olive"],
+    images:["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop"],
+    rating:4.2, reviews:89, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_029", name:"Dobby-Weave Dress Shirt", brand:"Ted Baker",
+    category:"men", subcategory:"shirts",
+    price:99.99, originalPrice:null, discount:null,
+    description:"A meticulously constructed dress shirt in a fine dobby-weave cotton with a subtle textural pattern. Slim-fit cut with a cutaway collar for a sharp, modern presentation.",
+    sizes:["XS","S","M","L","XL"], colors:["White","Pale Blue","Lilac"],
+    images:["https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:115, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_030", name:"Stretch Cotton Polo", brand:"Zara",
+    category:"men", subcategory:"polos",
+    price:45.99, originalPrice:null, discount:null,
+    description:"A sleek polo shirt in stretch cotton pique for freedom of movement with a refined finish. Features an understated tonal placket and ribbed trim for a polished look.",
+    sizes:["XS","S","M","L","XL"], colors:["Black","White","Burgundy"],
+    images:["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:204, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_031", name:"Tapered Cargo Trousers", brand:"Weekday",
+    category:"men", subcategory:"trousers",
+    price:74.99, originalPrice:null, discount:null,
+    description:"Practical and stylish tapered cargo trousers in a durable ripstop fabric. Multiple utility pockets and a drawstring waist give these a functional edge with a contemporary silhouette.",
+    sizes:["28","30","32","34","36"], colors:["Olive","Black","Stone"],
+    images:["https://images.unsplash.com/photo-1617952236317-0bd127407984?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:156, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_032", name:"Straight Relaxed Jeans", brand:"H&M",
+    category:"men", subcategory:"jeans",
+    price:49.99, originalPrice:null, discount:null,
+    description:"A modern straight-leg jean in soft, slightly stretchy denim for comfortable all-day wear. The mid-rise waistband and relaxed through-the-thigh fit offer a lived-in, effortless feel.",
+    sizes:["28","30","32","34","36","38"], colors:["Light Wash","Mid Wash","Black"],
+    images:["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:267, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_033", name:"Linen Summer Suit", brand:"Selected Femme",
+    category:"men", subcategory:"suits",
+    price:299.99, originalPrice:null, discount:null,
+    description:"A lightweight two-piece linen suit perfect for warm-weather occasions. The slightly relaxed jacket silhouette and flat-front trousers strike a balance between ease and elegance.",
+    sizes:["36","38","40","42","44"], colors:["Ecru","Light Blue","Sage"],
+    images:["https://images.unsplash.com/photo-1617952236317-0bd127407984?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:53, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_034", name:"Waxed Cotton Field Jacket", brand:"AllSaints",
+    category:"men", subcategory:"jackets",
+    price:219.99, originalPrice:null, discount:null,
+    description:"A timeless field jacket in waxed cotton with a storm flap, game pockets, and corduroy collar. Water-resistant and built to weather the elements in rugged style.",
+    sizes:["XS","S","M","L","XL"], colors:["Olive","Navy","Black"],
+    images:["https://images.unsplash.com/photo-1551537073-f73e3a6bee56?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617952236317-0bd127407984?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:74, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_035", name:"French Terry Zip Sweatshirt", brand:"Arket",
+    category:"men", subcategory:"sweatshirts",
+    price:89.99, originalPrice:null, discount:null,
+    description:"A full-zip sweatshirt in midweight French terry cotton with a clean stand collar and tonal zips. The relaxed fit and garment-washed finish give it a perfectly broken-in feel.",
+    sizes:["XS","S","M","L","XL"], colors:["Washed Grey","Navy","Ecru"],
+    images:["https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:122, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_036", name:"Swim Shorts", brand:"Mango",
+    category:"men", subcategory:"shorts",
+    price:39.99, originalPrice:null, discount:null,
+    description:"Quick-dry swim shorts in a lightweight technical fabric with an inner mesh brief and adjustable drawstring waist. A bold tropical print makes a statement at any poolside or beach.",
+    sizes:["XS","S","M","L","XL"], colors:["Tropical Blue","Black","Terracotta"],
+    images:["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop"],
+    rating:4.2, reviews:88, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_037", name:"Linen Band-Collar Shirt", brand:"COS",
+    category:"men", subcategory:"shirts",
+    price:79.99, originalPrice:null, discount:null,
+    description:"A refined band-collar shirt in 100% washed linen for a relaxed, effortless look. The slightly boxy cut and minimal detailing are hallmarks of understated luxury.",
+    sizes:["XS","S","M","L","XL"], colors:["White","Sand","Slate"],
+    images:["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:167, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_038", name:"Cashmere Bomber Jacket", brand:"Reiss",
+    category:"men", subcategory:"jackets",
+    price:319.99, originalPrice:null, discount:null,
+    description:"A luxurious bomber jacket crafted from pure cashmere with a clean silhouette and ribbed hem, cuffs, and collar. Unlined for a lightweight feel perfect for transitional seasons.",
+    sizes:["XS","S","M","L","XL"], colors:["Camel","Black","Navy"],
+    images:["https://images.unsplash.com/photo-1617952236317-0bd127407984?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1551537073-f73e3a6bee56?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:41, inStock:true, tags:[], featured:false
+  },
 
-  <!-- OPERATIONAL ENDEAVORS -->
-  <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:24px;color:var(--cat-dark);">Key Operational Efficiency Endeavors</h3>
-  <div class="appendix-grid">
-    <div class="app-card">
-      <div class="app-card-header">
-        Endeavor 1 · Functional BA (AI Assist)
-        <span class="badge">Approved</span>
-      </div>
-      <div class="app-card-body">
-        <div class="app-section-title">Solution</div>
-        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">Stand up an "AI-Augmented Business Analysis" capability by embedding Microsoft Copilot (M365), Sidekick, and Figma Make into the BA-to-delivery lifecycle.</p>
-        <div class="app-section-title">Capabilities</div>
-        <ul class="app-list">
-          <li>AI summarizes intake/meetings into decisions, actions, open items</li>
-          <li>AI drafts FR/NFR, user stories, and acceptance criteria faster</li>
-          <li>AI flags gaps, ambiguities, and edge cases early</li>
-          <li>AI maintains traceability (goal → requirement → story → test)</li>
-          <li>AI accelerates process maps, wireframes, and clickable prototypes</li>
-        </ul>
-        <div class="app-section-title">Benefits</div>
-        <div class="benefit-row"><span class="benefit-label">Requirements cycle time reduction</span><span class="benefit-val">~10–20%</span></div>
-        <div class="benefit-row"><span class="benefit-label">Grooming time reduction</span><span class="benefit-val">1–2 weeks</span></div>
-        <div class="benefit-row"><span class="benefit-label">Design feedback turnaround</span><span class="benefit-val">1–2 weeks faster</span></div>
-        <div class="benefit-row"><span class="benefit-label">Fewer requirement-driven defects</span><span class="benefit-val">~10–20%</span></div>
-      </div>
-    </div>
+  /* ── KIDS (12) ────────────────────────────────────────────────── */
+  {
+    id:"prod_039", name:"Smock Collar Dress", brand:"H&M",
+    category:"kids", subcategory:"dresses",
+    price:29.99, originalPrice:null, discount:null,
+    description:"An adorable smock-collar dress in 100% organic cotton with contrast embroidered details. Easy dressing with a back button placket and a comfortable, roomy fit for active days.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y"], colors:["Pink","Blue","Yellow"],
+    images:["https://images.unsplash.com/photo-1496747679638-9f48b9f20f82?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1502716119720-aecd46570e47?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:94, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_040", name:"Striped Long-Sleeve T-Shirt", brand:"Uniqlo",
+    category:"kids", subcategory:"tops",
+    price:18.99, originalPrice:null, discount:null,
+    description:"A cosy long-sleeve tee in soft Supima cotton jersey with a Breton stripe pattern. Ribbed cuffs and a tagless label keep things comfortable for all-day wear.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y"], colors:["Navy/White","Red/White","Black/White"],
+    images:["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:203, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_041", name:"Jogger Trousers", brand:"Zara",
+    category:"kids", subcategory:"trousers",
+    price:24.99, originalPrice:null, discount:null,
+    description:"Comfortable jogger trousers in a soft cotton-blend with an elasticated waistband and ribbed ankle cuffs. Practical side pockets and a relaxed fit make these ideal for school or play.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y"], colors:["Grey Marl","Navy","Black"],
+    images:["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:145, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_042", name:"Denim Bib Overall Set", brand:"Mango",
+    category:"kids", subcategory:"sets",
+    price:44.99, originalPrice:null, discount:null,
+    description:"A sweet two-piece bib overall set in soft denim with an adjustable strap and flap pockets. Paired with a co-ordinating striped long-sleeve tee for a complete, ready-to-wear outfit.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y"], colors:["Light Denim","Dark Denim"],
+    images:["https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1539008835657-9e8e5f8e3a0f?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:67, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_043", name:"Tiered Ruffle Dress", brand:"Selected Femme",
+    category:"kids", subcategory:"dresses",
+    price:34.99, originalPrice:null, discount:null,
+    description:"A charming tiered ruffle dress in a floral-print cotton with an elasticated waist and adjustable straps. The layered hem adds a playful bounce with every step.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y"], colors:["Floral Pink","Floral Yellow"],
+    images:["https://images.unsplash.com/photo-1502716119720-aecd46570e47?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1496747679638-9f48b9f20f82?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:78, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_044", name:"Graphic Sweatshirt", brand:"H&M",
+    category:"kids", subcategory:"tops",
+    price:22.99, originalPrice:null, discount:null,
+    description:"A midweight cotton-fleece sweatshirt with a fun photographic animal graphic on the front. The relaxed fit, crew neck, and ribbed hem make this an easy everyday go-to.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y","12-13Y"], colors:["Grey","Coral","Blue"],
+    images:["https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:132, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_045", name:"Slim-Fit Chino Trousers", brand:"Zara",
+    category:"kids", subcategory:"trousers",
+    price:27.99, originalPrice:null, discount:null,
+    description:"Smart slim-fit chino trousers in stretch cotton with a mock fly and elasticated back waistband. Clean enough for school, casual enough for weekends.",
+    sizes:["4-5Y","6-7Y","8-9Y","10-11Y","12-13Y"], colors:["Beige","Navy","Khaki"],
+    images:["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:89, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_046", name:"Floral Co-Ord Set", brand:"Monki",
+    category:"kids", subcategory:"sets",
+    price:49.99, originalPrice:null, discount:null,
+    description:"A matching two-piece co-ord set comprising a cropped top and wide-leg trousers in a vibrant floral print. Made from soft viscose for a lightweight, breezy feel.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y"], colors:["Floral Lilac","Floral Green"],
+    images:["https://images.unsplash.com/photo-1539008835657-9e8e5f8e3a0f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:56, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_047", name:"Cable-Knit Pinafore Dress", brand:"Arket",
+    category:"kids", subcategory:"dresses",
+    price:59.99, originalPrice:null, discount:null,
+    description:"A cosy cable-knit pinafore dress in pure lambswool with an A-line silhouette and adjustable shoulder straps. Layer over a long-sleeve tee for a timeless autumn look.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y"], colors:["Oatmeal","Pink","Sage"],
+    images:["https://images.unsplash.com/photo-1496747679638-9f48b9f20f82?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1502716119720-aecd46570e47?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:43, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_048", name:"Pocket Tee 2-Pack", brand:"Uniqlo",
+    category:"kids", subcategory:"tops",
+    price:19.99, originalPrice:null, discount:null,
+    description:"A practical two-pack of short-sleeve pocket tees in ultra-soft 100% cotton jersey. Clean crew necks and a relaxed fit make these the ultimate everyday uniform.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y","12-13Y"], colors:["White/Grey","Navy/White","Black/Khaki"],
+    images:["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:217, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_049", name:"Flare Denim Jeans", brand:"H&M",
+    category:"kids", subcategory:"trousers",
+    price:32.99, originalPrice:null, discount:null,
+    description:"On-trend flare jeans in soft stretch denim with a high-rise waistband and flared hem. Five-pocket styling keeps things classic while the silhouette brings a fashionable update.",
+    sizes:["4-5Y","6-7Y","8-9Y","10-11Y","12-13Y"], colors:["Light Wash","Dark Wash"],
+    images:["https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:88, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_050", name:"Dinosaur Pyjama Set", brand:"H&M",
+    category:"kids", subcategory:"sets",
+    price:22.99, originalPrice:null, discount:null,
+    description:"A fun pyjama set featuring an all-over dinosaur print in soft, brushed organic cotton jersey. The elasticated waistband and relaxed top ensure restful nights and playful mornings.",
+    sizes:["2-3Y","4-5Y","6-7Y","8-9Y","10-11Y"], colors:["Blue Dino","Green Dino"],
+    images:["https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1539008835657-9e8e5f8e3a0f?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:196, inStock:true, tags:[], featured:false
+  },
 
-    <div class="app-card">
-      <div class="app-card-header">
-        Endeavor 2 · Hybris/Spartacus Dev (GHCP)
-        <span class="badge">Active Pilot</span>
-      </div>
-      <div class="app-card-body">
-        <div class="app-section-title">Solution</div>
-        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">Integrate AI-driven productivity improvements within backend development by utilizing automated code generation, performance tuning, patch updates, and smart model recommendations.</p>
-        <div class="app-section-title">Capabilities</div>
-        <ul class="app-list">
-          <li>Consistent code delivery aligned with project standards</li>
-          <li>Faster feature &amp; component development using existing patterns</li>
-          <li>Improved API &amp; data integration quality</li>
-          <li>Sanity assistance — additional check before code push</li>
-          <li>Automated PR and code review assistance</li>
-        </ul>
-        <div class="app-section-title">Benefits</div>
-        <div class="benefit-row"><span class="benefit-label">Reduced cycle time</span><span class="benefit-val">~8–10%</span></div>
-        <div class="benefit-row"><span class="benefit-label">Fewer PR iterations</span><span class="benefit-val">~7–9%</span></div>
-        <div class="benefit-row"><span class="benefit-label">Consistent implementations</span><span class="benefit-val">~8–10%</span></div>
-      </div>
-    </div>
+  /* ── SHOES (18) ───────────────────────────────────────────────── */
+  {
+    id:"prod_051", name:"Pointed-Toe Kitten Heels", brand:"Whistles",
+    category:"shoes", subcategory:"heels",
+    price:149.99, originalPrice:null, discount:null,
+    description:"Elegant pointed-toe kitten heels in smooth nappa leather with a slim 5cm heel. The almond toe and tonal stitching lend a refined minimalism that pairs with everything.",
+    sizes:["36","37","38","39","40","41"], colors:["Black","Nude","Red"],
+    images:["https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:132, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_052", name:"Chelsea Ankle Boots", brand:"AllSaints",
+    category:"shoes", subcategory:"boots",
+    price:199.99, originalPrice:null, discount:null,
+    description:"Classic Chelsea ankle boots in full-grain leather with elasticated side panels and a block heel. The timeless silhouette and durable leather sole make these a year-round investment.",
+    sizes:["36","37","38","39","40","41","42"], colors:["Black","Tan","Dark Brown"],
+    images:["https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:278, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_053", name:"Canvas Low-Top Trainers", brand:"Arket",
+    category:"shoes", subcategory:"sneakers",
+    price:69.99, originalPrice:null, discount:null,
+    description:"Iconic low-top canvas trainers with a vulcanised waffle sole and clean tonal upper. Lightweight and versatile, these are a casual wardrobe cornerstone.",
+    sizes:["36","37","38","39","40","41","42"], colors:["White","Black","Navy"],
+    images:["https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:504, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_054", name:"Leather Ballet Flats", brand:"Mango",
+    category:"shoes", subcategory:"flats",
+    price:89.99, originalPrice:null, discount:null,
+    description:"Timeless ballet flats in supple leather with a delicate bow trim and a slim leather sole. The rounded toe and elasticated back strap ensure a secure, comfortable fit.",
+    sizes:["36","37","38","39","40","41"], colors:["Black","Nude","Burgundy"],
+    images:["https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:187, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_055", name:"Strappy Block-Heel Sandals", brand:"Ted Baker",
+    category:"shoes", subcategory:"sandals",
+    price:129.99, originalPrice:null, discount:null,
+    description:"Sophisticated strappy sandals with a stable 7cm block heel and adjustable ankle strap. The slender vamp straps and polished gold hardware elevate any summer outfit.",
+    sizes:["36","37","38","39","40","41"], colors:["Nude","Black","Silver"],
+    images:["https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:93, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_056", name:"Suede Penny Loafers", brand:"Massimo Dutti",
+    category:"shoes", subcategory:"loafers",
+    price:179.99, originalPrice:null, discount:null,
+    description:"Luxurious penny loafers in supple suede with a leather-lined interior and a durable rubber sole. The classic penny slot and slim profile lend these a smart-casual versatility.",
+    sizes:["36","37","38","39","40","41","42"], colors:["Tan","Black","Cognac"],
+    images:["https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:145, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_057", name:"Platform Mule Heels", brand:"Zara",
+    category:"shoes", subcategory:"heels",
+    price:109.99, originalPrice:null, discount:null,
+    description:"Statement platform mules with a square toe and a 9cm heel offset by a 3cm platform for surprising comfort. Padded leather footbed and backless design for effortless warm-weather styling.",
+    sizes:["36","37","38","39","40","41"], colors:["Black","Ecru","Raffia"],
+    images:["https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:167, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_058", name:"Over-the-Knee Boots", brand:"Reiss",
+    category:"shoes", subcategory:"boots",
+    price:249.99, originalPrice:null, discount:null,
+    description:"Dramatically elegant over-the-knee boots in stretch suede-effect fabric that moulds to the leg. A 5cm block heel provides height and stability across long days.",
+    sizes:["36","37","38","39","40","41"], colors:["Black","Tan"],
+    images:["https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:82, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_059", name:"Leather Chunky Sole Trainers", brand:"COS",
+    category:"shoes", subcategory:"sneakers",
+    price:149.99, originalPrice:null, discount:null,
+    description:"Minimalist leather trainers with a distinctive chunky EVA sole for a contemporary directional look. The clean tonal upper and concealed lacing system keep the aesthetic uncluttered.",
+    sizes:["40","41","42","43","44","45","46"], colors:["White","Black","Sand"],
+    images:["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:234, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_060", name:"Leather Derby Boots", brand:"AllSaints",
+    category:"shoes", subcategory:"boots",
+    price:219.99, originalPrice:null, discount:null,
+    description:"Rugged yet refined Derby boots in full-grain leather with Goodyear-welt construction and a lug rubber sole. The D-ring lacing and side zip make these both practical and polished.",
+    sizes:["40","41","42","43","44","45","46"], colors:["Dark Brown","Black","Cognac"],
+    images:["https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:119, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_061", name:"Tassel Leather Loafers", brand:"Ted Baker",
+    category:"shoes", subcategory:"loafers",
+    price:189.99, originalPrice:null, discount:null,
+    description:"A distinguished pair of tassel loafers in polished calfskin leather with a leather-lined interior and leather sole. The low vamp and defined tongue add old-world elegance.",
+    sizes:["40","41","42","43","44","45"], colors:["Cognac","Black","Burgundy"],
+    images:["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:78, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_062", name:"Mesh Running Trainers", brand:"H&M",
+    category:"shoes", subcategory:"sneakers",
+    price:54.99, originalPrice:null, discount:null,
+    description:"Lightweight mesh running-inspired trainers with a cushioned foam midsole and breathable knit upper. The streamlined silhouette transitions from gym to street with ease.",
+    sizes:["40","41","42","43","44","45","46"], colors:["Grey","Black","White/Blue"],
+    images:["https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:312, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_063", name:"Suede Chelsea Boots", brand:"Whistles",
+    category:"shoes", subcategory:"boots",
+    price:175.99, originalPrice:null, discount:null,
+    description:"Sleek Chelsea boots in velvety suede with elasticated side gussets and a narrow block heel. The refined pointed toe and pull-tab make these a polished everyday staple.",
+    sizes:["40","41","42","43","44","45"], colors:["Dark Brown","Navy","Black"],
+    images:["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:96, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_064", name:"Horsebit Leather Loafers", brand:"Massimo Dutti",
+    category:"shoes", subcategory:"loafers",
+    price:229.99, originalPrice:null, discount:null,
+    description:"Heritage horsebit loafers in soft calfskin with gold-tone horsebit hardware at the vamp. A leather sole and cushioned insole provide luxurious all-day comfort.",
+    sizes:["40","41","42","43","44","45","46"], colors:["Black","Dark Brown","Tan"],
+    images:["https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:61, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_065", name:"Suede Slide Sandals", brand:"Arket",
+    category:"shoes", subcategory:"sandals",
+    price:79.99, originalPrice:null, discount:null,
+    description:"Minimal slide sandals in supple suede with a wide strap and a cushioned insole. The low-profile footbed and clean silhouette offer effortless luxury for warm days.",
+    sizes:["40","41","42","43","44","45"], colors:["Tan","Black","White"],
+    images:["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:143, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_066", name:"Woven Espadrille Wedges", brand:"Mango",
+    category:"shoes", subcategory:"sandals",
+    price:84.99, originalPrice:null, discount:null,
+    description:"Chic espadrille wedges with a jute-wrapped platform and canvas upper with a lace-up ankle strap. Lightweight and breathable, made for long Mediterranean afternoons.",
+    sizes:["36","37","38","39","40","41"], colors:["Natural","Navy","White"],
+    images:["https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:108, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_067", name:"Pointed Mule Flats", brand:"COS",
+    category:"shoes", subcategory:"flats",
+    price:119.99, originalPrice:null, discount:null,
+    description:"Understated pointed-toe mules in smooth leather with a minimal backless silhouette. The slim outsole and architectural pointed toe add a quietly confident edge.",
+    sizes:["36","37","38","39","40","41","42"], colors:["Black","Ecru","Chocolate"],
+    images:["https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:156, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_068", name:"Lace-Up Oxford Shoes", brand:"Reiss",
+    category:"shoes", subcategory:"loafers",
+    price:199.99, originalPrice:null, discount:null,
+    description:"Classically crafted Oxford shoes in polished calf leather with a Brogue perforated toe cap and leather sole. Timeless in design, these elevate any formal or smart-casual ensemble.",
+    sizes:["40","41","42","43","44","45","46"], colors:["Black","Dark Brown","Tan"],
+    images:["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:88, inStock:true, tags:[], featured:false
+  },
 
-    <div class="app-card">
-      <div class="app-card-header">
-        Endeavor 3 · Operate Automation (GHCP)
-        <span class="badge">In Progress</span>
-      </div>
-      <div class="app-card-body">
-        <div class="app-section-title">Solution</div>
-        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">The Operate team occasionally performs data updates or temporary workarounds to resolve critical business issues without formal deployment (e.g., via Impex's or scripting jobs). Using GitHub Copilot, these can be developed and executed more quickly.</p>
-        <div class="app-section-title">Capabilities</div>
-        <ul class="app-list">
-          <li>Automatically generate Impex's for data correction</li>
-          <li>Create and automate scripting jobs for recurring data issues</li>
-          <li>Faster framework upgrades with minimal defects</li>
-          <li>Faster fixes for small code changes and hotfixes via boilerplate generation</li>
-        </ul>
-        <div class="app-section-title">Benefits</div>
-        <div class="benefit-row"><span class="benefit-label">Manual effort saved</span><span class="benefit-val">~120 mins/month</span></div>
-        <div class="benefit-row"><span class="benefit-label">Faster fixes for hotfixes</span><span class="benefit-val">~10%</span></div>
-        <div class="benefit-row"><span class="benefit-label">Improved INC turnaround</span><span class="benefit-val">~6–8%</span></div>
-      </div>
-    </div>
+  /* ── BAGS (12) ────────────────────────────────────────────────── */
+  {
+    id:"prod_069", name:"Structured Leather Tote", brand:"Whistles",
+    category:"bags", subcategory:"totes",
+    price:229.99, originalPrice:null, discount:null,
+    description:"A structured tote in full-grain vegetable-tanned leather with a spacious interior, a zipped inner pocket, and double rolled-leather handles. Develops a beautiful patina over time.",
+    sizes:["One Size"], colors:["Tan","Black","Burgundy"],
+    images:["https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:167, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_070", name:"Mini Leather Crossbody", brand:"& Other Stories",
+    category:"bags", subcategory:"crossbodies",
+    price:149.99, originalPrice:null, discount:null,
+    description:"A compact crossbody bag in smooth leather with a flap closure, magnetic snap, and an adjustable chain strap. The structured boxy silhouette holds a phone, cards, and keys with ease.",
+    sizes:["One Size"], colors:["Black","Cream","Cherry Red"],
+    images:["https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1566150905458-1bf1a9c17b62?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:213, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_071", name:"Satin Envelope Clutch", brand:"Ted Baker",
+    category:"bags", subcategory:"clutches",
+    price:89.99, originalPrice:null, discount:null,
+    description:"An elegant envelope clutch in smooth satin with a polished gold push-lock closure and a detachable wrist strap. The clean lines and subtle sheen make it ideal for evening occasions.",
+    sizes:["One Size"], colors:["Black","Champagne","Cobalt"],
+    images:["https://images.unsplash.com/photo-1566150905458-1bf1a9c17b62?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:98, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_072", name:"Waxed Canvas Backpack", brand:"Arket",
+    category:"bags", subcategory:"backpacks",
+    price:179.99, originalPrice:null, discount:null,
+    description:"A heritage-inspired roll-top backpack in waxed canvas with full-grain leather trim and antique brass hardware. Naturally water-resistant with an internal laptop sleeve.",
+    sizes:["One Size"], colors:["Olive","Navy","Black"],
+    images:["https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:134, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_073", name:"Woven Raffia Tote", brand:"Mango",
+    category:"bags", subcategory:"totes",
+    price:79.99, originalPrice:null, discount:null,
+    description:"A summery oversized tote hand-woven from natural raffia with leather-look handles and a detachable inner pouch. Lightweight yet spacious, perfect for the beach or a weekend market.",
+    sizes:["One Size"], colors:["Natural","Black","Ecru"],
+    images:["https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1566150905458-1bf1a9c17b62?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:87, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_074", name:"Quilted Chain Crossbody", brand:"Zara",
+    category:"bags", subcategory:"crossbodies",
+    price:119.99, originalPrice:null, discount:null,
+    description:"A sophisticated quilted crossbody with a diamond-stitched exterior and a long chain strap. The compact size, interior card slots, and gold-tone hardware exude quiet luxury.",
+    sizes:["One Size"], colors:["Black","Camel","Dusty Pink"],
+    images:["https://images.unsplash.com/photo-1566150905458-1bf1a9c17b62?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:192, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_075", name:"Beaded Minaudiere Clutch", brand:"Whistles",
+    category:"bags", subcategory:"clutches",
+    price:139.99, originalPrice:null, discount:null,
+    description:"A hand-beaded minaudiere clutch with an intricate geometric pattern and a push-clasp frame closure. Comes with a delicate metal chain drop handle for versatile carrying.",
+    sizes:["One Size"], colors:["Gold","Silver","Multi"],
+    images:["https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:54, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_076", name:"Leather City Backpack", brand:"Reiss",
+    category:"bags", subcategory:"backpacks",
+    price:249.99, originalPrice:null, discount:null,
+    description:"A sleek structured backpack in pebbled leather with a top carry handle, padded back panel, and a dedicated laptop compartment. Smart enough for the office, rugged enough for travel.",
+    sizes:["One Size"], colors:["Black","Dark Brown"],
+    images:["https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1566150905458-1bf1a9c17b62?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:76, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_077", name:"Canvas Shopper Tote", brand:"Uniqlo",
+    category:"bags", subcategory:"totes",
+    price:29.99, originalPrice:null, discount:null,
+    description:"A practical yet stylish shopper tote in heavyweight organic cotton canvas. The long handles, interior zip pocket, and reinforced base make this an everyday essential.",
+    sizes:["One Size"], colors:["Natural","Black","Navy"],
+    images:["https://images.unsplash.com/photo-1566150905458-1bf1a9c17b62?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:321, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_078", name:"Pebbled Leather Saddle Bag", brand:"AllSaints",
+    category:"bags", subcategory:"crossbodies",
+    price:189.99, originalPrice:null, discount:null,
+    description:"A relaxed saddle bag in pebbled leather with a curved flap, turn-lock closure, and a long adjustable strap. The vintage-inspired shape adds character to any outfit.",
+    sizes:["One Size"], colors:["Tan","Black","Rust"],
+    images:["https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:103, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_079", name:"Velvet Frame Clutch", brand:"& Other Stories",
+    category:"bags", subcategory:"clutches",
+    price:99.99, originalPrice:null, discount:null,
+    description:"An opulent velvet clutch with a polished brass art-deco frame closure and a short wrist chain. The jewel-toned velvet and sculptural clasp make this a showpiece for special occasions.",
+    sizes:["One Size"], colors:["Emerald","Midnight Blue","Bordeaux"],
+    images:["https://images.unsplash.com/photo-1566150905458-1bf1a9c17b62?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:67, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_080", name:"Nylon Slim Backpack", brand:"COS",
+    category:"bags", subcategory:"backpacks",
+    price:119.99, originalPrice:null, discount:null,
+    description:"A minimalist slim backpack in durable recycled nylon with a padded laptop sleeve, magnetic closure top panel, and clean tonal hardware. Built for modern city commuters.",
+    sizes:["One Size"], colors:["Black","Stone","Navy"],
+    images:["https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:144, inStock:true, tags:[], featured:false
+  },
 
-    <div class="app-card">
-      <div class="app-card-header">
-        Endeavor 4 · Automated ServiceNow Incidents
-        <span class="badge">Delivered</span>
-      </div>
-      <div class="app-card-body">
-        <div class="app-section-title">Solution</div>
-        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">When SCI detects an error, it triggers the Alert Notification Service. The service both emails the support team and automatically generates a ServiceNow incident — ensuring every error is formally tracked and accelerating resolution times.</p>
-        <div class="app-section-title">Capabilities</div>
-        <ul class="app-list">
-          <li>Rapid incident response — eliminates manual ticket creation</li>
-          <li>Seamless SAP + ServiceNow integration for error handling</li>
-          <li>Enhanced visibility with real-time insights and actionable notifications</li>
-          <li>Streamlined prioritization and workflow routing for critical alerts</li>
-        </ul>
-        <div class="app-section-title">Benefits</div>
-        <div class="benefit-row"><span class="benefit-label">Tickets reduced per month</span><span class="benefit-val">10–15 tickets</span></div>
-        <div class="benefit-row"><span class="benefit-label">Resolution time reduction</span><span class="benefit-val">40–50%</span></div>
-        <div class="benefit-row"><span class="benefit-label">SLA improvement</span><span class="benefit-val">~15%</span></div>
-      </div>
-    </div>
+  /* ── ACCESSORIES (10) ─────────────────────────────────────────── */
+  {
+    id:"prod_081", name:"Cashmere Tartan Scarf", brand:"Massimo Dutti",
+    category:"accessories", subcategory:"scarves",
+    price:119.99, originalPrice:null, discount:null,
+    description:"A generous wrap scarf in pure cashmere with a classic tartan check and fringed edges. Exceptionally soft and warm, it adds a heritage touch to any winter ensemble.",
+    sizes:["One Size"], colors:["Red/Black","Navy/Green","Camel/Brown"],
+    images:["https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:98, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_082", name:"Woven Leather Belt", brand:"Reiss",
+    category:"accessories", subcategory:"belts",
+    price:79.99, originalPrice:null, discount:null,
+    description:"A classic woven leather belt with an antique silver pin-buckle. Hand-plaited from smooth calfskin, this is a subtle finishing touch that works across formal and casual dressing.",
+    sizes:["XS","S","M","L","XL"], colors:["Tan","Black","Cognac"],
+    images:["https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:72, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_083", name:"Structured Fedora Hat", brand:"Whistles",
+    category:"accessories", subcategory:"hats",
+    price:69.99, originalPrice:null, discount:null,
+    description:"A classic structured fedora in felted wool with a grosgrain ribbon band and a pinched crown. A refined finishing piece that elevates both casual and tailored outfits.",
+    sizes:["S/M","L/XL"], colors:["Camel","Black","Charcoal"],
+    images:["https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:56, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_084", name:"Gold Hoop Earrings", brand:"& Other Stories",
+    category:"accessories", subcategory:"jewellery",
+    price:39.99, originalPrice:null, discount:null,
+    description:"Oversized sculptural hoop earrings in 18ct gold-plated brass with a smooth polished finish. The lightweight construction makes these comfortable for all-day wear.",
+    sizes:["One Size"], colors:["Gold","Silver","Rose Gold"],
+    images:["https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:243, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_085", name:"Cat-Eye Sunglasses", brand:"Mango",
+    category:"accessories", subcategory:"sunglasses",
+    price:49.99, originalPrice:null, discount:null,
+    description:"Retro-inspired cat-eye sunglasses with UV400 polarised lenses and a lightweight acetate frame. The upswept corners and subtle tortoiseshell offer timeless glamour.",
+    sizes:["One Size"], colors:["Tortoiseshell","Black","Transparent"],
+    images:["https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:187, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_086", name:"Silk Twill Square Scarf", brand:"Ted Baker",
+    category:"accessories", subcategory:"scarves",
+    price:89.99, originalPrice:null, discount:null,
+    description:"A luxurious 90x90cm square scarf in hand-rolled silk twill with a signature botanical print. Wear tied at the neck, in the hair, or looped through a bag handle.",
+    sizes:["One Size"], colors:["Floral Ivory","Floral Navy","Abstract"],
+    images:["https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:64, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_087", name:"Canvas Double-Pin Belt", brand:"Arket",
+    category:"accessories", subcategory:"belts",
+    price:44.99, originalPrice:null, discount:null,
+    description:"A relaxed canvas belt with a double-pin burnished metal buckle. The webbing construction and adjustable fit make it a practical, utilitarian accent for any casual outfit.",
+    sizes:["XS","S","M","L","XL"], colors:["Khaki","Black","Navy"],
+    images:["https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:89, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_088", name:"Merino Ribbed Beanie", brand:"COS",
+    category:"accessories", subcategory:"hats",
+    price:49.99, originalPrice:null, discount:null,
+    description:"A classic ribbed beanie knitted from 100% extra-fine merino wool. The generous turn-back cuff and fitted crown provide warmth and a clean, minimal aesthetic.",
+    sizes:["One Size"], colors:["Ecru","Black","Camel"],
+    images:["https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:178, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_089", name:"Pearl Station Necklace", brand:"Whistles",
+    category:"accessories", subcategory:"jewellery",
+    price:59.99, originalPrice:null, discount:null,
+    description:"A delicate station necklace featuring individually set freshwater pearls on a fine sterling silver chain. Elegantly understated and versatile enough to wear solo or layered.",
+    sizes:["One Size"], colors:["Pearl/Silver","Pearl/Gold"],
+    images:["https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:134, inStock:true, tags:[], featured:false
+  },
+  {
+    id:"prod_090", name:"Aviator Sunglasses", brand:"Zara",
+    category:"accessories", subcategory:"sunglasses",
+    price:34.99, originalPrice:null, discount:null,
+    description:"Timeless aviator sunglasses with gradient mineral lenses and a slim metal double-bridge frame. UV400 protection and a lightweight construction make these a travel-ready essential.",
+    sizes:["One Size"], colors:["Gold/Green","Silver/Blue","Black/Smoke"],
+    images:["https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:267, inStock:true, tags:[], featured:false
+  },
 
-    <div class="app-card">
-      <div class="app-card-header">
-        GenAI eCommerce Document Automation
-        <span class="badge">2026 Planned</span>
-      </div>
-      <div class="app-card-body">
-        <div class="app-section-title">Solution</div>
-        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">A production-grade pipeline that extracts and validates data from eCommerce documents (PDFs/forms) and converts it into trusted structured outputs. Governed GPT workflows that transform extracted content into narratives. Optional SAP-native path to extract top product features and translate to French (FR) and Spanish (ES).</p>
-        <div class="app-section-title">Tools</div>
-        <ul class="app-list">
-          <li>Azure AI Document Intelligence</li>
-          <li>Azure OpenAI / OpenAI Studio, Prompt Flow SDK</li>
-          <li>SAP BTP Tools</li>
-        </ul>
-        <div class="app-section-title">Benefits</div>
-        <div class="benefit-row"><span class="benefit-label">Manual effort reduction</span><span class="benefit-val">10–15 mins/config</span></div>
-        <div class="benefit-row"><span class="benefit-label">Higher accuracy &amp; consistency</span><span class="benefit-val">80%</span></div>
-        <div class="benefit-row"><span class="benefit-label">Faster cycle time</span><span class="benefit-val">Reduced rework</span></div>
-      </div>
-    </div>
+  /* ── SALE (15) ────────────────────────────────────────────────── */
+  {
+    id:"prod_091", name:"Slip Satin Midi Dress", brand:"Only",
+    category:"sale", subcategory:"dresses",
+    price:47.99, originalPrice:79.99, discount:40,
+    description:"A luxe slip midi dress in liquid satin with thin adjustable straps and a bias-cut skirt. The minimalist silhouette drapes beautifully and works from poolside to evening cocktails.",
+    sizes:["XS","S","M","L","XL"], colors:["Champagne","Black","Emerald"],
+    images:["https://images.unsplash.com/photo-1496747679638-9f48b9f20f82?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1502716119720-aecd46570e47?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:97, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_092", name:"Oxford Stripe Shirt", brand:"H&M",
+    category:"sale", subcategory:"shirts",
+    price:22.99, originalPrice:39.99, discount:43,
+    description:"A freshly striped Oxford shirt in 100% cotton with a classic button-down collar and a relaxed regular fit. An eternal capsule piece at an unmissable price.",
+    sizes:["XS","S","M","L","XL"], colors:["Blue/White","Pink/White","Red/White"],
+    images:["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:145, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_093", name:"Wool Blend Camel Coat", brand:"Mango",
+    category:"sale", subcategory:"coats",
+    price:139.99, originalPrice:229.99, discount:39,
+    description:"A sharp single-breasted wool-blend coat in a warm camel tone with wide lapels and a belted waist. A perennial investment piece now offered at an exceptional sale price.",
+    sizes:["XS","S","M","L","XL"], colors:["Camel","Chocolate"],
+    images:["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop"],
+    rating:4.7, reviews:78, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_094", name:"Suede Ankle Boots", brand:"Whistles",
+    category:"sale", subcategory:"boots",
+    price:99.99, originalPrice:169.99, discount:41,
+    description:"Versatile ankle boots in supple suede with a pointed toe and a slender 6cm heel. The inside zip entry and cushioned insole make these as comfortable as they are stylish.",
+    sizes:["36","37","38","39","40","41"], colors:["Tan","Black"],
+    images:["https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:112, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_095", name:"Leather Tote Bag", brand:"AllSaints",
+    category:"sale", subcategory:"totes",
+    price:109.99, originalPrice:179.99, discount:39,
+    description:"A roomy everyday tote in pebbled leather with an unstructured silhouette, two open compartments, and inner slip pockets. Durable and endlessly practical with a worn-in charm.",
+    sizes:["One Size"], colors:["Black","Tan"],
+    images:["https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:89, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_096", name:"Slim Stretch Jeans", brand:"Weekday",
+    category:"sale", subcategory:"jeans",
+    price:29.99, originalPrice:49.99, discount:40,
+    description:"Slim-fit jeans in a comfortable stretch denim blend with a mid-rise waistband and tapered leg. An everyday wardrobe staple in a season's best-selling washes.",
+    sizes:["28","30","32","34","36"], colors:["Light Wash","Black","Dark Indigo"],
+    images:["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617137968427-85924e38c539?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:234, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_097", name:"Merino Crew Neck Jumper", brand:"Uniqlo",
+    category:"sale", subcategory:"knitwear",
+    price:39.99, originalPrice:69.99, discount:43,
+    description:"A fine-knit crew neck jumper in 100% extra-fine merino wool with ribbed trims. Supremely soft and seasonlessly versatile at a clearance price that rewards quick decision-making.",
+    sizes:["XS","S","M","L","XL"], colors:["Navy","Grey","Burgundy"],
+    images:["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop"],
+    rating:4.6, reviews:312, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_098", name:"Cashmere Wrap Scarf", brand:"Arket",
+    category:"sale", subcategory:"scarves",
+    price:59.99, originalPrice:99.99, discount:40,
+    description:"A generously proportioned cashmere wrap scarf in a herringbone weave with clean fringed edges. Available in three heritage colourways at a significantly reduced end-of-season price.",
+    sizes:["One Size"], colors:["Camel","Grey Herringbone","Ivory"],
+    images:["https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"],
+    rating:4.8, reviews:54, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_099", name:"Flared Wide-Leg Jeans", brand:"Monki",
+    category:"sale", subcategory:"jeans",
+    price:24.99, originalPrice:44.99, discount:44,
+    description:"On-trend wide flare jeans in a mid-weight cotton denim with a high-rise waistband and dramatically flared hem. The vintage-inspired silhouette is back and better than ever.",
+    sizes:["XS","S","M","L","XL"], colors:["Mid Wash","Black","Dark Wash"],
+    images:["https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1539008835657-9e8e5f8e3a0f?w=600&h=800&fit=crop"],
+    rating:4.2, reviews:167, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_100", name:"Linen Relaxed Blazer", brand:"COS",
+    category:"sale", subcategory:"jackets",
+    price:89.99, originalPrice:149.99, discount:40,
+    description:"A deconstructed linen blazer with a relaxed unpadded shoulder and open chest pocket. The lightweight construction and clean silhouette make this the ideal warm-weather tailoring piece.",
+    sizes:["XS","S","M","L","XL"], colors:["Sand","Navy","White"],
+    images:["https://images.unsplash.com/photo-1551537073-f73e3a6bee56?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1617952236317-0bd127407984?w=600&h=800&fit=crop"],
+    rating:4.5, reviews:88, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_101", name:"Pleated Palazzo Trousers", brand:"Selected Femme",
+    category:"sale", subcategory:"trousers",
+    price:44.99, originalPrice:79.99, discount:44,
+    description:"Effortlessly chic palazzo trousers with knife-pleat detailing and a high elasticated waistband. The fluid drape and wide leg create a graceful silhouette that works for day or night.",
+    sizes:["XS","S","M","L","XL"], colors:["Black","Sage","Cobalt"],
+    images:["https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:73, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_102", name:"Leather Crossbody Bag", brand:"Mango",
+    category:"sale", subcategory:"crossbodies",
+    price:54.99, originalPrice:99.99, discount:45,
+    description:"A compact crossbody bag in smooth faux leather with a zip-top closure and a long adjustable strap. An accessible everyday companion at a significant end-of-season saving.",
+    sizes:["One Size"], colors:["Black","Tan","Nude"],
+    images:["https://images.unsplash.com/photo-1548036161-8c2a7ed35d93?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1566150905458-1bf1a9c17b62?w=600&h=800&fit=crop"],
+    rating:4.3, reviews:156, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_103", name:"Canvas Flatform Trainers", brand:"Vero Moda",
+    category:"sale", subcategory:"sneakers",
+    price:34.99, originalPrice:59.99, discount:42,
+    description:"Chunky flatform trainers in canvas with a vulcanised platform sole and lace-up front. The oversized silhouette and clean colourways give these a directional street-style edge.",
+    sizes:["36","37","38","39","40","41"], colors:["White","Black","Ecru"],
+    images:["https://images.unsplash.com/photo-1543163521-1bf539c55dd6?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&h=800&fit=crop"],
+    rating:4.1, reviews:98, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_104", name:"Satin Bomber Jacket", brand:"Zara",
+    category:"sale", subcategory:"jackets",
+    price:59.99, originalPrice:99.99, discount:40,
+    description:"A glossy satin bomber jacket with ribbed trim, a zip closure, and a back embroidered design. A bold statement piece at an unmissable sale-season price.",
+    sizes:["XS","S","M","L","XL"], colors:["Black","Champagne","Cherry"],
+    images:["https://images.unsplash.com/photo-1617952236317-0bd127407984?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1551537073-f73e3a6bee56?w=600&h=800&fit=crop"],
+    rating:4.2, reviews:124, inStock:true, tags:["sale"], featured:false
+  },
+  {
+    id:"prod_105", name:"Chunky Gold Chain Necklace", brand:"& Other Stories",
+    category:"sale", subcategory:"jewellery",
+    price:22.99, originalPrice:44.99, discount:49,
+    description:"A bold statement necklace in chunky gold-plated chain links with a secure lobster-claw clasp. Add instant edge to any outfit — now available at half price in the sale.",
+    sizes:["One Size"], colors:["Gold","Silver"],
+    images:["https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&h=800&fit=crop"],
+    rating:4.4, reviews:189, inStock:true, tags:["sale"], featured:false
+  }
+];
 
-    <div class="app-card">
-      <div class="app-card-header">
-        GenAI: The New Productivity Layer
-        <span class="badge">Strategic</span>
-      </div>
-      <div class="app-card-body">
-        <div class="app-section-title">Our Aim</div>
-        <p style="font-size:0.8rem;color:var(--cat-gray);line-height:1.6;margin-bottom:12px;">Leverage GenAI tools across two broad verticals: Business Value and Operational Value — touching People, Process, and Platform.</p>
-        <div class="app-section-title">Business Value Examples</div>
-        <ul class="app-list">
-          <li>Implementing business solutions leveraging AI/GenAI as part of solutioning</li>
-          <li>Creating uniform landscape utilizing GenAI</li>
-          <li>Building scalable and future-ready solutions with GenAI</li>
-        </ul>
-        <div class="app-section-title">Operational Value Examples</div>
-        <ul class="app-list">
-          <li>Leverage GenAI to generate code for on-going initiatives</li>
-          <li>Utilize Sidekick, PO Assist (Deloitte proprietary) for functional user story generation</li>
-          <li>Automated test coverage, defect density, escaped defects and rework rate</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
+/* ── Filter / Sort Helpers ───────────────────────────────────────── */
+function filterProducts(filters) {
+  if (!filters) return window.PRODUCTS.slice();
+  return window.PRODUCTS.filter(p => {
+    if (filters.category    && p.category    !== filters.category)    return false;
+    if (filters.subcategory && p.subcategory !== filters.subcategory) return false;
+    if (filters.minPrice    != null && p.price < filters.minPrice)    return false;
+    if (filters.maxPrice    != null && p.price > filters.maxPrice)    return false;
+    if (filters.minRating   != null && p.rating < filters.minRating)  return false;
+    if (filters.inStockOnly && !p.inStock)                            return false;
+    if (filters.sizes && filters.sizes.length) {
+      if (!filters.sizes.some(s => p.sizes.includes(s))) return false;
+    }
+    if (filters.colors && filters.colors.length) {
+      if (!filters.colors.some(c => p.colors.includes(c))) return false;
+    }
+    if (filters.brands && filters.brands.length) {
+      if (!filters.brands.includes(p.brand)) return false;
+    }
+    if (filters.tags && filters.tags.length) {
+      if (!filters.tags.some(t => p.tags.includes(t))) return false;
+    }
+    if (filters.searchQuery) {
+      const q = filters.searchQuery.toLowerCase();
+      const hay = [p.name,p.brand,p.category,p.subcategory,p.description,p.tags.join(' ')].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
 
-<!-- FOOTER -->
-<footer>
-  <div>
-    <div class="brand">Wisdom Test</div>
-    <div class="copy" style="margin-top:4px;">AI &amp; Automation Roadmap 2026 · February 2026</div>
-  </div>
-  <div class="copy" style="text-align:right;">
-    Delivery Excellence · Business Optimization<br>
-    Confidential — For Executive Leadership Review
-  </div>
-</footer>
+function searchProducts(query) {
+  if (!query) return window.PRODUCTS.slice();
+  const q = query.toLowerCase();
+  return window.PRODUCTS.filter(p => {
+    const hay = [p.name,p.brand,p.category,p.subcategory,p.description,p.tags.join(' ')].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+}
 
-</body>
-</html>
+function sortProducts(products, sortKey) {
+  const arr = products.slice();
+  switch (sortKey) {
+    case 'price_asc':  return arr.sort((a,b) => a.price - b.price);
+    case 'price_desc': return arr.sort((a,b) => b.price - a.price);
+    case 'newest':     return arr.sort((a,b) => a.id.localeCompare(b.id));
+    case 'rating':     return arr.sort((a,b) => b.rating - a.rating);
+    case 'recommended':
+    default:
+      return arr.sort((a,b) => {
+        if (b.featured !== a.featured) return b.featured ? 1 : -1;
+        return b.rating - a.rating;
+      });
+  }
+}
+</script>
+
