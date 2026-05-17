@@ -2296,3 +2296,733 @@ function sortProducts(products, sortKey) {
 }
 </script>
 
+
+<script>
+/* ── Cart Helpers ───────────────────────────────────────────────── */
+function addToCart(productId, size, color, qty) {
+  const p = window.PRODUCTS.find(x => x.id === productId);
+  if (!p) return;
+  const existing = window.CART.find(x => x.productId === productId && x.size === size && x.color === color);
+  if (existing) {
+    existing.quantity += (qty || 1);
+  } else {
+    window.CART.push({ productId, name: p.name, brand: p.brand, image: p.images[0], size, color, quantity: qty || 1, price: p.price });
+  }
+}
+
+function removeFromCart(productId, size, color) {
+  const idx = window.CART.findIndex(x => x.productId === productId && x.size === size && x.color === color);
+  if (idx > -1) window.CART.splice(idx, 1);
+}
+
+function getCartTotal() {
+  return window.CART.reduce((sum, x) => sum + x.price * x.quantity, 0);
+}
+
+function updateCartBadge() {
+  const badge = document.getElementById('cart-badge');
+  if (!badge) return;
+  const count = window.CART.reduce((a, x) => a + x.quantity, 0);
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'flex' : 'none';
+  if (count > 0) { badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce'); }
+}
+
+/* ── renderHome ─────────────────────────────────────────────────── */
+function renderHome() {
+  const featured = window.PRODUCTS.filter(p => p.featured === true).slice(0, 8);
+  const trending = window.PRODUCTS.filter(p => p.tags && p.tags.includes('trending')).slice(0, 8);
+
+  function productCardHTML(p, width) {
+    const wStyle = width ? `style="width:${width}px;flex-shrink:0;"` : '';
+    const saleBadge = p.discount ? `<span class="badge badge-sale">Sale</span>` : '';
+    const newBadge = p.tags.includes('new') ? `<span class="badge badge-new">New</span>` : '';
+    const img2 = p.images[1] ? `<img class="img-hover" src="${p.images[1]}" alt="" loading="lazy"/>` : '';
+    return `
+      <div class="product-card" ${wStyle} onclick="navigate('#/product/${p.id}')">
+        <div class="product-card-image-wrap" style="${width ? `width:${width}px;height:${Math.round(width*4/3)}px;` : ''}">
+          <img class="img-main" src="${p.images[0]}" alt="${p.name}" loading="lazy"/>
+          ${img2}
+          <div class="product-badges">${saleBadge}${newBadge}</div>
+          <div class="product-card-actions">
+            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();addToCart('${p.id}','${p.sizes[0]}','${p.colors[0]}',1);showToast('Added to bag!');updateCartBadge();">Add to Bag</button>
+            <button class="product-card-wishlist" onclick="event.stopPropagation();this.textContent=this.textContent==='🤍'?'❤️':'🤍';" title="Wishlist">🤍</button>
+          </div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-brand">${p.brand}</div>
+          <div class="product-card-name">${p.name}</div>
+          <div class="product-card-price">
+            ${p.discount ? `<span class="price-current price-sale">${formatPrice(p.price)}</span><span class="price-original">${formatPrice(p.originalPrice)}</span>` : `<span class="price-current">${formatPrice(p.price)}</span>`}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('app-content').innerHTML = `
+    <!-- SECTION 1: HERO -->
+    <section style="position:relative;height:90vh;min-height:500px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:url('https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600') center/cover no-repeat;">
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);"></div>
+      <div style="position:relative;z-index:1;text-align:center;padding:0 24px;max-width:700px;">
+        <h1 style="font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,64px);color:#fff;margin-bottom:16px;line-height:1.1;">The New Collection</h1>
+        <p style="font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:36px;">Curated styles for every story</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn" style="border:2px solid #fff;color:#fff;background:transparent;transition:all 200ms;" onmouseover="this.style.background='var(--color-gold)';this.style.borderColor='var(--color-gold)';" onmouseout="this.style.background='transparent';this.style.borderColor='#fff';" onclick="navigate('#/category/women')">Shop Women</button>
+          <button class="btn" style="border:2px solid #fff;color:#fff;background:transparent;transition:all 200ms;" onmouseover="this.style.background='var(--color-gold)';this.style.borderColor='var(--color-gold)';" onmouseout="this.style.background='transparent';this.style.borderColor='#fff';" onclick="navigate('#/category/men')">Shop Men</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: CATEGORY GRID -->
+    <section style="padding:72px 24px;">
+      <div style="max-width:1200px;margin:0 auto;">
+        <h2 style="font-family:'Playfair Display',serif;text-align:center;margin-bottom:40px;">Shop by Category</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;" id="cat-grid">
+          ${[
+            {label:'Women', slug:'women', img:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600'},
+            {label:'Men',   slug:'men',   img:'https://images.unsplash.com/photo-1480455624313-e29b44bbfde1?w=600'},
+            {label:'Shoes', slug:'shoes', img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600'},
+            {label:'Bags',  slug:'bags',  img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600'},
+            {label:'Kids',  slug:'kids',  img:'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?w=600'},
+            {label:'Sale',  slug:'sale',  img:'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600'},
+          ].map(c => `
+            <div onclick="navigate('#/category/${c.slug}')" style="position:relative;aspect-ratio:4/5;overflow:hidden;border-radius:4px;cursor:pointer;" onmouseover="this.querySelector('img').style.transform='scale(1.05)'" onmouseout="this.querySelector('img').style.transform='scale(1)'">
+              <img src="${c.img}" alt="${c.label}" style="width:100%;height:100%;object-fit:cover;transition:transform 400ms ease;" loading="lazy"/>
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 55%);"></div>
+              <span style="position:absolute;bottom:20px;left:20px;color:#fff;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:500;">${c.label}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: NEW ARRIVALS -->
+    <section style="padding:0 0 72px;background:var(--color-bg);">
+      <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;">
+          <h2 style="font-family:'Playfair Display',serif;">New Arrivals</h2>
+          <a href="#/category/women" style="font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-gold);text-decoration:none;">View All →</a>
+        </div>
+        <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;scrollbar-width:none;" class="hide-scrollbar">
+          ${featured.map(p => productCardHTML(p, 220)).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: PROMO BANNER -->
+    <section style="min-height:400px;display:flex;overflow:hidden;" id="promo-banner">
+      <div style="flex:1;background:#f5f0e8;display:flex;flex-direction:column;justify-content:center;padding:60px 48px;">
+        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);margin-bottom:16px;">Up to 50% off</h2>
+        <p style="font-size:1rem;color:#555;margin-bottom:32px;max-width:340px;">Refresh your wardrobe this season with our biggest sale yet.</p>
+        <div><button class="btn btn-primary" onclick="navigate('#/sale')">Shop the Sale</button></div>
+      </div>
+      <div style="flex:1;min-height:250px;overflow:hidden;" class="hide-mobile">
+        <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600" alt="Sale" style="width:100%;height:100%;object-fit:cover;"/>
+      </div>
+    </section>
+
+    <!-- SECTION 5: TRENDING NOW -->
+    <section style="padding:72px 0;">
+      <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;">
+          <h2 style="font-family:'Playfair Display',serif;">Trending Now</h2>
+          <a href="#/category/women" style="font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-gold);text-decoration:none;">View All →</a>
+        </div>
+        <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;scrollbar-width:none;" class="hide-scrollbar">
+          ${trending.map(p => productCardHTML(p, 220)).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: LOOKBOOK STRIP -->
+    <section style="padding:0 24px 72px;">
+      <div style="max-width:1200px;margin:0 auto;">
+        <h2 style="font-family:'Playfair Display',serif;margin-bottom:28px;">The Edit</h2>
+        <div style="display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:12px;height:600px;">
+          <div style="grid-row:1/3;position:relative;overflow:hidden;border-radius:4px;cursor:pointer;" onclick="navigate('#/category/women')">
+            <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600" alt="The Autumn Edit" style="width:100%;height:100%;object-fit:cover;transition:transform 500ms;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'"/>
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5) 0%,transparent 60%);"></div>
+            <div style="position:absolute;bottom:28px;left:28px;">
+              <p style="color:#fff;font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:10px;">The Autumn Edit</p>
+              <a href="#/category/women" style="color:var(--color-gold);font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;" onclick="event.stopPropagation()">Discover →</a>
+            </div>
+          </div>
+          <div style="position:relative;overflow:hidden;border-radius:4px;">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600" alt="" style="width:100%;height:100%;object-fit:cover;transition:transform 500ms;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'"/>
+          </div>
+          <div style="position:relative;overflow:hidden;border-radius:4px;">
+            <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600" alt="" style="width:100%;height:100%;object-fit:cover;transition:transform 500ms;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'"/>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: TESTIMONIALS -->
+    <section style="padding:72px 24px;background:#f9f7f4;">
+      <div style="max-width:1000px;margin:0 auto;">
+        <h2 style="font-family:'Playfair Display',serif;text-align:center;margin-bottom:40px;">What our customers say</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+          ${[
+            {name:'Sarah M.', stars:5, text:'Absolutely love the quality. The fabric feels luxurious and the fit is perfect. Will definitely order again!'},
+            {name:'James T.', stars:4, text:'Great selection and super fast delivery. The packaging felt premium too. My go-to for wardrobe updates.'},
+            {name:'Priya L.', stars:5, text:'The dress I ordered looked even better in person. Sizing was true to the guide. Highly recommend LUMINO.'},
+          ].map(r => `
+            <div style="background:#fff;border-radius:8px;box-shadow:0 2px 16px rgba(0,0,0,0.07);padding:28px;">
+              <div style="color:var(--color-gold);font-size:1.1rem;margin-bottom:12px;">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+              <p style="font-size:0.9rem;color:#444;line-height:1.6;margin-bottom:16px;">"${r.text}"</p>
+              <p style="font-size:0.8rem;font-weight:600;color:#888;letter-spacing:0.05em;">${r.name}</p>
+            </div>`).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8: PRESS STRIP -->
+    <section style="padding:32px 24px;border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border);">
+      <p style="text-align:center;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:#bbb;margin-bottom:20px;">As Seen In</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap;">
+        ${['VOGUE','ELLE','HARPER\'S BAZAAR','GQ','COSMOPOLITAN'].map(b => `<span style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:600;">${b}</span>`).join('')}
+      </div>
+    </section>
+  `;
+
+  /* mobile cat grid fix */
+  if (window.innerWidth < 768) {
+    const g = document.getElementById('cat-grid');
+    if (g) g.style.gridTemplateColumns = 'repeat(2,1fr)';
+  }
+  /* mobile promo stack */
+  if (window.innerWidth < 768) {
+    const pb = document.getElementById('promo-banner');
+    if (pb) pb.style.flexDirection = 'column';
+  }
+}
+
+/* ── renderPLP ──────────────────────────────────────────────────── */
+function renderPLP(slug) {
+  const content = document.getElementById('app-content');
+  const isSale = slug === 'sale';
+  const catLabel = slug.charAt(0).toUpperCase() + slug.slice(1);
+
+  let allProducts = window.PRODUCTS.filter(p => {
+    if (isSale) return p.category === 'sale' || (p.discount && p.discount > 0);
+    return p.category === slug || p.subcategory === slug || p.id.includes(slug);
+  });
+  if (!allProducts.length) allProducts = window.PRODUCTS.filter(p => p.category === slug);
+  if (!allProducts.length) allProducts = window.PRODUCTS.slice(0, 24);
+
+  const uniqueSizes = [...new Set(allProducts.flatMap(p => p.sizes))];
+  const uniqueColors = [...new Set(allProducts.flatMap(p => p.colors))];
+  const allBrands = [...new Set(allProducts.map(p => p.brand))];
+
+  let filters = { minPrice: 0, maxPrice: 500, sizes: [], colors: [], brands: [], minRating: 0, inStockOnly: false };
+  let sortKey = 'recommended';
+  let offset = 0;
+  const PAGE = 24;
+
+  const colorMap = { Black:'#1a1a1a', White:'#f8f8f8', Navy:'#001f5b', Red:'#c0392b', Blue:'#2980b9', Green:'#27ae60', Beige:'#d4b896', Camel:'#c19a6b', Grey:'#888', Gray:'#888', Pink:'#e91e8c', Ivory:'#fffff0', Cream:'#fffdd0', Brown:'#795548', Orange:'#e67e22', Yellow:'#f1c40f', Purple:'#9b59b6', Nude:'#e8c99a', Sage:'#87a878', Khaki:'#8d7a4f', Rust:'#b7410e', Cognac:'#9a4b0f', Tan:'#d2b48c', Gold:'#c8a96e', Silver:'#c0c0c0', Charcoal:'#36454f', Olive:'#808000', Sand:'#c2b280', Ecru:'#c2b280', Chocolate:'#7b3f00', Emerald:'#2ecc71', Cobalt:'#0047ab', Taupe:'#483c32', Coral:'#ff6b6b', Floral:'#e91e8c', Denim:'#1560bd', Multi:'linear-gradient(135deg,#e91e8c,#3498db,#2ecc71)', Burgundy:'#800020', Blush:'#de5d83', Champagne:'#f7e7ce', Midnight:'#191970', Houndstooth:'#333', Slate:'#708090', Stone:'#928f86', Forest:'#228b22', Marl:'#aaa', Oatmeal:'#e4d5b7', Terracotta:'#e2725b', Natural:'#d4c5a9' };
+
+  function getColor(c) {
+    for (const [k,v] of Object.entries(colorMap)) { if (c.toLowerCase().includes(k.toLowerCase())) return v; }
+    return '#ccc';
+  }
+
+  function starsHTML(rating) {
+    const r = Math.round(rating);
+    return '★'.repeat(r) + '☆'.repeat(5 - r);
+  }
+
+  function applyAndRender() {
+    let result = allProducts.filter(p => {
+      if (p.price < filters.minPrice || p.price > filters.maxPrice) return false;
+      if (filters.sizes.length && !filters.sizes.some(s => p.sizes.includes(s))) return false;
+      if (filters.colors.length && !filters.colors.some(c => p.colors.some(pc => pc.toLowerCase().includes(c.toLowerCase())))) return false;
+      if (filters.brands.length && !filters.brands.includes(p.brand)) return false;
+      if (filters.minRating && p.rating < filters.minRating) return false;
+      if (filters.inStockOnly && !p.inStock) return false;
+      return true;
+    });
+    result = sortProducts(result, sortKey);
+    const page = result.slice(0, offset + PAGE);
+
+    const grid = document.getElementById('plp-grid');
+    const countEl = document.getElementById('plp-count');
+    const moreBtn = document.getElementById('plp-more');
+    if (!grid) return;
+    if (countEl) countEl.textContent = `Showing ${page.length} of ${result.length} products`;
+    grid.innerHTML = page.map(p => `
+      <div class="product-card" onclick="navigate('#/product/${p.id}')">
+        <div class="product-card-image-wrap">
+          <img class="img-main" src="${p.images[0]}" alt="${p.name}" loading="lazy"/>
+          ${p.images[1] ? `<img class="img-hover" src="${p.images[1]}" alt="" loading="lazy"/>` : ''}
+          <div class="product-badges">
+            ${p.discount ? `<span class="badge badge-sale">SALE</span>` : ''}
+            ${p.tags.includes('new') && !p.discount ? `<span class="badge badge-new">NEW</span>` : ''}
+          </div>
+          <button class="product-card-wishlist" style="position:absolute;top:10px;right:10px;z-index:2;" onclick="event.stopPropagation();this.textContent=this.textContent==='🤍'?'❤️':'🤍';" title="Wishlist">🤍</button>
+          <div class="product-card-actions">
+            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();addToCart('${p.id}','${p.sizes[0]}','${p.colors[0]}',1);showToast('Added to bag!');updateCartBadge();">Add to Bag</button>
+          </div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-brand">${p.brand}</div>
+          <div class="product-card-name" style="-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;">${p.name}</div>
+          <div style="color:var(--color-gold);font-size:0.75rem;">${starsHTML(p.rating)}</div>
+          <div class="product-card-price">
+            ${p.discount
+              ? `<span class="price-current price-sale">${formatPrice(p.price)}</span><span class="price-original">${formatPrice(p.originalPrice)}</span>`
+              : `<span class="price-current">${formatPrice(p.price)}</span>`}
+          </div>
+        </div>
+      </div>`).join('');
+
+    if (moreBtn) moreBtn.style.display = offset + PAGE >= result.length ? 'none' : 'block';
+  }
+
+  let showAllBrands = false;
+  function sidebarHTML() {
+    const visibleBrands = showAllBrands ? allBrands : allBrands.slice(0, 8);
+    return `
+      <div style="position:sticky;top:120px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <h3 style="font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Filters</h3>
+          <button onclick="plpClearAll()" style="font-size:0.75rem;color:var(--color-gold);background:none;border:none;cursor:pointer;text-decoration:underline;">Clear All</button>
+        </div>
+        <div style="margin-bottom:24px;">
+          <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Price Range</p>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <input type="range" id="plp-min" min="0" max="500" value="${filters.minPrice}" style="flex:1;" oninput="filters.minPrice=+this.value;document.getElementById('plp-price-label').textContent='£'+filters.minPrice+' – £'+filters.maxPrice;offset=0;applyAndRender()"/>
+            <input type="range" id="plp-max" min="0" max="500" value="${filters.maxPrice}" style="flex:1;" oninput="filters.maxPrice=+this.value;document.getElementById('plp-price-label').textContent='£'+filters.minPrice+' – £'+filters.maxPrice;offset=0;applyAndRender()"/>
+          </div>
+          <p id="plp-price-label" style="font-size:0.8rem;color:var(--color-text-muted);">£${filters.minPrice} – £${filters.maxPrice}</p>
+        </div>
+        <div style="margin-bottom:24px;">
+          <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Size</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${uniqueSizes.map(s => `<label style="cursor:pointer;"><input type="checkbox" style="display:none;" ${filters.sizes.includes(s)?'checked':''} onchange="if(this.checked){filters.sizes.push('${s}');}else{filters.sizes=filters.sizes.filter(x=>x!=='${s}');}offset=0;applyAndRender();"><span style="display:inline-block;padding:4px 10px;border:1px solid ${filters.sizes.includes(s)?'var(--color-gold)':'var(--color-border)'};border-radius:2px;font-size:0.75rem;background:${filters.sizes.includes(s)?'#fdf7ee':'#fff'};">${s}</span></label>`).join('')}
+          </div>
+        </div>
+        <div style="margin-bottom:24px;">
+          <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Color</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${uniqueColors.slice(0,12).map(c => { const sel = filters.colors.includes(c); return `<button title="${c}" onclick="if(${sel}){filters.colors=filters.colors.filter(x=>x!=='${c}');}else{filters.colors.push('${c}');}offset=0;plpRebuildSidebar();applyAndRender();" style="width:24px;height:24px;border-radius:50%;background:${getColor(c)};border:${sel?'3px solid var(--color-gold)':'2px solid rgba(0,0,0,0.12)'};cursor:pointer;box-sizing:border-box;transition:border 150ms;" title="${c}"></button>`; }).join('')}
+          </div>
+        </div>
+        <div style="margin-bottom:24px;">
+          <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Brand</p>
+          ${visibleBrands.map(b => `<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;font-size:0.83rem;"><input type="checkbox" ${filters.brands.includes(b)?'checked':''} onchange="if(this.checked){filters.brands.push('${b}');}else{filters.brands=filters.brands.filter(x=>x!=='${b}');}offset=0;applyAndRender();"> ${b}</label>`).join('')}
+          ${allBrands.length > 8 ? `<button onclick="showAllBrands=!showAllBrands;plpRebuildSidebar();" style="font-size:0.75rem;color:var(--color-gold);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:4px;">${showAllBrands?'Show less':'Show more ('+( allBrands.length-8)+')'}</button>` : ''}
+        </div>
+        <div style="margin-bottom:24px;">
+          <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Rating</p>
+          ${[{v:4,l:'4★ & above'},{v:3,l:'3★ & above'},{v:0,l:'All'}].map(r=>`<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;font-size:0.83rem;"><input type="radio" name="plp-rating" ${filters.minRating===r.v?'checked':''} onchange="filters.minRating=${r.v};offset=0;applyAndRender();"> ${r.l}</label>`).join('')}
+        </div>
+        <div style="margin-bottom:24px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.83rem;"><input type="checkbox" ${filters.inStockOnly?'checked':''} onchange="filters.inStockOnly=this.checked;offset=0;applyAndRender();"> In Stock Only</label>
+        </div>
+      </div>`;
+  }
+
+  window.plpRebuildSidebar = function() {
+    const sb = document.getElementById('plp-sidebar');
+    if (sb) sb.innerHTML = sidebarHTML();
+  };
+  window.plpClearAll = function() {
+    filters = { minPrice: 0, maxPrice: 500, sizes: [], colors: [], brands: [], minRating: 0, inStockOnly: false };
+    offset = 0;
+    plpRebuildSidebar();
+    applyAndRender();
+  };
+
+  content.innerHTML = `
+    <div style="max-width:1200px;margin:0 auto;padding:24px 24px 60px;">
+      <nav style="font-size:0.78rem;color:var(--color-text-muted);margin-bottom:16px;">
+        <a href="#/" style="color:var(--color-text-muted);text-decoration:none;" onmouseover="this.style.color='var(--color-gold)'" onmouseout="this.style.color='var(--color-text-muted)'">Home</a>
+        <span style="margin:0 8px;">›</span>
+        <span>${catLabel}</span>
+      </nav>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;">
+        <h1 style="font-family:'Playfair Display',serif;font-size:1.8rem;">${catLabel}</h1>
+        <span style="background:var(--color-primary);color:#fff;font-size:0.7rem;font-weight:600;padding:3px 10px;border-radius:12px;">${allProducts.length}</span>
+      </div>
+
+      <!-- Mobile filter btn -->
+      <div class="show-mobile-only" style="margin-bottom:16px;">
+        <button class="btn btn-outlined btn-sm" onclick="document.getElementById('plp-mobile-filter').style.display='flex'">⚙ Filter & Sort</button>
+      </div>
+
+      <!-- Mobile filter modal -->
+      <div id="plp-mobile-filter" style="display:none;position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,0.5);align-items:flex-end;">
+        <div style="background:#fff;width:100%;max-height:80vh;overflow-y:auto;border-radius:16px 16px 0 0;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <strong>Filters</strong>
+            <button onclick="document.getElementById('plp-mobile-filter').style.display='none'" style="font-size:1.2rem;background:none;border:none;cursor:pointer;">×</button>
+          </div>
+          <div id="plp-mobile-sidebar"></div>
+          <button class="btn btn-primary btn-full" style="margin-top:16px;" onclick="document.getElementById('plp-mobile-filter').style.display='none'">View Results</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:32px;align-items:flex-start;">
+        <!-- Sidebar -->
+        <div id="plp-sidebar" class="hide-mobile" style="width:240px;flex-shrink:0;"></div>
+
+        <!-- Main -->
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+            <span id="plp-count" style="font-size:0.83rem;color:var(--color-text-muted);"></span>
+            <select onchange="sortKey=this.value;offset=0;applyAndRender();" style="padding:8px 12px;border:1px solid var(--color-border);border-radius:2px;font-size:0.83rem;background:#fff;cursor:pointer;">
+              <option value="recommended">Recommended</option>
+              <option value="price_asc">Price: Low–High</option>
+              <option value="price_desc">Price: High–Low</option>
+              <option value="newest">Newest</option>
+              <option value="rating">Rating</option>
+            </select>
+          </div>
+          <div id="plp-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;"></div>
+          <div style="text-align:center;margin-top:40px;">
+            <button id="plp-more" class="btn btn-outlined" onclick="offset+=24;applyAndRender();">Load More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  /* Inject sidebar */
+  document.getElementById('plp-sidebar').innerHTML = sidebarHTML();
+  /* Also inject into mobile modal */
+  const mobSb = document.getElementById('plp-mobile-sidebar');
+  if (mobSb) mobSb.innerHTML = sidebarHTML();
+
+  /* Mobile grid = 2 col */
+  if (window.innerWidth <= 1024) {
+    const g = document.getElementById('plp-grid');
+    if (g) g.style.gridTemplateColumns = window.innerWidth < 768 ? 'repeat(2,1fr)' : 'repeat(2,1fr)';
+  }
+
+  applyAndRender();
+}
+
+/* ── renderPDP ──────────────────────────────────────────────────── */
+function renderPDP(productId) {
+  const content = document.getElementById('app-content');
+  const p = window.PRODUCTS.find(x => x.id === productId);
+
+  if (!p) {
+    content.innerHTML = `<div class="container section" style="text-align:center;"><h2>Product not found</h2><p style="margin:16px 0;">Sorry, we couldn't find that product.</p><button class="btn btn-primary" onclick="navigate('#/')">Back to Home</button></div>`;
+    return;
+  }
+
+  const colorMap = { Black:'#1a1a1a', White:'#f8f8f8', Navy:'#001f5b', Red:'#c0392b', Blue:'#2980b9', Green:'#27ae60', Beige:'#d4b896', Camel:'#c19a6b', Grey:'#888', Gray:'#888', Pink:'#e91e8c', Ivory:'#fffff0', Cream:'#fffdd0', Brown:'#795548', Orange:'#e67e22', Yellow:'#f1c40f', Purple:'#9b59b6', Nude:'#e8c99a', Sage:'#87a878', Khaki:'#8d7a4f', Rust:'#b7410e', Cognac:'#9a4b0f', Tan:'#d2b48c', Gold:'#c8a96e', Silver:'#c0c0c0', Charcoal:'#36454f', Olive:'#808000', Sand:'#c2b280', Ecru:'#c2b280', Chocolate:'#7b3f00', Emerald:'#2ecc71', Cobalt:'#0047ab', Taupe:'#483c32', Coral:'#ff6b6b', Denim:'#1560bd', Burgundy:'#800020', Blush:'#de5d83', Champagne:'#f7e7ce', Midnight:'#191970', Oatmeal:'#e4d5b7', Terracotta:'#e2725b', Natural:'#d4c5a9', Stone:'#928f86', Forest:'#228b22' };
+  function getColor(c) { for (const [k,v] of Object.entries(colorMap)) { if (c.toLowerCase().includes(k.toLowerCase())) return v; } return '#ccc'; }
+
+  let selectedImg = 0;
+  let selectedSize = '';
+  let selectedColor = p.colors[0];
+  let qty = 1;
+  let wishlist = false;
+
+  const related = window.PRODUCTS.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
+  const alsoViewed = window.PRODUCTS.filter(x => x.id !== p.id && x.category !== p.category).slice(0, 4);
+
+  /* Deterministic reviews from productId */
+  const reviewerNames = ['Sophie A.','James W.','Elena K.','Marcus T.','Priya S.','David L.','Natalie B.','Ravi M.','Claire F.','Tom H.'];
+  const reviewTexts = [
+    'Absolutely stunning piece. The quality exceeded my expectations and the fit was perfect.',
+    'Great product, fast shipping. The colour is exactly as shown in the photos.',
+    'I bought this as a gift and the recipient loved it. Beautifully packaged too.',
+    'Wore this to an event and received so many compliments. Sizing runs true.',
+    'Love the material — it feels premium and looks incredibly chic in person.',
+    'Exactly what I was looking for. Clean design and great attention to detail.',
+    'The construction is excellent. You can tell it\'s made to last.',
+    'Ordered two and would happily order again. LUMINO never disappoints.',
+    'Brilliant value for quality. Better than anything I\'ve found on the high street.',
+    'Fits beautifully and the colour is rich and vibrant. Very pleased!'
+  ];
+  const seed = parseInt(productId.replace(/\D/g,''), 10) || 0;
+  const reviewSubset = [0,1,2].map(i => ({
+    name: reviewerNames[(seed + i) % reviewerNames.length],
+    stars: Math.min(5, Math.max(3, Math.round(p.rating) - (i === 1 ? 1 : 0))),
+    text: reviewTexts[(seed + i * 3) % reviewTexts.length]
+  }));
+
+  /* Accordion state */
+  const accordions = [
+    { title:'Product Details', content:`<ul style="padding-left:18px;font-size:0.875rem;line-height:2;color:#555;"><li>Material: ${p.category==='shoes'?'Premium leather / textile upper':'100% natural fibres blend'}</li><li>Care: ${p.category==='bags'?'Wipe clean with damp cloth':'Machine wash at 30°C, do not tumble dry'}</li><li>Origin: Ethically produced in Portugal</li><li>Sustainability: Made with responsibly sourced materials</li></ul>` },
+    { title:'Size & Fit', content:`<p style="font-size:0.875rem;line-height:1.7;color:#555;">Model is 5'9" and wears size S/M. We recommend sizing up if between sizes. This style has a ${p.subcategory==='coats'||p.subcategory==='jackets'?'relaxed, oversized':'regular'} fit.</p>` },
+    { title:'Delivery & Returns', content:`<p style="font-size:0.875rem;line-height:1.7;color:#555;">Free standard delivery on orders over £50. Express delivery from £9.99 (1-2 business days). Standard delivery 3-5 business days. Free returns within 30 days — just book a collection or drop off at your nearest post office.</p>` },
+    { title:'Care Instructions', content:`<p style="font-size:0.875rem;line-height:1.7;color:#555;">🫧 ${p.category==='bags'?'Wipe with a soft damp cloth. Avoid prolonged exposure to moisture.':'Gentle machine wash at 30°C.'} ♻️ Lay flat to dry. Do not bleach. Iron on low heat if needed.</p>` },
+  ];
+
+  function renderPDPInner() {
+    function starsHTML(r) { const n=Math.round(r); return '★'.repeat(n)+'☆'.repeat(5-n); }
+
+    const ratingDist = [5,4,3,2,1].map(s => ({
+      s,
+      pct: s === 5 ? Math.round(p.reviews * 0.6) :
+           s === 4 ? Math.round(p.reviews * 0.25) :
+           s === 3 ? Math.round(p.reviews * 0.1) :
+           s === 2 ? Math.round(p.reviews * 0.03) :
+                     Math.round(p.reviews * 0.02)
+    }));
+
+    function productThumbHTML(q) {
+      return `<div style="width:220px;flex-shrink:0;cursor:pointer;" onclick="navigate('#/product/${q.id}')">
+        <div style="aspect-ratio:3/4;overflow:hidden;border-radius:2px;background:#f0eeea;">
+          <img src="${q.images[0]}" alt="${q.name}" style="width:100%;height:100%;object-fit:cover;transition:transform 400ms;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'" loading="lazy"/>
+        </div>
+        <div style="padding:10px 4px 0;">
+          <div style="font-size:0.7rem;color:#888;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">${q.brand}</div>
+          <div style="font-size:0.875rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${q.name}</div>
+          <div style="font-size:0.875rem;font-weight:600;margin-top:4px;">${formatPrice(q.price)}</div>
+        </div>
+      </div>`;
+    }
+
+    content.innerHTML = `
+      <!-- SIZE GUIDE MODAL -->
+      <div id="size-guide-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:8px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;padding:32px;position:relative;">
+          <button onclick="document.getElementById('size-guide-modal').style.display='none'" style="position:absolute;top:16px;right:16px;font-size:1.3rem;background:none;border:none;cursor:pointer;">×</button>
+          <h3 style="font-family:'Playfair Display',serif;margin-bottom:20px;">Size Guide</h3>
+          <table style="width:100%;border-collapse:collapse;font-size:0.83rem;">
+            <thead><tr>${['Size','UK','EU','US','Bust','Waist','Hips'].map(h=>`<th style="text-align:left;padding:10px 8px;border-bottom:2px solid var(--color-border);font-weight:600;letter-spacing:0.04em;">${h}</th>`).join('')}</tr></thead>
+            <tbody>${[['XS','6','34','2','80cm','62cm','88cm'],['S','8','36','4','84cm','66cm','92cm'],['M','10','38','6','88cm','70cm','96cm'],['L','12','40','8','92cm','74cm','100cm'],['XL','14','42','10','96cm','78cm','104cm']].map((r,i)=>`<tr style="background:${i%2?'#fafaf8':'#fff'};">${r.map(c=>`<td style="padding:10px 8px;border-bottom:1px solid var(--color-border);">${c}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="max-width:1200px;margin:0 auto;padding:24px 24px 80px;">
+        <!-- Breadcrumb -->
+        <nav style="font-size:0.78rem;color:var(--color-text-muted);margin-bottom:24px;">
+          <a href="#/" style="color:var(--color-text-muted);text-decoration:none;" onmouseover="this.style.color='var(--color-gold)'" onmouseout="this.style.color='var(--color-text-muted)'">Home</a>
+          <span style="margin:0 8px;">›</span>
+          <a href="#/category/${p.category}" style="color:var(--color-text-muted);text-decoration:none;" onmouseover="this.style.color='var(--color-gold)'" onmouseout="this.style.color='var(--color-text-muted)'">${p.category.charAt(0).toUpperCase()+p.category.slice(1)}</a>
+          <span style="margin:0 8px;">›</span>
+          <span style="color:var(--color-primary);">${p.name}</span>
+        </nav>
+
+        <!-- Two-col layout -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;" id="pdp-grid">
+
+          <!-- LEFT: Gallery -->
+          <div>
+            <div style="position:relative;overflow:hidden;border-radius:4px;cursor:zoom-in;background:#f5f3f0;" onmouseover="this.querySelector('.pdp-main-img').style.transform='scale(1.05)'" onmouseout="this.querySelector('.pdp-main-img').style.transform='scale(1)'">
+              ${p.discount ? `<div style="position:absolute;top:14px;left:14px;z-index:2;background:#c0392b;color:#fff;font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:2px;letter-spacing:0.06em;">${p.discount}% OFF</div>` : ''}
+              <img class="pdp-main-img" id="pdp-main-img" src="${p.images[selectedImg]}" alt="${p.name}" style="width:100%;max-height:600px;object-fit:cover;display:block;transition:transform 500ms ease;"/>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none;">
+              ${p.images.map((img, i) => `<img src="${img}" alt="" loading="lazy" onclick="document.getElementById('pdp-main-img').src='${img}';document.querySelectorAll('.pdp-thumb').forEach((t,ti)=>t.style.borderColor=ti===${i}?'var(--color-gold)':'transparent');" class="pdp-thumb" style="width:80px;height:80px;object-fit:cover;border-radius:2px;border:2px solid ${i===0?'var(--color-gold)':'transparent'};cursor:pointer;flex-shrink:0;transition:border-color 150ms;"/>`).join('')}
+            </div>
+          </div>
+
+          <!-- RIGHT: Info -->
+          <div>
+            <p style="font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:8px;">${p.brand}</p>
+            <h1 style="font-family:'Playfair Display',serif;font-size:1.75rem;line-height:1.2;margin-bottom:12px;">${p.name}</h1>
+
+            <!-- Stars -->
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+              <span style="color:var(--color-gold);">${starsHTML(p.rating)}</span>
+              <a href="#reviews" style="font-size:0.8rem;color:var(--color-text-muted);text-decoration:none;" onmouseover="this.style.color='var(--color-gold)'" onmouseout="this.style.color='var(--color-text-muted)'">(${p.reviews} reviews)</a>
+            </div>
+
+            <!-- Price -->
+            <div style="margin-bottom:24px;">
+              ${p.discount
+                ? `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <span style="text-decoration:line-through;color:#aaa;font-size:1rem;">${formatPrice(p.originalPrice)}</span>
+                    <span style="color:#c0392b;font-size:1.5rem;font-weight:700;">${formatPrice(p.price)}</span>
+                    <span style="background:#c0392b;color:#fff;font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:3px;">-${p.discount}%</span>
+                  </div>`
+                : `<span style="font-size:1.5rem;font-weight:700;">${formatPrice(p.price)}</span>`}
+            </div>
+
+            <!-- Color -->
+            <div style="margin-bottom:20px;">
+              <p style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Color: <span id="pdp-color-label" style="font-weight:400;">${selectedColor}</span></p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;" id="pdp-colors">
+                ${p.colors.map(c => `<button title="${c}" onclick="pdpSelectColor('${c}')" class="pdp-color-swatch" data-color="${c}" style="width:28px;height:28px;border-radius:50%;background:${getColor(c)};border:${c===selectedColor?'3px solid var(--color-gold)':'2px solid rgba(0,0,0,0.12)'};cursor:pointer;transition:border 150ms;position:relative;" title="${c}"></button>`).join('')}
+              </div>
+            </div>
+
+            <!-- Size -->
+            <div style="margin-bottom:20px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <p style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Size: <span id="pdp-size-label" style="font-weight:400;">${selectedSize||'Select'}</span></p>
+                <button onclick="document.getElementById('size-guide-modal').style.display='flex'" style="font-size:0.75rem;color:var(--color-gold);background:none;border:none;cursor:pointer;text-decoration:underline;">Size Guide</button>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;" id="pdp-sizes">
+                ${p.sizes.map(s => `<button onclick="pdpSelectSize('${s}')" data-size="${s}" class="pdp-size-pill" style="padding:10px 4px;border:1px solid ${s===selectedSize?'var(--color-primary)':'var(--color-border)'};background:${s===selectedSize?'var(--color-primary)':'#fff'};color:${s===selectedSize?'#fff':'var(--color-primary)'};border-radius:2px;font-size:0.8rem;cursor:pointer;transition:all 150ms;">${s}</button>`).join('')}
+              </div>
+              <p id="pdp-size-error" style="color:#c0392b;font-size:0.75rem;margin-top:6px;display:none;">Please select a size.</p>
+            </div>
+
+            <!-- Qty -->
+            <div style="margin-bottom:24px;">
+              <p style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Quantity</p>
+              <div style="display:flex;align-items:center;gap:0;border:1px solid var(--color-border);border-radius:2px;width:fit-content;">
+                <button onclick="if(pdpQty>1){pdpQty--;document.getElementById('pdp-qty').textContent=pdpQty;}" style="width:40px;height:40px;background:none;border:none;font-size:1.2rem;cursor:pointer;border-right:1px solid var(--color-border);">−</button>
+                <span id="pdp-qty" style="width:48px;text-align:center;font-size:0.9rem;">${qty}</span>
+                <button onclick="if(pdpQty<10){pdpQty++;document.getElementById('pdp-qty').textContent=pdpQty;}" style="width:40px;height:40px;background:none;border:none;font-size:1.2rem;cursor:pointer;border-left:1px solid var(--color-border);">+</button>
+              </div>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;">
+              <button class="btn btn-primary btn-lg btn-full" id="pdp-atb-btn" onclick="pdpAddToBag()">Add to Bag</button>
+              <button class="btn btn-outlined btn-lg btn-full" id="pdp-wl-btn" onclick="this.textContent=this.textContent.includes('🤍')?'❤️  Saved to Wishlist':'🤍  Save to Wishlist';">🤍&nbsp; Save to Wishlist</button>
+            </div>
+
+            <!-- Description -->
+            <p style="font-size:0.9rem;line-height:1.75;color:#444;margin-bottom:28px;">${p.description}</p>
+
+            <!-- Accordions -->
+            <div id="pdp-accordions">
+              ${accordions.map((a,i)=>`
+                <div style="border-top:1px solid var(--color-border);">
+                  <button onclick="pdpToggleAccordion(${i})" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 0;background:none;border:none;cursor:pointer;font-size:0.875rem;font-weight:600;text-align:left;">
+                    ${a.title} <span id="pdp-chevron-${i}" style="transition:transform 200ms;font-size:0.7rem;">▼</span>
+                  </button>
+                  <div id="pdp-acc-${i}" style="display:none;padding-bottom:16px;">${a.content}</div>
+                </div>`).join('')}
+              <div style="border-top:1px solid var(--color-border);"></div>
+            </div>
+
+            <!-- Trust badges -->
+            <div style="display:flex;gap:0;margin-top:24px;border:1px solid var(--color-border);border-radius:4px;overflow:hidden;">
+              ${['🔄 Free Returns','🔒 Secure Checkout','🌱 Sustainably Sourced'].map(b=>`<div style="flex:1;text-align:center;padding:12px 8px;font-size:0.7rem;font-weight:600;letter-spacing:0.04em;border-right:1px solid var(--color-border);">${b}</div>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Complete the Look -->
+        ${related.length ? `<div style="margin-top:64px;">
+          <h2 style="font-family:'Playfair Display',serif;margin-bottom:24px;">Complete the Look</h2>
+          <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;scrollbar-width:none;">
+            ${related.map(q=>productThumbHTML(q)).join('')}
+          </div>
+        </div>` : ''}
+
+        <!-- Also Viewed -->
+        ${alsoViewed.length ? `<div style="margin-top:48px;">
+          <h2 style="font-family:'Playfair Display',serif;margin-bottom:24px;">Customers Also Viewed</h2>
+          <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;scrollbar-width:none;">
+            ${alsoViewed.map(q=>productThumbHTML(q)).join('')}
+          </div>
+        </div>` : ''}
+
+        <!-- Reviews -->
+        <div id="reviews" style="margin-top:64px;">
+          <h2 style="font-family:'Playfair Display',serif;margin-bottom:28px;">Customer Reviews</h2>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:start;margin-bottom:40px;">
+            <div style="text-align:center;padding:24px 32px;border:1px solid var(--color-border);border-radius:8px;">
+              <div style="font-size:3rem;font-weight:700;line-height:1;">${p.rating.toFixed(1)}</div>
+              <div style="color:var(--color-gold);font-size:1.2rem;margin:6px 0;">${starsHTML(p.rating)}</div>
+              <div style="font-size:0.75rem;color:var(--color-text-muted);">Based on ${p.reviews} reviews</div>
+            </div>
+            <div>
+              ${ratingDist.map(r => `
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                  <span style="font-size:0.8rem;min-width:16px;">${r.s}★</span>
+                  <div style="flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden;">
+                    <div style="height:100%;width:${p.reviews>0?Math.round(r.pct/p.reviews*100):0}%;background:var(--color-gold);border-radius:4px;"></div>
+                  </div>
+                  <span style="font-size:0.75rem;color:var(--color-text-muted);min-width:28px;">${r.pct}</span>
+                </div>`).join('')}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px;">
+            ${reviewSubset.map(r=>`
+              <div style="padding:24px;border:1px solid var(--color-border);border-radius:6px;background:#fff;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <strong style="font-size:0.875rem;">${r.name}</strong>
+                  <span style="color:var(--color-gold);font-size:0.9rem;">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span>
+                </div>
+                <p style="font-size:0.875rem;color:#555;line-height:1.6;margin:0;">"${r.text}"</p>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    /* Mobile: stack grid */
+    if (window.innerWidth < 768) {
+      const g = document.getElementById('pdp-grid');
+      if (g) g.style.gridTemplateColumns = '1fr';
+    }
+  }
+
+  /* PDP helper fns — attached to window so inline handlers can reach them */
+  window.pdpQty = 1;
+  window.pdpSelectedSize = '';
+  window.pdpSelectedColor = p.colors[0];
+
+  window.pdpSelectSize = function(s) {
+    window.pdpSelectedSize = s;
+    document.querySelectorAll('.pdp-size-pill').forEach(el => {
+      const active = el.dataset.size === s;
+      el.style.background = active ? 'var(--color-primary)' : '#fff';
+      el.style.color = active ? '#fff' : 'var(--color-primary)';
+      el.style.borderColor = active ? 'var(--color-primary)' : 'var(--color-border)';
+    });
+    const lbl = document.getElementById('pdp-size-label');
+    if (lbl) lbl.textContent = s;
+    const err = document.getElementById('pdp-size-error');
+    if (err) err.style.display = 'none';
+  };
+
+  window.pdpSelectColor = function(c) {
+    window.pdpSelectedColor = c;
+    document.querySelectorAll('.pdp-color-swatch').forEach(el => {
+      el.style.border = el.dataset.color === c ? '3px solid var(--color-gold)' : '2px solid rgba(0,0,0,0.12)';
+    });
+    const lbl = document.getElementById('pdp-color-label');
+    if (lbl) lbl.textContent = c;
+  };
+
+  window.pdpAddToBag = function() {
+    if (!window.pdpSelectedSize) {
+      const err = document.getElementById('pdp-size-error');
+      if (err) err.style.display = 'block';
+      const btn = document.getElementById('pdp-atb-btn');
+      if (btn) { btn.style.animation = 'none'; void btn.offsetWidth; btn.style.animation = 'pdpShake 400ms ease'; }
+      return;
+    }
+    addToCart(p.id, window.pdpSelectedSize, window.pdpSelectedColor, window.pdpQty);
+    showToast('Added to bag! 🛍');
+    updateCartBadge();
+  };
+
+  window.pdpToggleAccordion = function(i) {
+    const body = document.getElementById('pdp-acc-'+i);
+    const chev = document.getElementById('pdp-chevron-'+i);
+    if (!body) return;
+    const open = body.style.display === 'block';
+    body.style.display = open ? 'none' : 'block';
+    if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
+  };
+
+  function productThumbHTML(q) {
+    return `<div style="width:220px;flex-shrink:0;cursor:pointer;" onclick="navigate('#/product/${q.id}')">
+      <div style="aspect-ratio:3/4;overflow:hidden;border-radius:2px;background:#f0eeea;">
+        <img src="${q.images[0]}" alt="${q.name}" style="width:100%;height:100%;object-fit:cover;transition:transform 400ms;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'" loading="lazy"/>
+      </div>
+      <div style="padding:10px 4px 0;">
+        <div style="font-size:0.7rem;color:#888;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">${q.brand}</div>
+        <div style="font-size:0.875rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${q.name}</div>
+        <div style="font-size:0.875rem;font-weight:600;margin-top:4px;">${formatPrice(q.price)}</div>
+      </div>
+    </div>`;
+  }
+
+  /* Inject shake keyframe once */
+  if (!document.getElementById('pdp-shake-style')) {
+    const st = document.createElement('style');
+    st.id = 'pdp-shake-style';
+    st.textContent = '@keyframes pdpShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}';
+    document.head.appendChild(st);
+  }
+
+  renderPDPInner();
+}
+</script>
+
