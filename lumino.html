@@ -3026,3 +3026,805 @@ function renderPDP(productId) {
 }
 </script>
 
+
+<script>
+/* ── Cart helpers ───────────────────────────────────────────────── */
+function updateCartQuantity(productId, size, color, newQty) {
+  if (newQty <= 0) { removeFromCart(productId, size, color); }
+  else {
+    const item = window.CART.find(x => x.productId === productId && x.size === size && x.color === color);
+    if (item) item.quantity = newQty;
+  }
+  updateCartBadge();
+  renderCart();
+}
+
+/* ── renderCart ─────────────────────────────────────────────────── */
+function renderCart() {
+  const el = document.getElementById('app-content');
+
+  if (!window.CART.length) {
+    el.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:40px 24px;">
+        <div style="font-size:64px;margin-bottom:20px;">🛍</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:12px;">Your bag is empty</h2>
+        <p style="color:var(--color-text-muted);margin-bottom:28px;">Looks like you haven't added anything yet.</p>
+        <button class="btn btn-primary" onclick="navigate('#/')">Continue Shopping</button>
+      </div>`;
+    return;
+  }
+
+  function calcSubtotal() { return window.CART.reduce((s,x) => s + x.price * x.quantity, 0); }
+  function calcDelivery(sub) { return sub >= 50 ? 0 : 4.99; }
+  function calcTotal(sub, del) {
+    const promo = window.PROMO ? sub * window.PROMO.discount : 0;
+    return sub + del - promo;
+  }
+
+  function cartHTML() {
+    const subtotal = calcSubtotal();
+    const delivery = calcDelivery(subtotal);
+    const promoAmt = window.PROMO ? subtotal * window.PROMO.discount : 0;
+    const total = calcTotal(subtotal, delivery);
+
+    return `
+      <div style="max-width:1100px;margin:0 auto;padding:32px 24px 80px;">
+        <h1 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:8px;">Your Bag</h1>
+        <p style="color:var(--color-text-muted);font-size:0.85rem;margin-bottom:32px;">${window.CART.reduce((a,x)=>a+x.quantity,0)} item${window.CART.reduce((a,x)=>a+x.quantity,0)!==1?'s':''}</p>
+
+        <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;">
+          <!-- Items -->
+          <div style="flex:1;min-width:280px;">
+            ${window.CART.map(item => `
+              <div style="display:flex;gap:16px;padding:20px 0;border-bottom:1px solid var(--color-border);align-items:flex-start;">
+                <img src="${item.image}" alt="${item.name}" style="width:80px;height:80px;object-fit:cover;border-radius:4px;flex-shrink:0;background:#f0eeea;"/>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.7rem;color:var(--color-text-muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px;">${item.brand}</div>
+                  <div style="font-weight:600;font-size:0.9rem;margin-bottom:4px;">${item.name}</div>
+                  <div style="font-size:0.78rem;color:var(--color-text-muted);margin-bottom:12px;">Size: ${item.size} | Color: ${item.color}</div>
+                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;border:1px solid var(--color-border);border-radius:2px;">
+                      <button onclick="updateCartQuantity('${item.productId}','${item.size}','${item.color}',${item.quantity-1})" style="width:32px;height:32px;background:none;border:none;cursor:pointer;font-size:1rem;border-right:1px solid var(--color-border);">−</button>
+                      <span style="width:36px;text-align:center;font-size:0.875rem;">${item.quantity}</span>
+                      <button onclick="updateCartQuantity('${item.productId}','${item.size}','${item.color}',${item.quantity+1})" style="width:32px;height:32px;background:none;border:none;cursor:pointer;font-size:1rem;border-left:1px solid var(--color-border);">+</button>
+                    </div>
+                    <button onclick="removeFromCart('${item.productId}','${item.size}','${item.color}');updateCartBadge();renderCart();" style="font-size:0.75rem;color:var(--color-text-muted);background:none;border:none;cursor:pointer;text-decoration:underline;">Remove</button>
+                  </div>
+                </div>
+                <div style="font-weight:600;font-size:0.9rem;flex-shrink:0;">${formatPrice(item.price * item.quantity)}</div>
+              </div>`).join('')}
+            <div style="margin-top:24px;">
+              <a href="#/" style="font-size:0.8rem;color:var(--color-gold);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;" onclick="navigate('#/')">← Continue Shopping</a>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div style="width:300px;flex-shrink:0;position:sticky;top:80px;border:1px solid var(--color-border);border-radius:4px;padding:24px;">
+            <h3 style="font-size:0.9rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px;">Order Summary</h3>
+
+            <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:0.875rem;">
+              <span style="color:var(--color-text-muted);">Subtotal</span>
+              <span>${formatPrice(subtotal)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:0.875rem;">
+              <span style="color:var(--color-text-muted);">Delivery</span>
+              <span style="color:${delivery===0?'#27ae60':'inherit'}">${delivery===0?'FREE':formatPrice(delivery)}</span>
+            </div>
+            ${window.PROMO ? `
+            <div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:0.875rem;">
+              <span style="color:#27ae60;">Promo (${window.PROMO.code})</span>
+              <span style="color:#27ae60;">−${formatPrice(promoAmt)}</span>
+            </div>` : ''}
+
+            <!-- Promo input -->
+            <div style="margin-bottom:20px;" id="cart-promo-wrap">
+              ${window.PROMO ? `
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:3px;font-size:0.8rem;">
+                  <span style="color:#16a34a;font-weight:600;">✓ ${window.PROMO.code} applied</span>
+                  <button onclick="window.PROMO=null;renderCart();" style="font-size:0.75rem;color:#c0392b;background:none;border:none;cursor:pointer;text-decoration:underline;">Remove</button>
+                </div>` : `
+                <div style="display:flex;gap:8px;">
+                  <input id="promo-input" type="text" placeholder="Promo code" style="flex:1;padding:9px 12px;border:1px solid var(--color-border);border-radius:3px;font-size:0.83rem;outline:none;" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/>
+                  <button class="btn btn-outlined btn-sm" onclick="applyPromo()">Apply</button>
+                </div>
+                <div id="promo-msg" style="font-size:0.75rem;margin-top:6px;"></div>`}
+            </div>
+
+            <div style="display:flex;justify-content:space-between;font-size:1rem;font-weight:700;padding-top:16px;border-top:1px solid var(--color-border);margin-bottom:20px;">
+              <span>Total</span>
+              <span>${formatPrice(total)}</span>
+            </div>
+
+            <button class="btn btn-primary btn-full" onclick="navigate('#/checkout')">Proceed to Checkout</button>
+
+            <div style="text-align:center;margin-top:14px;font-size:0.72rem;color:var(--color-text-muted);letter-spacing:0.05em;">VISA | MC | PayPal | Apple Pay</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  el.innerHTML = cartHTML();
+}
+
+window.applyPromo = function() {
+  const input = document.getElementById('promo-input');
+  const msg = document.getElementById('promo-msg');
+  if (!input || !msg) return;
+  const code = (input.value || '').trim().toUpperCase();
+  if (code === 'LUMINO20') {
+    window.PROMO = { code: 'LUMINO20', discount: 0.20 };
+    renderCart();
+  } else {
+    msg.style.color = '#c0392b';
+    msg.textContent = 'Invalid promo code.';
+  }
+};
+
+/* ── renderCheckout ─────────────────────────────────────────────── */
+function renderCheckout() {
+  if (!window.CART.length) { navigate('#/cart'); return; }
+  const el = document.getElementById('app-content');
+  window.CHECKOUT_DATA = window.CHECKOUT_DATA || {};
+
+  let stepState = 1;
+  let showGuestBanner = !window.CURRENT_USER && !window.GUEST_MODE;
+
+  const steps = ['Details','Delivery','Review'];
+
+  function progressBar() {
+    return `
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:40px;">
+        ${steps.map((s,i) => {
+          const n = i+1;
+          const active = stepState === n;
+          const done = stepState > n;
+          return `
+            <div style="display:flex;align-items:center;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;
+                  background:${done?'var(--color-gold)':active?'var(--color-primary)':'#e5e5e5'};
+                  color:${done||active?'#fff':'#999'};">${done?'✓':n}</div>
+                <span style="font-size:0.7rem;font-weight:${active?'700':'400'};color:${active?'var(--color-primary)':'#999'};letter-spacing:0.06em;text-transform:uppercase;">${n}. ${s}</span>
+              </div>
+              ${i<steps.length-1?`<div style="width:60px;height:2px;background:${done?'var(--color-gold)':'#e5e5e5'};margin:0 8px;margin-bottom:22px;"></div>`:''}
+            </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  function guestBanner() {
+    if (!showGuestBanner) return '';
+    return `
+      <div style="background:#f5f0e8;border:1px solid #e0d5c0;border-radius:6px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <span style="font-size:0.875rem;">Sign in for faster checkout and to save your order history.</span>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary btn-sm" onclick="navigate('#/login')">Sign In</button>
+          <button class="btn btn-outlined btn-sm" onclick="window.GUEST_MODE=true;showGuestBanner=false;reRender();">Continue as Guest</button>
+        </div>
+      </div>`;
+  }
+
+  const cd = window.CHECKOUT_DATA;
+
+  function fld(id, label, type, placeholder, val, required, optional) {
+    return `
+      <div class="form-group">
+        <label class="form-label" for="co-${id}">${label}${optional?' <span style="color:#aaa;font-weight:400;">(optional)</span>':''}</label>
+        <input class="form-input" id="co-${id}" type="${type||'text'}" placeholder="${placeholder||''}" value="${val||''}" ${required?'required':''} oninput="window.CHECKOUT_DATA['${id}']=this.value;document.getElementById('co-err-${id}').textContent='';" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/>
+        <div id="co-err-${id}" style="color:#c0392b;font-size:0.72rem;margin-top:4px;"></div>
+      </div>`;
+  }
+
+  function step1HTML() {
+    return `
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:24px;">Contact & Delivery Details</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>${fld('firstName','First Name','text','',cd.firstName,true)}</div>
+        <div>${fld('lastName','Last Name','text','',cd.lastName,true)}</div>
+      </div>
+      ${fld('email','Email Address','email','you@example.com',cd.email,true)}
+      ${fld('phone','Phone Number','tel','',cd.phone,true)}
+      ${fld('address1','Address Line 1','text','',cd.address1,true)}
+      ${fld('address2','Address Line 2','text','',cd.address2,false,true)}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>${fld('city','City','text','',cd.city,true)}</div>
+        <div>${fld('postcode','Postcode','text','',cd.postcode,true)}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="co-country">Country</label>
+        <select class="form-input" id="co-country" onchange="window.CHECKOUT_DATA.country=this.value" style="cursor:pointer;">
+          ${['United Kingdom','United States','France','Germany','Italy','Spain','Australia','Canada','Other'].map(c=>`<option value="${c}" ${cd.country===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      ${window.CURRENT_USER?`<label style="display:flex;align-items:center;gap:10px;font-size:0.875rem;cursor:pointer;margin-bottom:24px;"><input type="checkbox" ${cd.saveAddress?'checked':''} onchange="window.CHECKOUT_DATA.saveAddress=this.checked"> Save this address</label>`:''}
+      <button class="btn btn-primary" style="min-width:200px;" onclick="validateStep1()">Next: Delivery →</button>`;
+  }
+
+  window.validateStep1 = function() {
+    const required = ['firstName','lastName','email','phone','address1','city','postcode'];
+    let valid = true;
+    required.forEach(id => {
+      const val = (window.CHECKOUT_DATA[id]||'').trim();
+      const errEl = document.getElementById('co-err-'+id);
+      if (!val) { if(errEl) errEl.textContent='This field is required.'; valid=false; }
+      else { if(errEl) errEl.textContent=''; }
+    });
+    if (!window.CHECKOUT_DATA.country) window.CHECKOUT_DATA.country = 'United Kingdom';
+    if (valid) { stepState=2; reRender(); }
+  };
+
+  const deliveryOptions = [
+    {id:'standard', label:'Standard Delivery', sub:'3–5 business days', price: calcSubtotalCO()>=50?0:4.99, priceLabel: calcSubtotalCO()>=50?'FREE':'£4.99'},
+    {id:'express',  label:'Express Delivery',  sub:'1–2 business days', price:9.99, priceLabel:'£9.99'},
+    {id:'nextday',  label:'Next Day Delivery', sub:'Order by 9pm',      price:14.99, priceLabel:'£14.99'},
+  ];
+  if (!window.CHECKOUT_DATA.deliveryMethod) window.CHECKOUT_DATA.deliveryMethod = 'standard';
+
+  function calcSubtotalCO() { return window.CART.reduce((s,x)=>s+x.price*x.quantity,0); }
+
+  function step2HTML() {
+    return `
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:24px;">Choose Delivery</h2>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+        ${deliveryOptions.map(opt => {
+          const sel = window.CHECKOUT_DATA.deliveryMethod === opt.id;
+          return `
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border:2px solid ${sel?'var(--color-gold)':'var(--color-border)'};border-radius:8px;cursor:pointer;background:${sel?'#fdf7ee':'#fff'};transition:border-color 150ms;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <input type="radio" name="delivery" value="${opt.id}" ${sel?'checked':''} onchange="window.CHECKOUT_DATA.deliveryMethod='${opt.id}';reRender();" style="accent-color:var(--color-gold);width:16px;height:16px;">
+                <div>
+                  <div style="font-weight:600;font-size:0.9rem;">${opt.label}</div>
+                  <div style="font-size:0.78rem;color:var(--color-text-muted);">${opt.sub}</div>
+                </div>
+              </div>
+              <span style="font-weight:700;font-size:0.9rem;color:${opt.price===0?'#27ae60':'inherit'}">${opt.priceLabel}</span>
+            </label>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button class="btn btn-outlined" onclick="stepState=1;reRender();">← Back</button>
+        <button class="btn btn-primary" onclick="stepState=3;reRender();">Next: Review →</button>
+      </div>`;
+  }
+
+  function step3HTML() {
+    const subtotal = calcSubtotalCO();
+    const selectedDel = deliveryOptions.find(o=>o.id===window.CHECKOUT_DATA.deliveryMethod)||deliveryOptions[0];
+    const deliveryCost = selectedDel.price;
+    const promoAmt = window.PROMO ? subtotal * window.PROMO.discount : 0;
+    const total = subtotal + deliveryCost - promoAmt;
+    const addr = window.CHECKOUT_DATA;
+    return `
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:24px;">Review Your Order</h2>
+      <div style="border:1px solid var(--color-border);border-radius:6px;overflow:hidden;margin-bottom:24px;">
+        <div style="padding:16px 20px;background:#fafaf8;border-bottom:1px solid var(--color-border);font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Items</div>
+        ${window.CART.map(item=>`
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--color-border);">
+            <img src="${item.image}" alt="${item.name}" style="width:48px;height:48px;object-fit:cover;border-radius:3px;background:#f0eeea;flex-shrink:0;"/>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.875rem;font-weight:600;">${item.name}</div>
+              <div style="font-size:0.75rem;color:var(--color-text-muted);">Size: ${item.size} | Color: ${item.color} | Qty: ${item.quantity}</div>
+            </div>
+            <span style="font-weight:600;font-size:0.875rem;">${formatPrice(item.price*item.quantity)}</span>
+          </div>`).join('')}
+        <div style="padding:16px 20px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:8px;"><span style="color:var(--color-text-muted);">Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:8px;"><span style="color:var(--color-text-muted);">Delivery (${selectedDel.label})</span><span style="color:${deliveryCost===0?'#27ae60':'inherit'}">${deliveryCost===0?'FREE':formatPrice(deliveryCost)}</span></div>
+          ${window.PROMO?`<div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:8px;"><span style="color:#27ae60;">Promo (${window.PROMO.code})</span><span style="color:#27ae60;">−${formatPrice(promoAmt)}</span></div>`:''}
+          <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;padding-top:12px;border-top:1px solid var(--color-border);"><span>Total</span><span>${formatPrice(total)}</span></div>
+        </div>
+      </div>
+      <div style="border:1px solid var(--color-border);border-radius:6px;padding:16px 20px;margin-bottom:24px;">
+        <div style="font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">Delivery Address</div>
+        <div style="font-size:0.875rem;color:#444;line-height:1.7;">${addr.firstName} ${addr.lastName}<br>${addr.address1}${addr.address2?', '+addr.address2:''}<br>${addr.city}, ${addr.postcode}<br>${addr.country}</div>
+      </div>
+      <p style="font-size:0.78rem;color:var(--color-text-muted);margin-bottom:20px;text-align:center;">No payment required for this demo.</p>
+      <div style="display:flex;gap:12px;flex-direction:column;">
+        <button class="btn btn-primary btn-full" style="height:52px;font-size:0.875rem;" onclick="placeOrder()">Place Order</button>
+        <button class="btn btn-outlined" onclick="stepState=2;reRender();">← Back</button>
+      </div>`;
+  }
+
+  window.placeOrder = function() {
+    const orderId = 'ORD-' + Date.now();
+    const selectedDel = deliveryOptions.find(o=>o.id===window.CHECKOUT_DATA.deliveryMethod)||deliveryOptions[0];
+    const subtotal = window.CART.reduce((s,x)=>s+x.price*x.quantity,0);
+    const promoAmt = window.PROMO ? subtotal * window.PROMO.discount : 0;
+    const total = subtotal + selectedDel.price - promoAmt;
+    const order = {
+      id: orderId,
+      items: window.CART.map(x=>({...x})),
+      subtotal,
+      deliveryCost: selectedDel.price,
+      deliveryLabel: selectedDel.label,
+      promoAmt,
+      total,
+      address: {...window.CHECKOUT_DATA},
+      deliveryMethod: window.CHECKOUT_DATA.deliveryMethod,
+      status: 'Confirmed',
+      placedAt: new Date()
+    };
+    window.ORDERS.push(order);
+    if (window.CURRENT_USER) {
+      window.CURRENT_USER.orders = window.CURRENT_USER.orders || [];
+      window.CURRENT_USER.orders.push(order);
+    }
+    window.CART = [];
+    window.PROMO = null;
+    updateCartBadge();
+    navigate('#/order/' + orderId);
+  };
+
+  function reRender() {
+    const wrap = document.getElementById('checkout-step-content');
+    const pb = document.getElementById('checkout-progress');
+    if (pb) pb.innerHTML = progressBar();
+    if (wrap) {
+      wrap.innerHTML = stepState===1 ? step1HTML() : stepState===2 ? step2HTML() : step3HTML();
+    }
+    const gb = document.getElementById('checkout-guest-banner');
+    if (gb) gb.innerHTML = guestBanner();
+  }
+
+  window.reRender = reRender;
+
+  el.innerHTML = `
+    <div style="max-width:640px;margin:0 auto;padding:32px 24px 80px;">
+      <h1 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:28px;text-align:center;">Checkout</h1>
+      <div id="checkout-progress">${progressBar()}</div>
+      <div id="checkout-guest-banner">${guestBanner()}</div>
+      <div id="checkout-step-content">${stepState===1?step1HTML():stepState===2?step2HTML():step3HTML()}</div>
+    </div>`;
+}
+
+/* ── renderOrderConfirmation ────────────────────────────────────── */
+function renderOrderConfirmation(orderId) {
+  const el = document.getElementById('app-content');
+  const order = window.ORDERS.find(o => o.id === orderId);
+
+  if (!order) {
+    el.innerHTML = `<div style="text-align:center;padding:60px 24px;"><h2>Order not found.</h2><button class="btn btn-primary" style="margin-top:20px;" onclick="navigate('#/')">Back to Home</button></div>`;
+    return;
+  }
+
+  const deliveryDays = order.deliveryMethod === 'nextday' ? '1 business day' : order.deliveryMethod === 'express' ? '1–2 business days' : '3–5 business days';
+  const addr = order.address || {};
+  const placedDate = new Date(order.placedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+
+  el.innerHTML = `
+    <div style="max-width:640px;margin:0 auto;padding:48px 24px 80px;text-align:center;">
+      <div style="width:80px;height:80px;border-radius:50%;background:#16a34a;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 4px 20px rgba(22,163,74,0.3);">
+        <span style="color:#fff;font-size:40px;line-height:1;">✓</span>
+      </div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:10px;">Order Confirmed!</h1>
+      <p style="color:var(--color-text-muted);margin-bottom:4px;">Order #${order.id}</p>
+      <p style="font-size:0.85rem;color:var(--color-text-muted);margin-bottom:32px;">Placed on ${placedDate} · Estimated delivery: ${deliveryDays}</p>
+
+      <div style="border:1px solid var(--color-border);border-radius:8px;overflow:hidden;text-align:left;margin-bottom:24px;">
+        <div style="padding:14px 20px;background:#fafaf8;border-bottom:1px solid var(--color-border);font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Items Ordered</div>
+        ${order.items.map(item=>`
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--color-border);">
+            <img src="${item.image}" alt="${item.name}" style="width:56px;height:56px;object-fit:cover;border-radius:4px;background:#f0eeea;flex-shrink:0;"/>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.875rem;font-weight:600;">${item.name}</div>
+              <div style="font-size:0.75rem;color:var(--color-text-muted);">Size: ${item.size} | Color: ${item.color} | Qty: ${item.quantity}</div>
+            </div>
+            <span style="font-size:0.875rem;font-weight:600;">${formatPrice(item.price*item.quantity)}</span>
+          </div>`).join('')}
+        <div style="padding:14px 20px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:6px;"><span style="color:var(--color-text-muted);">Subtotal</span><span>${formatPrice(order.subtotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:6px;"><span style="color:var(--color-text-muted);">Delivery</span><span style="color:${order.deliveryCost===0?'#27ae60':'inherit'}">${order.deliveryCost===0?'FREE':formatPrice(order.deliveryCost)}</span></div>
+          ${order.promoAmt>0?`<div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:6px;"><span style="color:#27ae60;">Promo Discount</span><span style="color:#27ae60;">−${formatPrice(order.promoAmt)}</span></div>`:''}
+          <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;padding-top:10px;border-top:1px solid var(--color-border);"><span>Total</span><span>${formatPrice(order.total)}</span></div>
+        </div>
+      </div>
+
+      ${addr.address1 ? `
+      <div style="border:1px solid var(--color-border);border-radius:8px;padding:16px 20px;text-align:left;margin-bottom:28px;">
+        <div style="font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">Delivery Address</div>
+        <div style="font-size:0.875rem;color:#444;line-height:1.7;">${addr.firstName} ${addr.lastName}<br>${addr.address1}${addr.address2?', '+addr.address2:''}<br>${addr.city}, ${addr.postcode}<br>${addr.country}</div>
+      </div>` : ''}
+
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="navigate('#/')">Continue Shopping</button>
+        <button class="btn btn-outlined" onclick="navigate('#/account')">View My Orders</button>
+      </div>
+    </div>`;
+}
+
+/* ── renderLogin ────────────────────────────────────────────────── */
+function renderLogin() {
+  const el = document.getElementById('app-content');
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;min-height:70vh;padding:40px 24px;">
+      <div style="width:100%;max-width:440px;background:#fff;border-radius:8px;box-shadow:0 4px 32px rgba(0,0,0,0.1);padding:48px;">
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:8px;text-align:center;">Welcome back</h2>
+        <p style="color:var(--color-text-muted);font-size:0.85rem;text-align:center;margin-bottom:32px;">Sign in to your LUMINO account</p>
+
+        <div id="login-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:4px;padding:10px 14px;font-size:0.8rem;color:#c0392b;margin-bottom:16px;"></div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <input class="form-input" id="login-email" type="email" placeholder="you@example.com" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input class="form-input" id="login-password" type="password" placeholder="••••••••" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'" onkeydown="if(event.key==='Enter')doLogin();"/>
+        </div>
+        <div style="text-align:right;margin-bottom:24px;">
+          <button style="font-size:0.78rem;color:var(--color-gold);background:none;border:none;cursor:pointer;" onclick="alert('Password reset coming soon!')">Forgot password?</button>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()">Sign In</button>
+
+        <div style="display:flex;align-items:center;gap:12px;margin:24px 0;">
+          <div style="flex:1;height:1px;background:var(--color-border);"></div>
+          <span style="font-size:0.75rem;color:var(--color-text-muted);">or</span>
+          <div style="flex:1;height:1px;background:var(--color-border);"></div>
+        </div>
+
+        <p style="text-align:center;font-size:0.85rem;">New here? <a href="#/register" style="color:var(--color-gold);font-weight:600;text-decoration:none;" onclick="navigate('#/register')">Create an account</a></p>
+      </div>
+    </div>`;
+}
+
+window.doLogin = function() {
+  const email = (document.getElementById('login-email').value||'').trim().toLowerCase();
+  const password = (document.getElementById('login-password').value||'');
+  const errEl = document.getElementById('login-error');
+  const user = window.USERS.find(u => u.email.toLowerCase() === email);
+  if (!user) {
+    errEl.textContent = 'No account found with this email.';
+    errEl.style.display = 'block'; return;
+  }
+  if (user.password !== password) {
+    errEl.textContent = 'Incorrect password.';
+    errEl.style.display = 'block'; return;
+  }
+  window.CURRENT_USER = user;
+  renderHeader();
+  navigate('#/account');
+};
+
+/* ── renderRegister ─────────────────────────────────────────────── */
+function renderRegister() {
+  const el = document.getElementById('app-content');
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;min-height:70vh;padding:40px 24px;">
+      <div style="width:100%;max-width:440px;background:#fff;border-radius:8px;box-shadow:0 4px 32px rgba(0,0,0,0.1);padding:48px;">
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:8px;text-align:center;">Create your account</h2>
+        <p style="color:var(--color-text-muted);font-size:0.85rem;text-align:center;margin-bottom:32px;">Join LUMINO for exclusive access</p>
+
+        <div id="reg-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:4px;padding:10px 14px;font-size:0.8rem;color:#c0392b;margin-bottom:16px;"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label" for="reg-first">First Name</label>
+            <input class="form-input" id="reg-first" type="text" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-last">Last Name</label>
+            <input class="form-input" id="reg-last" type="text" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <input class="form-input" id="reg-email" type="email" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-pass">Password</label>
+          <input class="form-input" id="reg-pass" type="password" placeholder="Min. 8 characters" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-confirm">Confirm Password</label>
+          <input class="form-input" id="reg-confirm" type="password" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'" onkeydown="if(event.key==='Enter')doRegister();"/>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" onclick="doRegister()">Create Account</button>
+
+        <div style="display:flex;align-items:center;gap:12px;margin:24px 0;">
+          <div style="flex:1;height:1px;background:var(--color-border);"></div>
+          <span style="font-size:0.75rem;color:var(--color-text-muted);">or</span>
+          <div style="flex:1;height:1px;background:var(--color-border);"></div>
+        </div>
+        <p style="text-align:center;font-size:0.85rem;">Already have an account? <a href="#/login" style="color:var(--color-gold);font-weight:600;text-decoration:none;" onclick="navigate('#/login')">Sign in</a></p>
+      </div>
+    </div>`;
+}
+
+window.doRegister = function() {
+  const first   = (document.getElementById('reg-first').value||'').trim();
+  const last    = (document.getElementById('reg-last').value||'').trim();
+  const email   = (document.getElementById('reg-email').value||'').trim();
+  const pass    = (document.getElementById('reg-pass').value||'');
+  const confirm = (document.getElementById('reg-confirm').value||'');
+  const errEl   = document.getElementById('reg-error');
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  errEl.style.display = 'none';
+
+  if (!first||!last||!email||!pass||!confirm) { errEl.textContent='All fields are required.'; errEl.style.display='block'; return; }
+  if (!emailRe.test(email)) { errEl.textContent='Please enter a valid email address.'; errEl.style.display='block'; return; }
+  if (pass.length < 8) { errEl.textContent='Password must be at least 8 characters.'; errEl.style.display='block'; return; }
+  if (pass !== confirm) { errEl.textContent='Passwords do not match.'; errEl.style.display='block'; return; }
+  if (window.USERS.find(u=>u.email.toLowerCase()===email.toLowerCase())) { errEl.textContent='An account with this email already exists.'; errEl.style.display='block'; return; }
+
+  const user = { id:'user_'+Date.now(), firstName:first, lastName:last, email, password:pass, orders:[], createdAt:new Date() };
+  window.USERS.push(user);
+  window.CURRENT_USER = user;
+  renderHeader();
+  navigate('#/account');
+};
+
+/* ── renderAccount ──────────────────────────────────────────────── */
+function renderAccount() {
+  if (!window.CURRENT_USER) { navigate('#/login'); return; }
+  const el = document.getElementById('app-content');
+  const u = window.CURRENT_USER;
+  let activeTab = 'overview';
+
+  function statusBadge(status) {
+    const map = { Confirmed:'#16a34a', Processing:'#d97706', Delivered:'#2563eb' };
+    const col = map[status]||'#888';
+    return `<span style="background:${col}22;color:${col};font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:10px;letter-spacing:0.04em;">${status}</span>`;
+  }
+
+  function tabContent() {
+    if (activeTab === 'overview') {
+      const orders = u.orders || [];
+      const spent = orders.reduce((s,o)=>s+(o.total||0),0);
+      const joined = new Date(u.createdAt).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+      return `
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:24px;">Welcome back, ${u.firstName}!</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;">
+          ${[
+            {label:'Total Orders', value: orders.length},
+            {label:'Total Spent',  value: formatPrice(spent)},
+            {label:'Member Since', value: joined},
+          ].map(s=>`
+            <div style="border:1px solid var(--color-border);border-radius:8px;padding:20px 24px;">
+              <div style="font-size:1.4rem;font-weight:700;margin-bottom:4px;">${s.value}</div>
+              <div style="font-size:0.75rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.08em;">${s.label}</div>
+            </div>`).join('')}
+        </div>
+        ${orders.length ? `
+          <h3 style="font-size:0.85rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">Recent Orders</h3>
+          <div style="border:1px solid var(--color-border);border-radius:6px;overflow:hidden;">
+            ${[...orders].reverse().slice(0,3).map(o=>`
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--color-border);cursor:pointer;" onclick="navigate('#/order/${o.id}')" onmouseover="this.style.background='#fafaf8'" onmouseout="this.style.background=''">
+                <div>
+                  <div style="font-size:0.875rem;font-weight:600;">${o.id}</div>
+                  <div style="font-size:0.75rem;color:var(--color-text-muted);">${new Date(o.placedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+                </div>
+                <div style="text-align:right;display:flex;align-items:center;gap:12px;">
+                  <span style="font-size:0.875rem;font-weight:600;">${formatPrice(o.total)}</span>
+                  ${statusBadge(o.status)}
+                </div>
+              </div>`).join('')}
+          </div>` : `<p style="color:var(--color-text-muted);font-size:0.875rem;">No orders yet — <a href="#/" style="color:var(--color-gold);" onclick="navigate('#/')">start shopping</a>!</p>`}`;
+    }
+
+    if (activeTab === 'orders') {
+      const orders = u.orders || [];
+      if (!orders.length) return `<div style="text-align:center;padding:48px 0;"><p style="color:var(--color-text-muted);margin-bottom:16px;">No orders yet. Start shopping!</p><button class="btn btn-primary" onclick="navigate('#/')">Shop Now</button></div>`;
+      return `
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:24px;">My Orders</h2>
+        <div style="border:1px solid var(--color-border);border-radius:6px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:12px 20px;background:#fafaf8;border-bottom:1px solid var(--color-border);font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);">
+            <span>Order ID</span><span>Date</span><span>Items</span><span>Total</span><span>Status</span>
+          </div>
+          ${[...orders].reverse().map(o=>`
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:14px 20px;border-bottom:1px solid var(--color-border);align-items:center;cursor:pointer;font-size:0.875rem;" onclick="navigate('#/order/${o.id}')" onmouseover="this.style.background='#fafaf8'" onmouseout="this.style.background=''">
+              <span style="font-weight:600;color:var(--color-gold);">${o.id}</span>
+              <span style="color:var(--color-text-muted);">${new Date(o.placedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>
+              <span>${(o.items||[]).reduce((a,x)=>a+x.quantity,0)}</span>
+              <span style="font-weight:600;">${formatPrice(o.total)}</span>
+              <span>${statusBadge(o.status)}</span>
+            </div>`).join('')}
+        </div>`;
+    }
+
+    if (activeTab === 'addresses') {
+      return `
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:24px;">Saved Addresses</h2>
+        <div style="border:2px dashed var(--color-border);border-radius:8px;padding:40px;text-align:center;">
+          <p style="color:var(--color-text-muted);margin-bottom:8px;">No saved addresses yet.</p>
+          <p style="font-size:0.8rem;color:#bbb;">Addresses saved during checkout will appear here.</p>
+        </div>`;
+    }
+
+    if (activeTab === 'settings') {
+      return `
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:24px;">Account Settings</h2>
+        <div style="max-width:480px;">
+          <div id="settings-success" style="display:none;background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:10px 14px;font-size:0.8rem;color:#16a34a;margin-bottom:16px;">Changes saved!</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="st-first" value="${u.firstName}" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/></div>
+            <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="st-last" value="${u.lastName}" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" id="st-email" type="email" value="${u.email}" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/></div>
+          <button class="btn btn-primary" style="margin-bottom:40px;" onclick="
+            window.CURRENT_USER.firstName=document.getElementById('st-first').value.trim()||window.CURRENT_USER.firstName;
+            window.CURRENT_USER.lastName=document.getElementById('st-last').value.trim()||window.CURRENT_USER.lastName;
+            window.CURRENT_USER.email=document.getElementById('st-email').value.trim()||window.CURRENT_USER.email;
+            renderHeader();
+            document.getElementById('settings-success').style.display='block';
+            setTimeout(()=>{const s=document.getElementById('settings-success');if(s)s.style.display='none';},3000);">Save Changes</button>
+
+          <div style="border-top:1px solid var(--color-border);padding-top:24px;margin-bottom:24px;">
+            <h3 style="font-size:0.85rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;">Update Password</h3>
+            <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" id="st-cur-pass" type="password" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/></div>
+            <div class="form-group"><label class="form-label">New Password</label><input class="form-input" id="st-new-pass" type="password" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/></div>
+            <div class="form-group"><label class="form-label">Confirm New Password</label><input class="form-input" id="st-conf-pass" type="password" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/></div>
+            <div id="pw-error" style="color:#c0392b;font-size:0.78rem;margin-bottom:10px;display:none;"></div>
+            <button class="btn btn-outlined" onclick="
+              const cur=document.getElementById('st-cur-pass').value;
+              const nw=document.getElementById('st-new-pass').value;
+              const cf=document.getElementById('st-conf-pass').value;
+              const pwe=document.getElementById('pw-error');
+              if(cur!==window.CURRENT_USER.password){pwe.textContent='Current password incorrect.';pwe.style.display='block';return;}
+              if(nw.length<8){pwe.textContent='New password must be at least 8 characters.';pwe.style.display='block';return;}
+              if(nw!==cf){pwe.textContent='Passwords do not match.';pwe.style.display='block';return;}
+              window.CURRENT_USER.password=nw;pwe.style.display='none';
+              document.getElementById('settings-success').style.display='block';
+              setTimeout(()=>{const s=document.getElementById('settings-success');if(s)s.style.display='none';},3000);">Update Password</button>
+          </div>
+
+          <div style="border-top:1px solid var(--color-border);padding-top:24px;">
+            <p style="font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:12px;">Danger Zone</p>
+            <button class="btn btn-outlined" style="border-color:#c0392b;color:#c0392b;" onmouseover="this.style.background='#c0392b';this.style.color='#fff';" onmouseout="this.style.background='transparent';this.style.color='#c0392b';" onclick="window.CURRENT_USER=null;renderHeader();navigate('#/');">Sign Out</button>
+          </div>
+        </div>`;
+    }
+    return '';
+  }
+
+  function renderTabs() {
+    const tabs = [{id:'overview',label:'Overview'},{id:'orders',label:'Orders'},{id:'addresses',label:'Addresses'},{id:'settings',label:'Settings'}];
+    const tabBar = tabs.map(t=>`
+      <button onclick="activeTab='${t.id}';document.getElementById('acct-tab-content').innerHTML=tabContent();document.querySelectorAll('.acct-tab').forEach(b=>{b.style.borderBottom=b.dataset.tab==='${t.id}'?'2px solid var(--color-primary)':'2px solid transparent';b.style.color=b.dataset.tab==='${t.id}'?'var(--color-primary)':'var(--color-text-muted)';});"
+        class="acct-tab" data-tab="${t.id}" style="padding:12px 20px;background:none;border:none;border-bottom:2px solid ${activeTab===t.id?'var(--color-primary)':'transparent'};color:${activeTab===t.id?'var(--color-primary)':'var(--color-text-muted)'};font-size:0.875rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;transition:all 150ms;">${t.label}</button>`).join('');
+    return `<div style="display:flex;border-bottom:1px solid var(--color-border);margin-bottom:32px;">${tabBar}</div>`;
+  }
+
+  el.innerHTML = `
+    <div style="max-width:900px;margin:0 auto;padding:32px 24px 80px;">
+      ${renderTabs()}
+      <div id="acct-tab-content">${tabContent()}</div>
+    </div>`;
+}
+
+/* ── renderSearch ───────────────────────────────────────────────── */
+function renderSearch() {
+  const el = document.getElementById('app-content');
+  const query = (window.SEARCH_QUERY || '').trim();
+
+  if (!query) {
+    el.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;padding:40px 24px;text-align:center;">
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:12px;">Search</h2>
+        <p style="color:var(--color-text-muted);margin-bottom:24px;">Discover styles, brands, and more.</p>
+        <div style="width:100%;max-width:520px;position:relative;">
+          <input id="search-page-input" class="form-input" type="text" placeholder="Search for products, brands, styles..." style="padding-right:48px;font-size:1rem;height:52px;" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'" onkeydown="if(event.key==='Enter'){window.SEARCH_QUERY=this.value.trim();renderSearch();}"/>
+          <button onclick="window.SEARCH_QUERY=document.getElementById('search-page-input').value.trim();renderSearch();" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--color-text-muted);">🔍</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const results = searchProducts(query);
+
+  if (!results.length) {
+    el.innerHTML = `
+      <div style="max-width:700px;margin:0 auto;padding:48px 24px;text-align:center;">
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:12px;">No results for "${query}"</h2>
+        <p style="color:var(--color-text-muted);margin-bottom:28px;">We couldn't find anything matching your search. Try one of these:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
+          ${['dresses','jackets','sneakers','bags','scarves'].map(t=>`<button class="btn btn-outlined btn-sm" onclick="window.SEARCH_QUERY='${t}';renderSearch();">${t}</button>`).join('')}
+        </div>
+        <button class="btn btn-primary" style="margin-top:32px;" onclick="navigate('#/')">Back to Home</button>
+      </div>`;
+    return;
+  }
+
+  /* Re-use PLP layout with search results */
+  const uniqueSizes = [...new Set(results.flatMap(p=>p.sizes))];
+  const uniqueColors = [...new Set(results.flatMap(p=>p.colors))];
+  const allBrands = [...new Set(results.map(p=>p.brand))];
+  let sortKey = 'recommended';
+  let offset = 0;
+  const PAGE = 24;
+  let searchFilters = { minPrice:0, maxPrice:500, sizes:[], colors:[], brands:[], minRating:0, inStockOnly:false };
+
+  const colorMap = {Black:'#1a1a1a',White:'#f8f8f8',Navy:'#001f5b',Red:'#c0392b',Blue:'#2980b9',Green:'#27ae60',Beige:'#d4b896',Camel:'#c19a6b',Grey:'#888',Pink:'#e91e8c',Ivory:'#fffff0',Cream:'#fffdd0',Brown:'#795548',Nude:'#e8c99a',Sage:'#87a878',Tan:'#d2b48c',Gold:'#c8a96e',Silver:'#c0c0c0',Charcoal:'#36454f',Olive:'#808000',Sand:'#c2b280',Ecru:'#c2b280',Burgundy:'#800020',Blush:'#de5d83',Champagne:'#f7e7ce',Oatmeal:'#e4d5b7'};
+  function getColor(c){for(const[k,v]of Object.entries(colorMap)){if(c.toLowerCase().includes(k.toLowerCase()))return v;}return'#ccc';}
+  function starsHTML(r){const n=Math.round(r);return'★'.repeat(n)+'☆'.repeat(5-n);}
+
+  function applySearchAndRender() {
+    let res = results.filter(p=>{
+      if(p.price<searchFilters.minPrice||p.price>searchFilters.maxPrice)return false;
+      if(searchFilters.sizes.length&&!searchFilters.sizes.some(s=>p.sizes.includes(s)))return false;
+      if(searchFilters.colors.length&&!searchFilters.colors.some(c=>p.colors.some(pc=>pc.toLowerCase().includes(c.toLowerCase()))))return false;
+      if(searchFilters.brands.length&&!searchFilters.brands.includes(p.brand))return false;
+      if(searchFilters.minRating&&p.rating<searchFilters.minRating)return false;
+      if(searchFilters.inStockOnly&&!p.inStock)return false;
+      return true;
+    });
+    res = sortProducts(res, sortKey);
+    const page = res.slice(0, offset+PAGE);
+    const grid = document.getElementById('search-grid');
+    const countEl = document.getElementById('search-count');
+    const moreBtn = document.getElementById('search-more');
+    if(countEl) countEl.textContent = `${res.length} result${res.length!==1?'s':''} for "${query}"`;
+    if(grid) grid.innerHTML = page.map(p=>`
+      <div class="product-card" onclick="navigate('#/product/${p.id}')">
+        <div class="product-card-image-wrap">
+          <img class="img-main" src="${p.images[0]}" alt="${p.name}" loading="lazy"/>
+          ${p.images[1]?`<img class="img-hover" src="${p.images[1]}" alt="" loading="lazy"/>`:''}
+          <div class="product-badges">${p.discount?'<span class="badge badge-sale">SALE</span>':''}${p.tags.includes('new')&&!p.discount?'<span class="badge badge-new">NEW</span>':''}</div>
+          <div class="product-card-actions">
+            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();addToCart('${p.id}','${p.sizes[0]}','${p.colors[0]}',1);showToast('Added to bag!');updateCartBadge();">Add to Bag</button>
+          </div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-brand">${p.brand}</div>
+          <div class="product-card-name" style="-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;">${p.name}</div>
+          <div style="color:var(--color-gold);font-size:0.75rem;">${starsHTML(p.rating)}</div>
+          <div class="product-card-price">${p.discount?`<span class="price-current price-sale">${formatPrice(p.price)}</span><span class="price-original">${formatPrice(p.originalPrice)}</span>`:`<span class="price-current">${formatPrice(p.price)}</span>`}</div>
+        </div>
+      </div>`).join('');
+    if(moreBtn) moreBtn.style.display = offset+PAGE>=res.length?'none':'block';
+  }
+
+  el.innerHTML = `
+    <div style="max-width:1200px;margin:0 auto;padding:24px 24px 80px;">
+      <div style="margin-bottom:24px;">
+        <h1 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:4px;">Search Results</h1>
+        <p id="search-count" style="color:var(--color-text-muted);font-size:0.875rem;"></p>
+      </div>
+      <div style="display:flex;gap:32px;align-items:flex-start;">
+        <div class="hide-mobile" style="width:240px;flex-shrink:0;">
+          <div style="position:sticky;top:120px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+              <h3 style="font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Filter</h3>
+              <button onclick="searchFilters={minPrice:0,maxPrice:500,sizes:[],colors:[],brands:[],minRating:0,inStockOnly:false};offset=0;applySearchAndRender();" style="font-size:0.75rem;color:var(--color-gold);background:none;border:none;cursor:pointer;text-decoration:underline;">Clear All</button>
+            </div>
+            <div style="margin-bottom:20px;">
+              <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Price</p>
+              <div style="display:flex;gap:8px;margin-bottom:6px;">
+                <input type="range" min="0" max="500" value="${searchFilters.minPrice}" style="flex:1;" oninput="searchFilters.minPrice=+this.value;document.getElementById('search-price-lbl').textContent='£'+searchFilters.minPrice+' – £'+searchFilters.maxPrice;offset=0;applySearchAndRender()"/>
+                <input type="range" min="0" max="500" value="${searchFilters.maxPrice}" style="flex:1;" oninput="searchFilters.maxPrice=+this.value;document.getElementById('search-price-lbl').textContent='£'+searchFilters.minPrice+' – £'+searchFilters.maxPrice;offset=0;applySearchAndRender()"/>
+              </div>
+              <p id="search-price-lbl" style="font-size:0.8rem;color:var(--color-text-muted);">£${searchFilters.minPrice} – £${searchFilters.maxPrice}</p>
+            </div>
+            <div style="margin-bottom:20px;">
+              <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Brand</p>
+              ${allBrands.slice(0,8).map(b=>`<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;font-size:0.83rem;"><input type="checkbox" onchange="if(this.checked){searchFilters.brands.push('${b}');}else{searchFilters.brands=searchFilters.brands.filter(x=>x!=='${b}');}offset=0;applySearchAndRender();"> ${b}</label>`).join('')}
+            </div>
+            <div style="margin-bottom:20px;">
+              <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Rating</p>
+              ${[{v:4,l:'4★ & above'},{v:3,l:'3★ & above'},{v:0,l:'All'}].map(r=>`<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;font-size:0.83rem;"><input type="radio" name="s-rating" ${searchFilters.minRating===r.v?'checked':''} onchange="searchFilters.minRating=${r.v};offset=0;applySearchAndRender();"> ${r.l}</label>`).join('')}
+            </div>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.83rem;"><input type="checkbox" onchange="searchFilters.inStockOnly=this.checked;offset=0;applySearchAndRender();"> In Stock Only</label>
+          </div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+            <span style="font-size:0.83rem;color:var(--color-text-muted);"></span>
+            <select onchange="sortKey=this.value;offset=0;applySearchAndRender();" style="padding:8px 12px;border:1px solid var(--color-border);border-radius:2px;font-size:0.83rem;background:#fff;cursor:pointer;">
+              <option value="recommended">Recommended</option>
+              <option value="price_asc">Price: Low–High</option>
+              <option value="price_desc">Price: High–Low</option>
+              <option value="newest">Newest</option>
+              <option value="rating">Rating</option>
+            </select>
+          </div>
+          <div id="search-grid" style="display:grid;grid-template-columns:repeat(${window.innerWidth>1024?3:2},1fr);gap:20px;"></div>
+          <div style="text-align:center;margin-top:40px;">
+            <button id="search-more" class="btn btn-outlined" onclick="offset+=24;applySearchAndRender();">Load More</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  applySearchAndRender();
+}
+</script>
+
