@@ -3984,60 +3984,53 @@ function renderSearch() {
 
 
 <script>
-/* ── Chat widget styles (injected once) ─────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   LUMINO RULE-BASED CHATBOT  —  no API key, fully offline
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Inject chat styles once ────────────────────────────────────── */
 (function injectChatStyles() {
   if (document.getElementById('chat-extra-styles')) return;
   const s = document.createElement('style');
   s.id = 'chat-extra-styles';
   s.textContent = `
-    #chat-fab {
-      position:fixed;bottom:24px;right:24px;z-index:9999;
-      width:56px;height:56px;border-radius:50%;
-      background:var(--color-gold);border:none;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;
-      box-shadow:0 4px 20px rgba(200,169,110,0.5);
-      transition:transform 200ms ease,box-shadow 200ms ease;
-    }
-    #chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(200,169,110,0.6);}
-    #chat-fab:active{transform:scale(0.95);}
     #chat-window {
-      display:none;position:fixed;bottom:96px;right:24px;
-      width:360px;height:520px;z-index:9998;
-      background:#fff;border-radius:16px;
-      box-shadow:0 8px 32px rgba(0,0,0,0.18);
+      display:none;position:fixed;top:142px;right:0;
+      width:360px;height:calc(100vh - 142px);z-index:9997;
+      background:#fff;border-left:1px solid #e5e5e5;border-bottom:1px solid #e5e5e5;
       flex-direction:column;overflow:hidden;
-      animation:chatSlideUp 250ms ease;
+      transform:translateX(100%);
+      transition:transform 300ms cubic-bezier(0.4,0,0.2,1),opacity 300ms ease;
+      opacity:0;
     }
-    #chat-window.open{display:flex;}
-    @keyframes chatSlideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    #chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#fafaf8;}
+    #chat-window.open{display:flex;transform:translateX(0);opacity:1;}
+    #chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#fafaf8;}
     #chat-messages::-webkit-scrollbar{width:4px;}
     #chat-messages::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px;}
     .chat-msg-user{
       align-self:flex-end;background:#0a0a0a;color:#fff;
       border-radius:16px 16px 4px 16px;max-width:80%;
-      padding:10px 14px;font-size:0.83rem;line-height:1.45;word-break:break-word;
+      padding:10px 14px;font-size:0.83rem;line-height:1.5;word-break:break-word;
     }
     .chat-msg-assistant{
       align-self:flex-start;background:#f1f1f1;color:#0a0a0a;
       border-radius:16px 16px 16px 4px;max-width:85%;
-      padding:10px 14px;font-size:0.83rem;line-height:1.5;word-break:break-word;
+      padding:10px 14px;font-size:0.83rem;line-height:1.55;word-break:break-word;
     }
-    #typing-indicator{align-self:flex-start;background:#f1f1f1;border-radius:16px 16px 16px 4px;padding:12px 16px;display:flex;gap:5px;align-items:center;}
-    .typing-dot{width:7px;height:7px;border-radius:50%;background:#aaa;animation:typingBounce 1.2s ease-in-out infinite;}
+    .chat-msg-assistant a{color:var(--color-gold);font-weight:600;}
+    .typing-dot{width:7px;height:7px;border-radius:50%;background:#aaa;animation:typingBounce 1.2s ease-in-out infinite;display:inline-block;}
     .typing-dot:nth-child(2){animation-delay:0.2s;}
     .typing-dot:nth-child(3){animation-delay:0.4s;}
-    @keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+    @keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
     #chat-input-area{border-top:1px solid var(--color-border);padding:12px;display:flex;gap:8px;background:#fff;flex-shrink:0;}
     #chat-input{flex:1;padding:9px 13px;border:1px solid var(--color-border);border-radius:20px;font-size:0.83rem;outline:none;font-family:'Inter',sans-serif;transition:border-color 200ms;}
     #chat-input:focus{border-color:var(--color-gold);}
-    #chat-send-btn{width:36px;height:36px;border-radius:50%;background:var(--color-gold);color:#fff;border:none;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 200ms;}
+    #chat-send-btn{width:36px;height:36px;border-radius:50%;background:var(--color-gold);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 200ms;}
     #chat-send-btn:hover{background:#b8945a;}
-    #api-key-banner{background:#fef3c7;border-bottom:1px solid #fde68a;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;font-size:0.75rem;color:#92400e;flex-shrink:0;}
-    #api-key-form{background:#fafaf8;border-bottom:1px solid var(--color-border);padding:12px 14px;display:none;flex-shrink:0;}
-    #api-key-form input{width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:4px;font-size:0.8rem;margin-bottom:8px;outline:none;font-family:inherit;}
-    #api-key-form input:focus{border-color:var(--color-gold);}
-    @media(max-width:400px){#chat-window{width:calc(100vw - 32px);right:16px;bottom:88px;}}
+    #chat-header-btn.chat-active svg{stroke:var(--color-gold);}
+    @media(max-width:768px){
+      #chat-window{top:0;height:100vh;height:100dvh;width:100vw;border-left:none;}
+    }
   `;
   document.head.appendChild(s);
 })();
@@ -4047,41 +4040,29 @@ function renderChatButton() {
   const root = document.getElementById('chat-root');
   if (!root) return;
   root.innerHTML = `
-    <button id="chat-fab" aria-label="Open chat assistant" onclick="toggleChat()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
-    </button>
     <div id="chat-window" role="dialog" aria-label="LUMINO Chat Assistant">
-      <div style="background:#0a0a0a;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-radius:16px 16px 0 0;">
+
+      <!-- Header -->
+      <div style="background:#0a0a0a;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;"></div>
-          <span style="font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:500;">LUMINO Assistant</span>
+          <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:0.92rem;font-weight:500;line-height:1.2;">LUMINO Assistant</div>
+            <div style="font-size:0.68rem;color:rgba(255,255,255,0.5);letter-spacing:0.04em;">Ask me anything • Always free</div>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <button id="chat-gear-btn" aria-label="Set API key" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border:none;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;transition:background 150ms;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">⚙</button>
-          <button onclick="toggleChat()" aria-label="Close chat" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background 150ms;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">&times;</button>
-        </div>
+        <button onclick="toggleChat()" aria-label="Close chat" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.1);color:#fff;border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">&times;</button>
       </div>
 
-      <div id="api-key-banner">
-        <span>🔑 Enter your API key to enable AI responses</span>
-        <button onclick="toggleApiKeyForm()" style="background:none;border:none;cursor:pointer;font-size:0.75rem;color:#92400e;font-weight:700;text-decoration:underline;">Set Key →</button>
-      </div>
-
-      <div id="api-key-form">
-        <p style="font-size:0.72rem;color:#888;margin-bottom:6px;letter-spacing:0.04em;">Anthropic API key (stored in session only)</p>
-        <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." autocomplete="off"/>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button onclick="saveApiKey()" style="padding:7px 16px;background:var(--color-gold);color:#fff;border:none;border-radius:3px;font-size:0.78rem;font-weight:600;cursor:pointer;">Save Key</button>
-          <button onclick="toggleApiKeyForm()" style="font-size:0.75rem;color:#888;background:none;border:none;cursor:pointer;text-decoration:underline;">Cancel</button>
-        </div>
-      </div>
-
+      <!-- Messages -->
       <div id="chat-messages"></div>
 
+      <!-- Quick reply chips -->
+      <div id="quick-replies" style="display:flex;gap:6px;padding:8px 12px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;border-top:1px solid #f0f0f0;background:#fff;"></div>
+
+      <!-- Input -->
       <div id="chat-input-area">
-        <input type="text" id="chat-input" placeholder="Ask me anything…" maxlength="500"
+        <input type="text" id="chat-input" placeholder="Type a message…" maxlength="400"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}"/>
         <button id="chat-send-btn" onclick="sendChatMessage()" aria-label="Send">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -4089,51 +4070,13 @@ function renderChatButton() {
       </div>
     </div>
   `;
-
-  /* Gear toggle */
-  const gearBtn = document.getElementById('chat-gear-btn');
-  if (gearBtn) gearBtn.onclick = toggleApiKeyForm;
-
-  /* Show/hide banner based on saved key */
-  _syncApiKeyBanner();
-}
-
-/* ── API key helpers ────────────────────────────────────────────── */
-function toggleApiKeyForm() {
-  const form = document.getElementById('api-key-form');
-  if (!form) return;
-  const open = form.style.display === 'block';
-  form.style.display = open ? 'none' : 'block';
-  if (!open) {
-    const inp = document.getElementById('api-key-input');
-    const saved = sessionStorage.getItem('lumino_api_key') || '';
-    if (inp) { inp.value = saved; inp.focus(); }
-  }
-}
-
-function saveApiKey() {
-  const inp = document.getElementById('api-key-input');
-  if (!inp) return;
-  const key = inp.value.trim();
-  if (key) {
-    sessionStorage.setItem('lumino_api_key', key);
-    _syncApiKeyBanner();
-    toggleApiKeyForm();
-    appendChatMessage('assistant', '✓ API key saved for this session. How can I help you today?');
-  }
-}
-
-function _syncApiKeyBanner() {
-  const banner = document.getElementById('api-key-banner');
-  if (!banner) return;
-  banner.style.display = sessionStorage.getItem('lumino_api_key') ? 'none' : 'flex';
 }
 
 /* ── toggleChat ─────────────────────────────────────────────────── */
 let _chatOpened = false;
 function toggleChat() {
   const win = document.getElementById('chat-window');
-  if (!win) return;
+  if (!win) { renderChatButton(); return toggleChat(); }
   const isOpen = win.classList.contains('open');
   if (isOpen) {
     win.classList.remove('open');
@@ -4141,19 +4084,15 @@ function toggleChat() {
   } else {
     win.classList.add('open');
     win.style.display = 'flex';
-    _syncApiKeyBanner();
     if (!_chatOpened) {
       _chatOpened = true;
-      window.CHAT_HISTORY = [];
       const msgs = document.getElementById('chat-messages');
       if (msgs && msgs.children.length === 0) {
-        appendChatMessage('assistant', "Hi! I'm your LUMINO shopping assistant. I can help you find products, manage your cart, answer questions, and even update the catalog. What can I help with today?");
+        appendChatMessage('assistant', "Hi! 👋 I'm your LUMINO assistant. I can help you find products, check your cart, answer questions about shipping and returns, and more. What are you looking for today?");
+        showQuickReplies(["Find a dress 👗","Men's jackets 🧥","My cart 🛍","Shipping info 📦","Size guide 📏","Sale items 🏷","Go to checkout →"]);
       }
     }
-    setTimeout(() => {
-      const inp = document.getElementById('chat-input');
-      if (inp) inp.focus();
-    }, 200);
+    setTimeout(() => { const inp = document.getElementById('chat-input'); if (inp) inp.focus(); }, 200);
   }
 }
 
@@ -4163,11 +4102,11 @@ function appendChatMessage(role, content) {
   if (!container) return;
   const div = document.createElement('div');
   div.className = role === 'user' ? 'chat-msg-user' : 'chat-msg-assistant';
-  /* Simple markdown-ish: bold, line breaks */
-  div.innerHTML = String(content)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\n/g,'<br/>');
+  if (role === 'assistant') {
+    div.innerHTML = content; /* HTML allowed for assistant */
+  } else {
+    div.textContent = content;
+  }
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
 }
@@ -4178,234 +4117,296 @@ function showTypingIndicator() {
   if (!container || document.getElementById('typing-indicator')) return;
   const div = document.createElement('div');
   div.id = 'typing-indicator';
+  div.className = 'chat-msg-assistant';
+  div.style.cssText = 'background:#f1f1f1;padding:12px 16px;display:flex;gap:5px;align-items:center;';
   div.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
 }
-
 function hideTypingIndicator() {
   const el = document.getElementById('typing-indicator');
   if (el) el.remove();
 }
 
+/* ── showQuickReplies ───────────────────────────────────────────── */
+function showQuickReplies(chips) {
+  const row = document.getElementById('quick-replies');
+  if (!row) return;
+  row.innerHTML = chips.map(c => `
+    <button onclick="sendChatMessage('${c.replace(/'/g,"\\'")}');this.parentElement.innerHTML='';"
+      style="flex-shrink:0;border:1px solid #e5e5e5;border-radius:20px;padding:5px 13px;font-size:0.72rem;cursor:pointer;background:#fff;font-family:'Inter',sans-serif;white-space:nowrap;transition:background 150ms,border-color 150ms;"
+      onmouseover="this.style.background='#fef9f0';this.style.borderColor='var(--color-gold)'"
+      onmouseout="this.style.background='#fff';this.style.borderColor='#e5e5e5'"
+    >${c}</button>`).join('');
+  row.style.display = chips.length ? 'flex' : 'none';
+}
+
 /* ── sendChatMessage ────────────────────────────────────────────── */
-async function sendChatMessage() {
+function sendChatMessage(textOverride) {
   const input = document.getElementById('chat-input');
-  if (!input) return;
-  const text = input.value.trim();
+  const text = (textOverride || (input ? input.value : '')).trim();
   if (!text) return;
-
   appendChatMessage('user', text);
-  input.value = '';
-  window.CHAT_HISTORY.push({ role: 'user', content: text });
+  if (input) input.value = '';
+  /* hide chips */
+  const qr = document.getElementById('quick-replies');
+  if (qr) qr.innerHTML = '';
   showTypingIndicator();
-
-  try {
-    const responseText = await callClaudeAPI(window.CHAT_HISTORY);
-    if (!responseText) return;
+  setTimeout(() => {
     hideTypingIndicator();
-    const cleanText = handleChatAction(responseText);
-    appendChatMessage('assistant', cleanText || responseText);
-    window.CHAT_HISTORY.push({ role: 'assistant', content: responseText });
-  } catch (err) {
-    hideTypingIndicator();
-    console.error('Chat error:', err);
-    appendChatMessage('assistant', 'Sorry, I\'m having trouble connecting. Please check your API key and try again.');
-  }
+    const reply = getBotReply(text);
+    appendChatMessage('assistant', reply.html);
+    if (reply.action) { try { reply.action(); } catch(e){} }
+    if (reply.chips && reply.chips.length) showQuickReplies(reply.chips);
+  }, 320);
 }
 
-/* ── callClaudeAPI ──────────────────────────────────────────────── */
-async function callClaudeAPI(messages) {
-  const apiKey = sessionStorage.getItem('lumino_api_key');
-  if (!apiKey) {
-    appendChatMessage('assistant', 'Please set your Anthropic API key using the ⚙ gear icon above.');
-    return null;
+/* ═══════════════════════════════════════════════════════════════════
+   RULE ENGINE  —  getBotReply(input)
+   ═══════════════════════════════════════════════════════════════════ */
+function getBotReply(input) {
+  const t = input.toLowerCase().trim();
+  const fp = p => `£${Number(p).toFixed(2)}`;
+
+  /* ── GREETINGS ── */
+  if (/^(hi|hello|hey|good morning|good evening|howdy|hiya|sup|yo\b)/.test(t)) {
+    return {
+      html: "Hello! 👋 Welcome to LUMINO. How can I help you today? You can browse by category, check your cart, or ask about sizing and delivery.",
+      action: null,
+      chips: ["Show me Women's","Show me Men's","What's on sale?","My cart"]
+    };
   }
 
-  const cartSummary = JSON.stringify(
-    window.CART.map(i => ({ name: i.name, size: i.size, color: i.color, qty: i.quantity, price: i.price }))
-  );
-  const userJson = window.CURRENT_USER
-    ? JSON.stringify({ name: window.CURRENT_USER.firstName, email: window.CURRENT_USER.email })
-    : '"Guest"';
+  /* ── NAVIGATE TO CART ── (must come before generic "cart" check) */
+  if (/go to cart|view cart|open cart|take me to cart/.test(t)) {
+    return { html: "Taking you to your cart now! 🛍", action: () => navigate('#/cart'), chips: [] };
+  }
 
-  const systemPrompt = `You are LUMINO, an agentic fashion shopping assistant for a luxury fashion e-commerce site.
+  /* ── NAVIGATE TO CHECKOUT ── */
+  if (/\bcheckout\b|place order|complete order|buy now|proceed to pay/.test(t)) {
+    return { html: "Heading to checkout! 💳", action: () => navigate('#/checkout'), chips: [] };
+  }
 
-CURRENT STORE STATE:
-- Total products in catalog: ${window.PRODUCTS.length}
-- Current cart (${window.CART.length} items): ${cartSummary}
-- Logged in user: ${userJson}
-
-You can perform real actions by including JSON action blocks in your response using this exact format (one per line, no surrounding text on that line):
-{"type":"ACTION_TYPE",...}
-
-AVAILABLE ACTIONS:
-{"type":"ADD_TO_CART","productId":"prod_001","size":"M","color":"Black","quantity":1}
-{"type":"REMOVE_FROM_CART","productId":"prod_001"}
-{"type":"CLEAR_CART"}
-{"type":"NAVIGATE","route":"#/category/women"}
-{"type":"SEARCH","query":"blue dress"}
-{"type":"SHOW_PRODUCT","productId":"prod_005"}
-{"type":"CREATE_ORDER"}
-{"type":"ADD_PRODUCT","product":{"id":"prod_106","name":"Example Product","brand":"Zara","category":"women","subcategory":"tops","price":59.99,"originalPrice":null,"discount":null,"description":"A short description.","sizes":["XS","S","M","L","XL"],"colors":["Black","White"],"images":["https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop","https://images.unsplash.com/photo-1485518882345-15568f57cf3c?w=600&h=800&fit=crop"],"rating":4.5,"reviews":0,"inStock":true,"tags":[],"featured":false}}
-{"type":"DELETE_PRODUCT","productId":"prod_001"}
-{"type":"UPDATE_PRODUCT","productId":"prod_001","updates":{"price":79.99,"inStock":false}}
-
-RULES:
-- Always execute action blocks — the UI handles them automatically
-- After executing an action, confirm it in natural language
-- For ADD_TO_CART: pick a real productId from the catalog (prod_001 through prod_105)
-- Be concise, warm, and helpful. Max 3-5 products per list
-- Always use £ for prices
-- If user asks what is in their cart, describe the cartSummary contents
-- When recommending products, mention the name, brand, and price
-- For catalog edits (ADD_PRODUCT, UPDATE_PRODUCT, DELETE_PRODUCT) confirm the change and explain what was done`;
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: messages
-    })
-  });
-
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error?.message || 'API error ' + response.status);
-  const assistantText = data.content[0].text;
-  return assistantText;
-}
-
-/* ── handleChatAction ───────────────────────────────────────────── */
-function handleChatAction(responseText) {
-  const actionRegex = /\{[^{}]*"type"\s*:\s*"[A-Z_]+"[^{}]*\}/g;
-  const matches = responseText.match(actionRegex) || [];
-
-  matches.forEach(match => {
-    try {
-      const action = JSON.parse(match);
-      switch (action.type) {
-
-        case 'ADD_TO_CART': {
-          const p = window.PRODUCTS.find(x => x.id === action.productId);
-          if (p) {
-            addToCart(action.productId, action.size || p.sizes[0], action.color || p.colors[0], action.quantity || 1);
-            updateCartBadge();
-            /* Bounce cart icon */
-            const badge = document.getElementById('cart-badge');
-            if (badge) { badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce'); }
-          }
-          break;
-        }
-
-        case 'REMOVE_FROM_CART': {
-          const item = window.CART.find(x => x.productId === action.productId);
-          if (item) removeFromCart(item.productId, item.size, item.color);
-          updateCartBadge();
-          break;
-        }
-
-        case 'CLEAR_CART':
-          window.CART = [];
-          updateCartBadge();
-          break;
-
-        case 'NAVIGATE':
-          if (action.route) navigate(action.route);
-          break;
-
-        case 'SEARCH':
-          if (action.query) {
-            window.SEARCH_QUERY = action.query;
-            navigate('#/search');
-          }
-          break;
-
-        case 'SHOW_PRODUCT':
-          if (action.productId) navigate('#/product/' + action.productId);
-          break;
-
-        case 'CREATE_ORDER': {
-          if (!window.CURRENT_USER) {
-            appendChatMessage('assistant', 'Please sign in to place an order.');
-            break;
-          }
-          if (!window.CART.length) {
-            appendChatMessage('assistant', 'Your cart is empty — add some items first!');
-            break;
-          }
-          const orderId = 'ORD-' + Date.now();
-          const subtotal = window.CART.reduce((s, x) => s + x.price * x.quantity, 0);
-          const order = {
-            id: orderId,
-            items: window.CART.map(x => ({ ...x })),
-            subtotal,
-            deliveryCost: subtotal >= 50 ? 0 : 4.99,
-            deliveryLabel: 'Standard Delivery',
-            promoAmt: 0,
-            total: subtotal + (subtotal >= 50 ? 0 : 4.99),
-            address: window.CHECKOUT_DATA || {},
-            deliveryMethod: 'standard',
-            status: 'Confirmed',
-            placedAt: new Date()
-          };
-          window.ORDERS.push(order);
-          window.CURRENT_USER.orders = window.CURRENT_USER.orders || [];
-          window.CURRENT_USER.orders.push(order);
-          window.CART = [];
-          updateCartBadge();
-          navigate('#/order/' + orderId);
-          break;
-        }
-
-        case 'ADD_PRODUCT': {
-          const prod = action.product;
-          if (prod && prod.id && prod.name && prod.category && prod.price) {
-            const exists = window.PRODUCTS.find(x => x.id === prod.id);
-            if (!exists) {
-              window.PRODUCTS.push(prod);
-              /* Re-render PLP if currently on one */
-              const h = window.location.hash;
-              if (h.startsWith('#/category/')) renderPLP(h.replace('#/category/', ''));
-            }
-          }
-          break;
-        }
-
-        case 'DELETE_PRODUCT': {
-          if (action.productId) {
-            window.PRODUCTS = window.PRODUCTS.filter(x => x.id !== action.productId);
-            const h = window.location.hash;
-            if (h.startsWith('#/category/')) renderPLP(h.replace('#/category/', ''));
-          }
-          break;
-        }
-
-        case 'UPDATE_PRODUCT': {
-          const idx = window.PRODUCTS.findIndex(x => x.id === action.productId);
-          if (idx > -1 && action.updates) {
-            Object.assign(window.PRODUCTS[idx], action.updates);
-            const h = window.location.hash;
-            if (h === '#/product/' + action.productId) renderPDP(action.productId);
-            else if (h.startsWith('#/category/')) renderPLP(h.replace('#/category/', ''));
-          }
-          break;
-        }
-      }
-    } catch (e) {
-      /* silently skip malformed action blocks */
+  /* ── CART CONTENTS ── */
+  if (/\bcart\b|\bbag\b|what have i|my order|what.s in my/.test(t)) {
+    if (!window.CART || !window.CART.length) {
+      return {
+        html: "Your bag is currently empty. 🛍 Ready to start shopping?",
+        action: null,
+        chips: ["Show Women's","Show Men's","Sale items"]
+      };
     }
-  });
+    const total = window.CART.reduce((s,i) => s + i.price * i.quantity, 0);
+    const itemsHTML = window.CART.map(i =>
+      `<span style="display:block;margin:3px 0;">• <b>${i.name}</b> — Size: ${i.size}, Colour: ${i.color} × ${i.quantity} — ${fp(i.price)}</span>`
+    ).join('');
+    return {
+      html: `You have ${window.CART.length} item${window.CART.length>1?'s':''} in your bag:<br>${itemsHTML}<br><b>Total: ${fp(total)}</b>`,
+      action: null,
+      chips: ["Go to cart","Checkout now","Continue shopping"]
+    };
+  }
 
-  /* Strip all action JSON blocks from displayed text */
-  return responseText.replace(actionRegex, '').replace(/\n{3,}/g, '\n\n').trim();
+  /* ── SALE / DEALS ── */
+  if (/\bsale\b|discount|offer|deal|cheap|reduced|saving/.test(t)) {
+    const items = (window.PRODUCTS || []).filter(p => p.discount > 0).slice(0,4);
+    if (!items.length) return { html: "No sale items found right now — check back soon!", action: null, chips: ["Browse Women's","Browse Men's"] };
+    const listHTML = items.map(p =>
+      `<span style="display:block;margin:3px 0;">• <b>${p.name}</b> — <s style="color:#aaa;">${fp(p.originalPrice)}</s> <span style="color:#e53e3e;font-weight:600;">${fp(p.price)}</span> <span style="background:#e53e3e;color:#fff;font-size:0.65rem;padding:1px 5px;border-radius:3px;">${p.discount}% OFF</span></span>`
+    ).join('');
+    return {
+      html: `🏷 Great deals right now:<br>${listHTML}<br><a href="#/sale" onclick="navigate('#/sale');return false;" style="color:var(--color-gold);font-weight:600;">View all sale items →</a>`,
+      action: null,
+      chips: ["Show more sale","Go to sale page","Add to cart"]
+    };
+  }
+
+  /* ── WOMEN'S / DRESSES / TOPS ── */
+  if (/women|dress|blouse|skirt|feminine|ladies/.test(t)) {
+    const items = (window.PRODUCTS || []).filter(p => p.category === 'women').slice(0,4);
+    const listHTML = items.map(p =>
+      `<span style="display:block;margin:3px 0;">• <b>${p.name}</b> by ${p.brand} — ${fp(p.price)}</span>`
+    ).join('');
+    return {
+      html: `Here are some women's picks for you: 👗<br>${listHTML}<br><a href="#/category/women" onclick="navigate('#/category/women');return false;" style="color:var(--color-gold);font-weight:600;">View all Women's →</a>`,
+      action: null,
+      chips: ["Show dresses","Show tops","View all women's","Sale items"]
+    };
+  }
+
+  /* ── MEN'S / SHIRTS / SUITS / JACKETS ── (guard: not "women") */
+  if (/\bmen\b|\bman\b|shirt|suit|\bjacket\b|menswear|masculine/.test(t) && !/women/.test(t)) {
+    const items = (window.PRODUCTS || []).filter(p => p.category === 'men').slice(0,4);
+    const listHTML = items.map(p =>
+      `<span style="display:block;margin:3px 0;">• <b>${p.name}</b> by ${p.brand} — ${fp(p.price)}</span>`
+    ).join('');
+    return {
+      html: `Here are some men's picks for you: 🧥<br>${listHTML}<br><a href="#/category/men" onclick="navigate('#/category/men');return false;" style="color:var(--color-gold);font-weight:600;">View all Men's →</a>`,
+      action: null,
+      chips: ["Show shirts","Show suits","View all men's","Sale items"]
+    };
+  }
+
+  /* ── SHOES ── */
+  if (/shoe|boot|sneaker|heel|trainer|footwear|stiletto/.test(t)) {
+    const items = (window.PRODUCTS || []).filter(p => p.category === 'shoes').slice(0,4);
+    const listHTML = items.map(p =>
+      `<span style="display:block;margin:3px 0;">• <b>${p.name}</b> by ${p.brand} — ${fp(p.price)}</span>`
+    ).join('');
+    return {
+      html: `Stepping out in style! 👠<br>${listHTML}<br><a href="#/category/shoes" onclick="navigate('#/category/shoes');return false;" style="color:var(--color-gold);font-weight:600;">View all Shoes →</a>`,
+      action: null,
+      chips: ["Show heels","Show sneakers","Show boots","View all shoes"]
+    };
+  }
+
+  /* ── BAGS ── (guard: not cart) */
+  if (/\btote\b|handbag|clutch|purse|satchel|crossbody/.test(t)) {
+    const items = (window.PRODUCTS || []).filter(p => p.category === 'bags').slice(0,4);
+    const listHTML = items.map(p =>
+      `<span style="display:block;margin:3px 0;">• <b>${p.name}</b> by ${p.brand} — ${fp(p.price)}</span>`
+    ).join('');
+    return {
+      html: `Carry it in style! 👜<br>${listHTML}<br><a href="#/category/bags" onclick="navigate('#/category/bags');return false;" style="color:var(--color-gold);font-weight:600;">View all Bags →</a>`,
+      action: null,
+      chips: ["Show totes","Show clutches","View all bags"]
+    };
+  }
+
+  /* ── NEW ARRIVALS ── */
+  if (/new arrival|latest|just in|new collection|just arrived|newest/.test(t)) {
+    const items = (window.PRODUCTS || []).filter(p => p.featured).slice(0,4);
+    const listHTML = items.map(p =>
+      `<span style="display:block;margin:3px 0;">• <b>${p.name}</b> by ${p.brand} — ${fp(p.price)}</span>`
+    ).join('');
+    return {
+      html: `🆕 Fresh in this week:<br>${listHTML}<br><a href="#/" onclick="navigate('#/');return false;" style="color:var(--color-gold);font-weight:600;">Explore new arrivals →</a>`,
+      action: null,
+      chips: ["Show Women's","Show Men's","View sale"]
+    };
+  }
+
+  /* ── SHIPPING / DELIVERY ── */
+  if (/ship|deliver|how long|when will|dispatch|postage|tracking/.test(t)) {
+    return {
+      html: `📦 <b>Delivery Options:</b><br>
+• <b>Standard</b> (3–5 days): FREE on orders over £50, else £4.99<br>
+• <b>Express</b> (1–2 days): £9.99<br>
+• <b>Next Day</b> (order by 9pm): £14.99<br><br>
+We ship to UK, EU, USA, Australia and 50+ more countries!`,
+      action: null,
+      chips: ["Returns policy","Track my order","Go to checkout"]
+    };
+  }
+
+  /* ── RETURNS ── */
+  if (/return|refund|exchange|send back|wrong size/.test(t)) {
+    return {
+      html: `🔄 <b>Returns Policy:</b><br>
+• Free returns within <b>30 days</b><br>
+• Items must be unworn with tags attached<br>
+• Refunds processed within <b>5–7 business days</b><br>
+• Start a return from your account dashboard`,
+      action: null,
+      chips: ["Shipping info","Contact us","My account"]
+    };
+  }
+
+  /* ── SIZE GUIDE ── */
+  if (/\bsize\b|sizing|\bfit\b|measure|chart|which size/.test(t)) {
+    return {
+      html: `📏 <b>Size Guide:</b><br>
+<table style="font-size:11px;border-collapse:collapse;margin-top:6px;">
+<tr style="background:#f5f5f5;"><th style="padding:4px 8px;border:1px solid #e5e5e5;">Size</th><th style="padding:4px 8px;border:1px solid #e5e5e5;">UK</th><th style="padding:4px 8px;border:1px solid #e5e5e5;">EU</th><th style="padding:4px 8px;border:1px solid #e5e5e5;">Bust</th><th style="padding:4px 8px;border:1px solid #e5e5e5;">Waist</th></tr>
+<tr><td style="padding:4px 8px;border:1px solid #e5e5e5;">XS</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">6</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">34</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">80cm</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">62cm</td></tr>
+<tr style="background:#fafaf8;"><td style="padding:4px 8px;border:1px solid #e5e5e5;">S</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">8</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">36</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">84cm</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">66cm</td></tr>
+<tr><td style="padding:4px 8px;border:1px solid #e5e5e5;">M</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">10</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">38</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">88cm</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">70cm</td></tr>
+<tr style="background:#fafaf8;"><td style="padding:4px 8px;border:1px solid #e5e5e5;">L</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">12</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">40</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">92cm</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">74cm</td></tr>
+<tr><td style="padding:4px 8px;border:1px solid #e5e5e5;">XL</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">14</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">42</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">96cm</td><td style="padding:4px 8px;border:1px solid #e5e5e5;">78cm</td></tr>
+</table><br>When in doubt, <b>size up</b>!`,
+      action: null,
+      chips: ["Returns policy","Shipping info","Browse products"]
+    };
+  }
+
+  /* ── ACCOUNT / LOGIN ── */
+  if (/account|login|sign in|register|sign up|log in/.test(t)) {
+    if (window.CURRENT_USER) {
+      return {
+        html: `You're logged in as <b>${window.CURRENT_USER.firstName}</b>! <a href="#/account" onclick="navigate('#/account');return false;" style="color:var(--color-gold);font-weight:600;">Go to your account →</a>`,
+        action: null,
+        chips: ["My orders","Shipping info","Browse products"]
+      };
+    }
+    return {
+      html: `You're not signed in. <a href="#/login" onclick="navigate('#/login');return false;" style="color:var(--color-gold);font-weight:600;">Sign in →</a> or <a href="#/register" onclick="navigate('#/register');return false;" style="color:var(--color-gold);font-weight:600;">Create account →</a>`,
+      action: null,
+      chips: ["Sign in","Create account"]
+    };
+  }
+
+  /* ── HELP / CONTACT / SUPPORT ── */
+  if (/\bhelp\b|contact|support|problem|issue|complaint|question/.test(t)) {
+    return {
+      html: `Need help? 💬<br>
+• <b>Email:</b> hello@lumino.com<br>
+• <b>Hours:</b> Mon–Fri 9am–6pm GMT<br>
+• <b>Returns:</b> Free within 30 days<br><br>
+Or ask me anything directly here — I'm always on! 😊`,
+      action: null,
+      chips: ["Shipping info","Returns policy","Size guide"]
+    };
+  }
+
+  /* ── PAYMENT ── */
+  if (/\bpay\b|payment|visa|mastercard|card|apple pay|google pay|paypal/.test(t)) {
+    return {
+      html: `💳 We accept: <b>Visa, Mastercard, PayPal, Apple Pay</b> and <b>Google Pay</b>.<br>All transactions are secured with 256-bit SSL encryption. 🔒`,
+      action: null,
+      chips: ["Delivery info","Returns","Go to checkout"]
+    };
+  }
+
+  /* ── SEARCH / FIND ── */
+  if (/\bfind\b|looking for|search|show me|looking for/.test(t)) {
+    const query = t.replace(/(find|looking for|search for|search|show me)/g,'').trim();
+    if (query.length > 2 && window.PRODUCTS) {
+      const results = window.PRODUCTS.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query) ||
+        (p.brand && p.brand.toLowerCase().includes(query)) ||
+        (p.tags && p.tags.some(tag => tag.includes(query)))
+      ).slice(0,4);
+      if (results.length) {
+        const listHTML = results.map(p =>
+          `<span style="display:block;margin:3px 0;">• <b>${p.name}</b> by ${p.brand} — ${fp(p.price)}</span>`
+        ).join('');
+        return {
+          html: `Here's what I found for "<b>${query}</b>":<br>${listHTML}<br><a href="#/search" onclick="window.SEARCH_QUERY='${query}';navigate('#/search');return false;" style="color:var(--color-gold);font-weight:600;">View all results →</a>`,
+          action: () => { window.SEARCH_QUERY = query; },
+          chips: ["Refine search","Browse all","My cart"]
+        };
+      }
+      return {
+        html: `I couldn't find products matching "<b>${query}</b>". Try browsing by category instead.`,
+        action: null,
+        chips: ["Show Women's","Show Men's","Show Shoes","Sale items"]
+      };
+    }
+  }
+
+  /* ── DEFAULT FALLBACK ── */
+  return {
+    html: `I'm not sure about that, but I can help you with:<br>
+• 🛍 <b>Browse products</b> by category<br>
+• 📦 <b>Shipping &amp; delivery</b> info<br>
+• 📏 <b>Size guide</b><br>
+• 🔄 <b>Returns</b> policy<br>
+• 🛒 Your <b>cart</b> and <b>checkout</b><br><br>
+What would you like to know?`,
+    action: null,
+    chips: ["Show Women's","Show Men's","Sale items","My cart","Shipping info"]
+  };
 }
 </script>
 
