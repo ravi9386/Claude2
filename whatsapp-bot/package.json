@@ -1,0 +1,8 @@
+{
+  "name": "lumino-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "LUMINO WhatsApp bot — Twilio + Firebase + Vercel",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "dependencies": {}
+}
