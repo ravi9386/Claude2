@@ -2520,9 +2520,12 @@ function renderHome() {
       <div style="position:relative;z-index:1;text-align:center;padding:0 24px;max-width:700px;">
         <h1 style="font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,64px);color:#fff;margin-bottom:16px;line-height:1.1;">The New Collection</h1>
         <p style="font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:36px;">Curated styles for every story</p>
-        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;">
           <button class="btn" style="border:2px solid #fff;color:#fff;background:transparent;transition:all 200ms;" onmouseover="this.style.background='var(--color-gold)';this.style.borderColor='var(--color-gold)';" onmouseout="this.style.background='transparent';this.style.borderColor='#fff';" onclick="navigate('#/category/women')">Shop Women</button>
           <button class="btn" style="border:2px solid #fff;color:#fff;background:transparent;transition:all 200ms;" onmouseover="this.style.background='var(--color-gold)';this.style.borderColor='var(--color-gold)';" onmouseout="this.style.background='transparent';this.style.borderColor='#fff';" onclick="navigate('#/category/men')">Shop Men</button>
+        </div>
+        <div onclick="navigate('#/cart')" style="display:inline-flex;align-items:center;gap:10px;background:var(--color-gold);color:#fff;padding:10px 22px;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;transition:opacity 200ms;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          🎁 &nbsp;USE CODE <span style="background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:3px;margin:0 4px;">BOGO</span> — BUY ONE GET ONE FREE
         </div>
       </div>
     </section>
@@ -3209,17 +3212,19 @@ function renderCart() {
   }
 
   function calcSubtotal() { return window.CART.reduce((s,x) => s + x.price * x.quantity, 0); }
-  function calcDelivery(sub) { return sub >= 50 ? 0 : 4.99; }
+  function calcDelivery(sub) {
+    const base = sub >= 50 ? 0 : 4.99;
+    return base - window.getDeliveryDiscount(base);
+  }
   function calcTotal(sub, del) {
-    const promo = window.PROMO ? sub * window.PROMO.discount : 0;
-    return sub + del - promo;
+    return sub + del - window.getPromoDiscount(sub);
   }
 
   function cartHTML() {
-    const subtotal = calcSubtotal();
-    const delivery = calcDelivery(subtotal);
-    const promoAmt = window.PROMO ? subtotal * window.PROMO.discount : 0;
-    const total = calcTotal(subtotal, delivery);
+    const subtotal  = calcSubtotal();
+    const delivery  = calcDelivery(subtotal);
+    const promoAmt  = window.getPromoDiscount(subtotal);
+    const total     = calcTotal(subtotal, delivery);
 
     return `
       <div style="max-width:1100px;margin:0 auto;padding:32px 24px 80px;">
@@ -3264,21 +3269,30 @@ function renderCart() {
               <span style="color:var(--color-text-muted);">Delivery</span>
               <span style="color:${delivery===0?'#27ae60':'inherit'}">${delivery===0?'FREE':formatPrice(delivery)}</span>
             </div>
-            ${window.PROMO ? `
+            ${window.PROMO && promoAmt > 0 ? `
             <div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:0.875rem;">
-              <span style="color:#27ae60;">Promo (${window.PROMO.code})</span>
-              <span style="color:#27ae60;">−${formatPrice(promoAmt)}</span>
+              <span style="color:#16a34a;font-weight:500;">
+                ${window.PROMO.code === 'BOGO' ? '🎁 BOGO — cheapest item free' : `Promo (${window.PROMO.code})`}
+              </span>
+              <span style="color:#16a34a;font-weight:600;">−${formatPrice(promoAmt)}</span>
             </div>` : ''}
 
             <!-- Promo input -->
             <div style="margin-bottom:20px;" id="cart-promo-wrap">
               ${window.PROMO ? `
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:3px;font-size:0.8rem;">
-                  <span style="color:#16a34a;font-weight:600;">✓ ${window.PROMO.code} applied</span>
-                  <button onclick="window.PROMO=null;renderCart();" style="font-size:0.75rem;color:#c0392b;background:none;border:none;cursor:pointer;text-decoration:underline;">Remove</button>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:4px;font-size:0.8rem;">
+                  <div>
+                    <span style="color:#16a34a;font-weight:700;">✓ ${window.PROMO.code} applied</span>
+                    <span style="color:#16a34a;margin-left:6px;">${(window.PROMO_CODES[window.PROMO.code]||{}).label||''}</span>
+                  </div>
+                  <button onclick="window.PROMO=null;renderCart();" style="font-size:0.72rem;color:#c0392b;background:none;border:none;cursor:pointer;text-decoration:underline;">Remove</button>
                 </div>` : `
+                <div style="font-size:0.75rem;color:var(--color-text-muted);margin-bottom:6px;letter-spacing:0.04em;">Have a promo code? Try <b>BOGO</b>, LUMINO10, LUMINO20, FREESHIP</div>
                 <div style="display:flex;gap:8px;">
-                  <input id="promo-input" type="text" placeholder="Promo code" style="flex:1;padding:9px 12px;border:1px solid var(--color-border);border-radius:3px;font-size:0.83rem;outline:none;" onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"/>
+                  <input id="promo-input" type="text" placeholder="Enter promo code"
+                    style="flex:1;padding:9px 12px;border:1px solid var(--color-border);border-radius:3px;font-size:0.83rem;outline:none;text-transform:uppercase;"
+                    onfocus="this.style.borderColor='var(--color-gold)'" onblur="this.style.borderColor='var(--color-border)'"
+                    onkeydown="if(event.key==='Enter')applyPromo()"/>
                   <button class="btn btn-outlined btn-sm" onclick="applyPromo()">Apply</button>
                 </div>
                 <div id="promo-msg" style="font-size:0.75rem;margin-top:6px;"></div>`}
@@ -3300,17 +3314,53 @@ function renderCart() {
   el.innerHTML = cartHTML();
 }
 
+/* ── Promo catalogue ────────────────────────────────────────────── */
+window.PROMO_CODES = {
+  'LUMINO10': { type: 'percent', value: 0.10, label: '10% off your order'       },
+  'LUMINO20': { type: 'percent', value: 0.20, label: '20% off your order'       },
+  'BOGO':     { type: 'bogo',    value: 0,    label: 'Buy One Get One FREE'      },
+  'FREESHIP': { type: 'freeship',value: 0,    label: 'Free delivery on this order' },
+};
+
+/* ── Calculate promo discount amount ───────────────────────────── */
+window.getPromoDiscount = function(subtotal) {
+  const p = window.PROMO;
+  if (!p) return 0;
+  const def = window.PROMO_CODES[p.code];
+  if (!def) return 0;
+  if (def.type === 'percent')  return subtotal * def.value;
+  if (def.type === 'freeship') return 0; /* handled in delivery calc */
+  if (def.type === 'bogo') {
+    /* cheapest item in cart is free */
+    if (!window.CART || !window.CART.length) return 0;
+    const cheapest = [...window.CART].sort((a, b) => a.price - b.price)[0];
+    return cheapest ? cheapest.price : 0;
+  }
+  return 0;
+};
+
+window.getDeliveryDiscount = function(deliveryCost) {
+  const p = window.PROMO;
+  if (!p) return 0;
+  const def = window.PROMO_CODES[p.code];
+  if (def && def.type === 'freeship') return deliveryCost;
+  return 0;
+};
+
 window.applyPromo = function() {
   const input = document.getElementById('promo-input');
-  const msg = document.getElementById('promo-msg');
+  const msg   = document.getElementById('promo-msg');
   if (!input || !msg) return;
   const code = (input.value || '').trim().toUpperCase();
-  if (code === 'LUMINO20') {
-    window.PROMO = { code: 'LUMINO20', discount: 0.20 };
+  const def  = window.PROMO_CODES[code];
+  if (def) {
+    window.PROMO = { code };
+    msg.style.color = '#16a34a';
+    msg.textContent = `✓ "${code}" applied — ${def.label}`;
     renderCart();
   } else {
     msg.style.color = '#c0392b';
-    msg.textContent = 'Invalid promo code.';
+    msg.textContent = 'Invalid promo code. Try BOGO, LUMINO10, LUMINO20 or FREESHIP.';
   }
 };
 
@@ -3444,8 +3494,8 @@ function renderCheckout() {
   function step3HTML() {
     const subtotal = calcSubtotalCO();
     const selectedDel = deliveryOptions.find(o=>o.id===window.CHECKOUT_DATA.deliveryMethod)||deliveryOptions[0];
-    const deliveryCost = selectedDel.price;
-    const promoAmt = window.PROMO ? subtotal * window.PROMO.discount : 0;
+    const deliveryCost = selectedDel.price - window.getDeliveryDiscount(selectedDel.price);
+    const promoAmt = window.getPromoDiscount(subtotal);
     const total = subtotal + deliveryCost - promoAmt;
     const addr = window.CHECKOUT_DATA;
     return `
@@ -3464,7 +3514,7 @@ function renderCheckout() {
         <div style="padding:16px 20px;">
           <div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:8px;"><span style="color:var(--color-text-muted);">Subtotal</span><span>${formatPrice(subtotal)}</span></div>
           <div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:8px;"><span style="color:var(--color-text-muted);">Delivery (${selectedDel.label})</span><span style="color:${deliveryCost===0?'#27ae60':'inherit'}">${deliveryCost===0?'FREE':formatPrice(deliveryCost)}</span></div>
-          ${window.PROMO?`<div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:8px;"><span style="color:#27ae60;">Promo (${window.PROMO.code})</span><span style="color:#27ae60;">−${formatPrice(promoAmt)}</span></div>`:''}
+          ${window.PROMO && promoAmt > 0 ? `<div style="display:flex;justify-content:space-between;font-size:0.875rem;margin-bottom:8px;"><span style="color:#16a34a;font-weight:500;">${window.PROMO.code === 'BOGO' ? '🎁 BOGO — cheapest item free' : 'Promo (' + window.PROMO.code + ')'}</span><span style="color:#16a34a;font-weight:600;">−${formatPrice(promoAmt)}</span></div>` : ''}
           <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;padding-top:12px;border-top:1px solid var(--color-border);"><span>Total</span><span>${formatPrice(total)}</span></div>
         </div>
       </div>
@@ -3483,13 +3533,15 @@ function renderCheckout() {
     const orderId = 'ORD-' + Date.now();
     const selectedDel = deliveryOptions.find(o=>o.id===window.CHECKOUT_DATA.deliveryMethod)||deliveryOptions[0];
     const subtotal = window.CART.reduce((s,x)=>s+x.price*x.quantity,0);
-    const promoAmt = window.PROMO ? subtotal * window.PROMO.discount : 0;
-    const total = subtotal + selectedDel.price - promoAmt;
+    const promoAmt    = window.getPromoDiscount(subtotal);
+    const delDiscount = window.getDeliveryDiscount(selectedDel.price);
+    const finalDel    = selectedDel.price - delDiscount;
+    const total       = subtotal + finalDel - promoAmt;
     const order = {
       id: orderId,
       items: window.CART.map(x=>({...x})),
       subtotal,
-      deliveryCost: selectedDel.price,
+      deliveryCost: finalDel,
       deliveryLabel: selectedDel.label,
       promoAmt,
       total,
