@@ -4037,8 +4037,18 @@ function renderSearch() {
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   LUMINO RULE-BASED CHATBOT  —  no API key, fully offline
+   LUMINO AI AGENTS
+   Agent 1 — Conversational Styling  (Anthropic claude-opus-4-5)
+   Agent 5 — Visual Search           (Claude Vision, base64 upload)
+   Rule-based fallback when API key not configured
    ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Anthropic API (hardcoded shared key — user's explicit choice) ── */
+const ANTHROPIC_API_KEY = 'sk-ant-api03-YOUR_KEY_HERE';
+const ANTHROPIC_MODEL   = 'claude-opus-4-5';
+
+/* ── Multi-turn conversation history ─────────────────────────────── */
+let _aiChatHistory = [];
 
 /* ── Inject chat styles once ────────────────────────────────────── */
 (function injectChatStyles() {
@@ -4048,7 +4058,7 @@ function renderSearch() {
   s.textContent = `
     #chat-window {
       display:none;position:fixed;top:142px;right:0;
-      width:360px;height:calc(100vh - 142px);z-index:9997;
+      width:380px;height:calc(100vh - 142px);z-index:9997;
       background:#fff;border-left:1px solid #e5e5e5;border-bottom:1px solid #e5e5e5;
       flex-direction:column;overflow:hidden;
       transform:translateX(100%);
@@ -4070,16 +4080,23 @@ function renderSearch() {
       padding:10px 14px;font-size:0.83rem;line-height:1.55;word-break:break-word;
     }
     .chat-msg-assistant a{color:var(--color-gold);font-weight:600;}
+    .chat-msg-image{align-self:flex-end;max-width:80%;}
+    .chat-msg-image img{border-radius:12px;max-width:220px;max-height:200px;display:block;}
+    .chat-ai-badge{font-size:0.62rem;color:rgba(255,255,255,0.5);margin-top:3px;text-align:center;}
     .typing-dot{width:7px;height:7px;border-radius:50%;background:#aaa;animation:typingBounce 1.2s ease-in-out infinite;display:inline-block;}
     .typing-dot:nth-child(2){animation-delay:0.2s;}
     .typing-dot:nth-child(3){animation-delay:0.4s;}
     @keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
-    #chat-input-area{border-top:1px solid var(--color-border);padding:12px;display:flex;gap:8px;background:#fff;flex-shrink:0;}
+    #chat-input-area{border-top:1px solid var(--color-border);padding:10px 12px;display:flex;gap:7px;align-items:center;background:#fff;flex-shrink:0;}
     #chat-input{flex:1;padding:9px 13px;border:1px solid var(--color-border);border-radius:20px;font-size:0.83rem;outline:none;font-family:'Inter',sans-serif;transition:border-color 200ms;}
     #chat-input:focus{border-color:var(--color-gold);}
     #chat-send-btn{width:36px;height:36px;border-radius:50%;background:var(--color-gold);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 200ms;}
     #chat-send-btn:hover{background:#b8945a;}
+    #chat-send-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    #chat-photo-btn{width:34px;height:34px;border-radius:50%;background:#f5f5f5;border:1px solid #e5e5e5;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 150ms,border-color 150ms;}
+    #chat-photo-btn:hover{background:#fef9f0;border-color:var(--color-gold);}
     #chat-header-btn.chat-active svg{stroke:var(--color-gold);}
+    .chat-ai-thinking{font-size:0.72rem;color:#888;font-style:italic;padding:6px 14px;}
     @media(max-width:768px){
       #chat-window{top:0;height:100vh;height:100dvh;width:100vw;border-left:none;}
     }
@@ -4091,19 +4108,23 @@ function renderSearch() {
 function renderChatButton() {
   const root = document.getElementById('chat-root');
   if (!root) return;
+  const isAI = ANTHROPIC_API_KEY && !ANTHROPIC_API_KEY.includes('YOUR_KEY');
   root.innerHTML = `
-    <div id="chat-window" role="dialog" aria-label="LUMINO Chat Assistant">
+    <div id="chat-window" role="dialog" aria-label="LUMINO AI Stylist">
 
       <!-- Header -->
-      <div style="background:#0a0a0a;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div style="background:linear-gradient(135deg,#0a0a0a 0%,#1c1408 100%);color:#fff;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+          <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:pulse 2s infinite;"></div>
           <div>
-            <div style="font-family:'Playfair Display',serif;font-size:0.92rem;font-weight:500;line-height:1.2;">LUMINO Assistant</div>
-            <div style="font-size:0.68rem;color:rgba(255,255,255,0.5);letter-spacing:0.04em;">Ask me anything • Always free</div>
+            <div style="font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:500;line-height:1.2;">LUMINO AI Stylist ✨</div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);letter-spacing:0.04em;">${isAI ? 'Claude AI · Styling + Visual Search' : 'Smart assistant · Always on'}</div>
           </div>
         </div>
-        <button onclick="toggleChat()" aria-label="Close chat" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.1);color:#fff;border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">&times;</button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${isAI ? `<span style="font-size:0.6rem;color:var(--color-gold);background:rgba(200,169,110,0.18);padding:2px 7px;border-radius:10px;border:1px solid rgba(200,169,110,0.35);letter-spacing:0.03em;">Claude AI</span>` : ''}
+          <button onclick="toggleChat()" aria-label="Close chat" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);color:#fff;border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;">&times;</button>
+        </div>
       </div>
 
       <!-- Messages -->
@@ -4112,12 +4133,27 @@ function renderChatButton() {
       <!-- Quick reply chips -->
       <div id="quick-replies" style="display:flex;gap:6px;padding:8px 12px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;border-top:1px solid #f0f0f0;background:#fff;"></div>
 
-      <!-- Input -->
+      <!-- Input row -->
       <div id="chat-input-area">
-        <input type="text" id="chat-input" placeholder="Type a message…" maxlength="400"
+        <!-- Hidden file input for visual search -->
+        <input type="file" id="chat-image-input" accept="image/*" style="display:none;"
+          onchange="handleImageUpload(this.files[0])"/>
+        <!-- Camera / photo button (Agent 5) -->
+        <button id="chat-photo-btn"
+          onclick="document.getElementById('chat-image-input').click()"
+          aria-label="Visual search — upload a photo"
+          title="📸 Visual Search: upload a photo to find similar styles">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </button>
+        <input type="text" id="chat-input"
+          placeholder="${isAI ? 'Ask your AI stylist anything…' : 'Type a message…'}"
+          maxlength="500"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}"/>
         <button id="chat-send-btn" onclick="sendChatMessage()" aria-label="Send">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
     </div>
@@ -4140,8 +4176,20 @@ function toggleChat() {
       _chatOpened = true;
       const msgs = document.getElementById('chat-messages');
       if (msgs && msgs.children.length === 0) {
-        appendChatMessage('assistant', "Hi! 👋 I'm your LUMINO assistant. I can help you find products, check your cart, answer questions about shipping and returns, and more. What are you looking for today?");
-        showQuickReplies(["Find a dress 👗","Men's jackets 🧥","My cart 🛍","Shipping info 📦","Size guide 📏","Sale items 🏷","Go to checkout →"]);
+        const isAI = ANTHROPIC_API_KEY && !ANTHROPIC_API_KEY.includes('YOUR_KEY');
+        if (isAI) {
+          appendChatMessage('assistant',
+            `Hi! ✨ I'm your <b>LUMINO AI Stylist</b> — powered by Claude.<br><br>I can:<br>` +
+            `• Build complete outfits for any occasion &amp; budget<br>` +
+            `• Do <b>Visual Search</b> — tap 📸 to upload a photo<br>` +
+            `• Apply promo codes (try <b>BOGO</b>!) and guide you to checkout<br><br>` +
+            `What are you looking for today?`
+          );
+          showQuickReplies(["Style me for a wedding 💍","Beach holiday outfit 🌊","Men's smart casual 👔","What's on sale? 🏷","Upload a photo 📸"]);
+        } else {
+          appendChatMessage('assistant', "Hi! 👋 I'm your LUMINO assistant. I can help you find products, check your cart, answer questions about shipping and returns, and more. What are you looking for today?");
+          showQuickReplies(["Find a dress 👗","Men's jackets 🧥","My cart 🛍","Shipping info 📦","Size guide 📏","Sale items 🏷"]);
+        }
       }
     }
     setTimeout(() => { const inp = document.getElementById('chat-input'); if (inp) inp.focus(); }, 200);
@@ -4193,24 +4241,52 @@ function showQuickReplies(chips) {
   row.style.display = chips.length ? 'flex' : 'none';
 }
 
-/* ── sendChatMessage ────────────────────────────────────────────── */
-function sendChatMessage(textOverride) {
+/* ── sendChatMessage (async — routes to AI or rule fallback) ─────── */
+async function sendChatMessage(textOverride) {
   const input = document.getElementById('chat-input');
-  const text = (textOverride || (input ? input.value : '')).trim();
+  const text  = (textOverride || (input ? input.value : '')).trim();
   if (!text) return;
+
   appendChatMessage('user', text);
   if (input) input.value = '';
-  /* hide chips */
+
   const qr = document.getElementById('quick-replies');
   if (qr) qr.innerHTML = '';
+
   showTypingIndicator();
-  setTimeout(() => {
+  const btn = document.getElementById('chat-send-btn');
+  if (btn) btn.disabled = true;
+
+  try {
+    const isAI = ANTHROPIC_API_KEY && !ANTHROPIC_API_KEY.includes('YOUR_KEY');
+    if (isAI) {
+      /* ── Agent 1: AI Conversational Stylist ── */
+      const reply = await callAnthropicAPI(text, null, null);
+      hideTypingIndicator();
+      appendChatMessage('assistant', formatAIReply(reply));
+      showQuickReplies(parseAIQuickReplies(reply));
+    } else {
+      /* ── Rule-based fallback ── */
+      await new Promise(r => setTimeout(r, 380));
+      hideTypingIndicator();
+      const fb = getBotReply(text);
+      appendChatMessage('assistant', fb.html);
+      if (fb.action) { try { fb.action(); } catch(e){} }
+      if (fb.chips && fb.chips.length) showQuickReplies(fb.chips);
+    }
+  } catch(err) {
     hideTypingIndicator();
-    const reply = getBotReply(text);
-    appendChatMessage('assistant', reply.html);
-    if (reply.action) { try { reply.action(); } catch(e){} }
-    if (reply.chips && reply.chips.length) showQuickReplies(reply.chips);
-  }, 320);
+    console.warn('AI API error → rule fallback:', err.message);
+    /* Graceful degradation: show rule-based reply + error hint */
+    const fb = getBotReply(text);
+    appendChatMessage('assistant',
+      fb.html + `<br><span style="font-size:0.7rem;color:#aaa;display:block;margin-top:6px;">` +
+      `(AI stylist temporarily unavailable — showing smart suggestions)</span>`
+    );
+    if (fb.chips && fb.chips.length) showQuickReplies(fb.chips);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -4459,6 +4535,197 @@ What would you like to know?`,
     action: null,
     chips: ["Show Women's","Show Men's","Sale items","My cart","Shipping info"]
   };
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   AGENT 1 — AI STYLING ENGINE
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Build Anthropic system prompt with live catalog + cart ─────── */
+function buildLuminoSystemPrompt() {
+  const catalog = (window.PRODUCTS || []).map(p =>
+    `[${p.id}] ${p.name} (${p.brand}) | ${p.category}${p.subcategory ? '/'+p.subcategory : ''} | £${p.price}${p.discount ? ' ['+p.discount+'% off, was £'+p.originalPrice+']' : ''} | sizes: ${(p.sizes||[]).join('/')} | colours: ${(p.colors||[]).join(',')}`
+  ).join('\n');
+
+  const cartLines = (window.CART && window.CART.length)
+    ? window.CART.map(i => `  • ${i.name} ×${i.quantity} (${i.size}, ${i.color}) — £${(i.price * i.quantity).toFixed(2)}`).join('\n')
+    : '  (empty)';
+
+  return `You are LUMINO's AI Personal Stylist — a warm, expert fashion assistant for LUMINO luxury fashion at vermawisdom.com.
+
+## Your Roles
+**Conversational Stylist (Agent 1)**: Understand natural-language outfit requests. Given an occasion, budget, or style preference, assemble complete head-to-toe looks from the catalog, state prices, and guide to checkout.
+**Visual Search (Agent 5)**: When the user shares a photo, identify the garment type, style, and colours, then find the closest matches in the catalog.
+
+## Active Promo Codes — mention when relevant
+- **BOGO** — Buy One Get One Free (cheapest item free)
+- **LUMINO10** — 10% off the entire order
+- **LUMINO20** — 20% off the entire order
+- **FREESHIP** — Free delivery
+
+## Customer's Current Cart
+${cartLines}
+
+## Product Catalog (${(window.PRODUCTS||[]).length} items)
+${catalog}
+
+## Response Guidelines
+- Be warm, concise, and stylish. Respond in HTML-friendly text (use <b>bold</b> for product names/prices, <br> for line breaks).
+- When recommending items, always include the product name in bold and the price.
+- For outfit requests: suggest 2–4 items that work together, state the total, and mention any applicable promo.
+- For visual search: first describe what you see ("I can see a [description]"), then list up to 4 catalog matches.
+- End with 1–2 suggested next actions (e.g., "Add to cart", "Apply BOGO", "Go to checkout").
+- Keep responses under 180 words unless doing a full outfit breakdown.
+- Prices are in GBP (£). Currency symbol is £.`;
+}
+
+/* ── Call Anthropic Messages API ─────────────────────────────────── */
+async function callAnthropicAPI(text, imageBase64, mimeType) {
+  /* Build user message content */
+  const userContent = imageBase64
+    ? [
+        { type: 'image', source: { type: 'base64', media_type: mimeType || 'image/jpeg', data: imageBase64 } },
+        { type: 'text',  text: text || 'Analyse this image and find similar items in the LUMINO catalog.' }
+      ]
+    : [{ type: 'text', text }];
+
+  /* Append to rolling history */
+  _aiChatHistory.push({ role: 'user', content: userContent });
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type':      'application/json',
+      'x-api-key':         ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model:      ANTHROPIC_MODEL,
+      max_tokens: 900,
+      system:     buildLuminoSystemPrompt(),
+      messages:   _aiChatHistory
+    })
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error?.message || `HTTP ${response.status}`);
+  }
+
+  const data  = await response.json();
+  const reply = data.content?.[0]?.text || '';
+
+  /* Store assistant reply; keep last 12 turns (24 messages) */
+  _aiChatHistory.push({ role: 'assistant', content: reply });
+  if (_aiChatHistory.length > 24) _aiChatHistory = _aiChatHistory.slice(-24);
+
+  return reply;
+}
+
+/* ── Format AI markdown/text → safe HTML ─────────────────────────── */
+function formatAIReply(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    /* Restore HTML tags we actually want */
+    .replace(/&lt;b&gt;(.*?)&lt;\/b&gt;/g, '<b>$1</b>')
+    .replace(/&lt;br&gt;/g, '<br>')
+    .replace(/&lt;em&gt;(.*?)&lt;\/em&gt;/g, '<em>$1</em>')
+    /* Convert markdown bold **text** */
+    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+    /* Convert markdown italic *text* */
+    .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+    /* Line breaks */
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
+/* ── Extract contextual quick-reply chips from AI reply ─────────── */
+function parseAIQuickReplies(reply) {
+  const r = reply.toLowerCase();
+  const chips = [];
+  if (/\b(dress|top|blouse|skirt|women)\b/.test(r))      chips.push("Browse Women's 👗");
+  if (/\b(men|shirt|suit|jacket|trouser)\b/.test(r))     chips.push("Browse Men's 🧥");
+  if (/\b(shoe|boot|heel|sneaker|trainer)\b/.test(r))    chips.push("See shoes 👠");
+  if (/\b(bag|tote|clutch|purse|satchel)\b/.test(r))     chips.push("See bags 👜");
+  if (/\b(cart|add|basket|checkout)\b/.test(r))          chips.push("View my cart 🛍");
+  if (/\b(sale|discount|offer|deal|promo)\b/.test(r))    chips.push("Sale items 🏷");
+  if (/\b(bogo|lumino10|lumino20|freeship)\b/.test(r))   chips.push("Apply promo code");
+  if (chips.length === 0) {
+    chips.push("Show Women's","Show Men's","View sale","My cart");
+  }
+  return chips.slice(0, 4);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   AGENT 5 — VISUAL SEARCH ENGINE
+   ═══════════════════════════════════════════════════════════════════ */
+
+async function handleImageUpload(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+
+  /* Reset the file input so same file can be re-selected */
+  const fileInput = document.getElementById('chat-image-input');
+  if (fileInput) fileInput.value = '';
+
+  const reader = new FileReader();
+  reader.onload = async (evt) => {
+    const dataUrl   = evt.target.result;
+    const base64    = dataUrl.split(',')[1];
+    const mimeType  = file.type;
+
+    /* Show image preview as a user message bubble */
+    const container = document.getElementById('chat-messages');
+    if (container) {
+      const imgDiv = document.createElement('div');
+      imgDiv.className = 'chat-msg-image';
+      imgDiv.style.alignSelf = 'flex-end';
+      imgDiv.innerHTML = `
+        <img src="${dataUrl}" alt="Visual search photo" style="border-radius:12px;max-width:220px;max-height:200px;display:block;box-shadow:0 2px 10px rgba(0,0,0,0.15);"/>
+        <div style="font-size:0.67rem;color:#888;text-align:right;margin-top:3px;">🔍 Visual Search</div>`;
+      container.appendChild(imgDiv);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    /* Hide chips, show typing */
+    const qr = document.getElementById('quick-replies');
+    if (qr) qr.innerHTML = '';
+    showTypingIndicator();
+
+    const isAI = ANTHROPIC_API_KEY && !ANTHROPIC_API_KEY.includes('YOUR_KEY');
+    try {
+      if (isAI) {
+        const reply = await callAnthropicAPI('', base64, mimeType);
+        hideTypingIndicator();
+        appendChatMessage('assistant', formatAIReply(reply));
+        showQuickReplies(parseAIQuickReplies(reply));
+      } else {
+        /* Graceful no-key message */
+        hideTypingIndicator();
+        appendChatMessage('assistant',
+          `📸 <b>Visual Search</b> is set up and ready!<br><br>` +
+          `To activate AI vision, add your Anthropic API key to the <code>ANTHROPIC_API_KEY</code> ` +
+          `constant at the top of the chat script.<br><br>` +
+          `Once live, I'll identify any fashion item from a photo and find the closest matches in our catalog. ✨`
+        );
+        showQuickReplies(["Browse Women's 👗","Browse Men's 🧥","Sale items 🏷","My cart 🛍"]);
+      }
+    } catch(err) {
+      hideTypingIndicator();
+      console.error('Visual search error:', err);
+      appendChatMessage('assistant',
+        `Sorry, I had trouble analysing that image. Please try again or describe what you're looking for! 😊`
+      );
+      showQuickReplies(["Browse Women's","Browse Men's","Sale items"]);
+    }
+  };
+
+  reader.onerror = () => {
+    appendChatMessage('assistant', 'Could not read that image file. Please try a JPEG or PNG.');
+  };
+
+  reader.readAsDataURL(file);
 }
 </script>
 
