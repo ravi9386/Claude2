@@ -1096,7 +1096,7 @@
     const root = document.getElementById('header-root');
     if (!root) return;
     const announcementMessages = [
-      '✨ FREE SHIPPING ON ORDERS OVER £50',
+      '✨ FREE SHIPPING ON ORDERS OVER ₹5,000',
       '🆕 NEW ARRIVALS EVERY WEEK',
       '🏷 USE CODE <strong>LUMINO10</strong> FOR 10% OFF YOUR FIRST ORDER',
       '🌍 WE SHIP WORLDWIDE IN 3–5 DAYS',
@@ -1402,7 +1402,7 @@
   }
 
   function formatPrice(num) {
-    return '£' + Number(num).toFixed(2);
+    return '₹' + Number(num).toLocaleString('en-IN', {maximumFractionDigits: 0});
   }
 
   /* ─── Back to Top ───────────────────────────────────────────────── */
@@ -2662,8 +2662,11 @@ function sortProducts(products, sortKey) {
     'prod_105': [u(A[3]),  u(A[1])],  // Chunky Gold Chain Necklace
   };
 
+  /* Convert prices from GBP to INR (×100) */
   (window.PRODUCTS || []).forEach(function(p) {
     if (map[p.id]) p.images = map[p.id];
+    p.price         = Math.round(p.price         * 100);
+    if (p.originalPrice) p.originalPrice = Math.round(p.originalPrice * 100);
   });
 })();
 </script>
@@ -2888,7 +2891,7 @@ function renderPLP(slug) {
   const uniqueColors = [...new Set(allProducts.flatMap(p => p.colors))];
   const allBrands = [...new Set(allProducts.map(p => p.brand))];
 
-  let filters = { minPrice: 0, maxPrice: 500, sizes: [], colors: [], brands: [], minRating: 0, inStockOnly: false };
+  let filters = { minPrice: 0, maxPrice: 50000, sizes: [], colors: [], brands: [], minRating: 0, inStockOnly: false };
   let sortKey = 'recommended';
   let offset = 0;
   const PAGE = 24;
@@ -2964,10 +2967,10 @@ function renderPLP(slug) {
         <div style="margin-bottom:24px;">
           <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Price Range</p>
           <div style="display:flex;gap:8px;margin-bottom:8px;">
-            <input type="range" id="plp-min" min="0" max="500" value="${filters.minPrice}" style="flex:1;" oninput="filters.minPrice=+this.value;document.getElementById('plp-price-label').textContent='£'+filters.minPrice+' – £'+filters.maxPrice;offset=0;applyAndRender()"/>
-            <input type="range" id="plp-max" min="0" max="500" value="${filters.maxPrice}" style="flex:1;" oninput="filters.maxPrice=+this.value;document.getElementById('plp-price-label').textContent='£'+filters.minPrice+' – £'+filters.maxPrice;offset=0;applyAndRender()"/>
+            <input type="range" id="plp-min" min="0" max="50000" step="500" value="${filters.minPrice}" style="flex:1;" oninput="filters.minPrice=+this.value;document.getElementById('plp-price-label').textContent='₹'+filters.minPrice.toLocaleString('en-IN')+' – ₹'+filters.maxPrice.toLocaleString('en-IN');offset=0;applyAndRender()"/>
+            <input type="range" id="plp-max" min="0" max="50000" step="500" value="${filters.maxPrice}" style="flex:1;" oninput="filters.maxPrice=+this.value;document.getElementById('plp-price-label').textContent='₹'+filters.minPrice.toLocaleString('en-IN')+' – ₹'+filters.maxPrice.toLocaleString('en-IN');offset=0;applyAndRender()"/>
           </div>
-          <p id="plp-price-label" style="font-size:0.8rem;color:var(--color-text-muted);">£${filters.minPrice} – £${filters.maxPrice}</p>
+          <p id="plp-price-label" style="font-size:0.8rem;color:var(--color-text-muted);">₹${filters.minPrice.toLocaleString('en-IN')} – ₹${filters.maxPrice.toLocaleString('en-IN')}</p>
         </div>
         <div style="margin-bottom:24px;">
           <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Size</p>
@@ -3001,7 +3004,7 @@ function renderPLP(slug) {
     if (sb) sb.innerHTML = sidebarHTML();
   };
   window.plpClearAll = function() {
-    filters = { minPrice: 0, maxPrice: 500, sizes: [], colors: [], brands: [], minRating: 0, inStockOnly: false };
+    filters = { minPrice: 0, maxPrice: 50000, sizes: [], colors: [], brands: [], minRating: 0, inStockOnly: false };
     offset = 0;
     plpRebuildSidebar();
     applyAndRender();
@@ -3123,7 +3126,7 @@ function renderPDP(productId) {
   const accordions = [
     { title:'Product Details', content:`<ul style="padding-left:18px;font-size:0.875rem;line-height:2;color:#555;"><li>Material: ${p.category==='shoes'?'Premium leather / textile upper':'100% natural fibres blend'}</li><li>Care: ${p.category==='bags'?'Wipe clean with damp cloth':'Machine wash at 30°C, do not tumble dry'}</li><li>Origin: Ethically produced in Portugal</li><li>Sustainability: Made with responsibly sourced materials</li></ul>` },
     { title:'Size & Fit', content:`<p style="font-size:0.875rem;line-height:1.7;color:#555;">Model is 5'9" and wears size S/M. We recommend sizing up if between sizes. This style has a ${p.subcategory==='coats'||p.subcategory==='jackets'?'relaxed, oversized':'regular'} fit.</p>` },
-    { title:'Delivery & Returns', content:`<p style="font-size:0.875rem;line-height:1.7;color:#555;">Free standard delivery on orders over £50. Express delivery from £9.99 (1-2 business days). Standard delivery 3-5 business days. Free returns within 30 days — just book a collection or drop off at your nearest post office.</p>` },
+    { title:'Delivery & Returns', content:`<p style="font-size:0.875rem;line-height:1.7;color:#555;">Free standard delivery on orders over ₹5,000. Express delivery from ₹999 (1-2 business days). Standard delivery 3-5 business days. Free returns within 30 days — just book a collection or drop off at your nearest post office.</p>` },
     { title:'Care Instructions', content:`<p style="font-size:0.875rem;line-height:1.7;color:#555;">🫧 ${p.category==='bags'?'Wipe with a soft damp cloth. Avoid prolonged exposure to moisture.':'Gentle machine wash at 30°C.'} ♻️ Lay flat to dry. Do not bleach. Iron on low heat if needed.</p>` },
   ];
 
@@ -3431,7 +3434,7 @@ function renderCart() {
 
   function calcSubtotal() { return window.CART.reduce((s,x) => s + x.price * x.quantity, 0); }
   function calcDelivery(sub) {
-    const base = sub >= 50 ? 0 : 4.99;
+    const base = sub >= 5000 ? 0 : 499;
     return base - window.getDeliveryDiscount(base);
   }
   function calcTotal(sub, del) {
@@ -3676,9 +3679,9 @@ function renderCheckout() {
   };
 
   const deliveryOptions = [
-    {id:'standard', label:'Standard Delivery', sub:'3–5 business days', price: calcSubtotalCO()>=50?0:4.99, priceLabel: calcSubtotalCO()>=50?'FREE':'£4.99'},
-    {id:'express',  label:'Express Delivery',  sub:'1–2 business days', price:9.99, priceLabel:'£9.99'},
-    {id:'nextday',  label:'Next Day Delivery', sub:'Order by 9pm',      price:14.99, priceLabel:'£14.99'},
+    {id:'standard', label:'Standard Delivery', sub:'3–5 business days', price: calcSubtotalCO()>=5000?0:499, priceLabel: calcSubtotalCO()>=5000?'FREE':'₹499'},
+    {id:'express',  label:'Express Delivery',  sub:'1–2 business days', price:999,  priceLabel:'₹999'},
+    {id:'nextday',  label:'Next Day Delivery', sub:'Order by 9pm',      price:1499, priceLabel:'₹1,499'},
   ];
   if (!window.CHECKOUT_DATA.deliveryMethod) window.CHECKOUT_DATA.deliveryMethod = 'standard';
 
@@ -4155,7 +4158,7 @@ function renderSearch() {
   let sortKey = 'recommended';
   let offset = 0;
   const PAGE = 24;
-  let searchFilters = { minPrice:0, maxPrice:500, sizes:[], colors:[], brands:[], minRating:0, inStockOnly:false };
+  let searchFilters = { minPrice:0, maxPrice:50000, sizes:[], colors:[], brands:[], minRating:0, inStockOnly:false };
 
   const colorMap = {Black:'#1a1a1a',White:'#f8f8f8',Navy:'#001f5b',Red:'#c0392b',Blue:'#2980b9',Green:'#27ae60',Beige:'#d4b896',Camel:'#c19a6b',Grey:'#888',Pink:'#e91e8c',Ivory:'#fffff0',Cream:'#fffdd0',Brown:'#795548',Nude:'#e8c99a',Sage:'#87a878',Tan:'#d2b48c',Gold:'#c8a96e',Silver:'#c0c0c0',Charcoal:'#36454f',Olive:'#808000',Sand:'#c2b280',Ecru:'#c2b280',Burgundy:'#800020',Blush:'#de5d83',Champagne:'#f7e7ce',Oatmeal:'#e4d5b7'};
   function getColor(c){for(const[k,v]of Object.entries(colorMap)){if(c.toLowerCase().includes(k.toLowerCase()))return v;}return'#ccc';}
@@ -4208,15 +4211,15 @@ function renderSearch() {
           <div style="position:sticky;top:120px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
               <h3 style="font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Filter</h3>
-              <button onclick="searchFilters={minPrice:0,maxPrice:500,sizes:[],colors:[],brands:[],minRating:0,inStockOnly:false};offset=0;applySearchAndRender();" style="font-size:0.75rem;color:var(--color-gold);background:none;border:none;cursor:pointer;text-decoration:underline;">Clear All</button>
+              <button onclick="searchFilters={minPrice:0,maxPrice:50000,sizes:[],colors:[],brands:[],minRating:0,inStockOnly:false};offset=0;applySearchAndRender();" style="font-size:0.75rem;color:var(--color-gold);background:none;border:none;cursor:pointer;text-decoration:underline;">Clear All</button>
             </div>
             <div style="margin-bottom:20px;">
               <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Price</p>
               <div style="display:flex;gap:8px;margin-bottom:6px;">
-                <input type="range" min="0" max="500" value="${searchFilters.minPrice}" style="flex:1;" oninput="searchFilters.minPrice=+this.value;document.getElementById('search-price-lbl').textContent='£'+searchFilters.minPrice+' – £'+searchFilters.maxPrice;offset=0;applySearchAndRender()"/>
-                <input type="range" min="0" max="500" value="${searchFilters.maxPrice}" style="flex:1;" oninput="searchFilters.maxPrice=+this.value;document.getElementById('search-price-lbl').textContent='£'+searchFilters.minPrice+' – £'+searchFilters.maxPrice;offset=0;applySearchAndRender()"/>
+                <input type="range" min="0" max="50000" step="500" value="${searchFilters.minPrice}" style="flex:1;" oninput="searchFilters.minPrice=+this.value;document.getElementById('search-price-lbl').textContent='₹'+searchFilters.minPrice.toLocaleString('en-IN')+' – ₹'+searchFilters.maxPrice.toLocaleString('en-IN');offset=0;applySearchAndRender()"/>
+                <input type="range" min="0" max="50000" step="500" value="${searchFilters.maxPrice}" style="flex:1;" oninput="searchFilters.maxPrice=+this.value;document.getElementById('search-price-lbl').textContent='₹'+searchFilters.minPrice.toLocaleString('en-IN')+' – ₹'+searchFilters.maxPrice.toLocaleString('en-IN');offset=0;applySearchAndRender()"/>
               </div>
-              <p id="search-price-lbl" style="font-size:0.8rem;color:var(--color-text-muted);">£${searchFilters.minPrice} – £${searchFilters.maxPrice}</p>
+              <p id="search-price-lbl" style="font-size:0.8rem;color:var(--color-text-muted);">₹${searchFilters.minPrice.toLocaleString('en-IN')} – ₹${searchFilters.maxPrice.toLocaleString('en-IN')}</p>
             </div>
             <div style="margin-bottom:20px;">
               <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Brand</p>
@@ -4512,7 +4515,7 @@ async function sendChatMessage(textOverride) {
    ═══════════════════════════════════════════════════════════════════ */
 function getBotReply(input) {
   const t = input.toLowerCase().trim();
-  const fp = p => `£${Number(p).toFixed(2)}`;
+  const fp = p => `₹${Number(p).toLocaleString('en-IN', {maximumFractionDigits:0})}`;
 
   /* ── GREETINGS ── */
   if (/^(hi|hello|hey|good morning|good evening|howdy|hiya|sup|yo\b)/.test(t)) {
@@ -4636,10 +4639,10 @@ function getBotReply(input) {
   if (/ship|deliver|how long|when will|dispatch|postage|tracking/.test(t)) {
     return {
       html: `📦 <b>Delivery Options:</b><br>
-• <b>Standard</b> (3–5 days): FREE on orders over £50, else £4.99<br>
-• <b>Express</b> (1–2 days): £9.99<br>
-• <b>Next Day</b> (order by 9pm): £14.99<br><br>
-We ship to UK, EU, USA, Australia and 50+ more countries!`,
+• <b>Standard</b> (3–5 days): FREE on orders over ₹5,000, else ₹499<br>
+• <b>Express</b> (1–2 days): ₹999<br>
+• <b>Next Day</b> (order by 9pm): ₹1,499<br><br>
+We ship across India and 50+ countries worldwide!`,
       action: null,
       chips: ["Returns policy","Track my order","Go to checkout"]
     };
@@ -4762,11 +4765,11 @@ What would you like to know?`,
 /* ── Build Anthropic system prompt with live catalog + cart ─────── */
 function buildLuminoSystemPrompt() {
   const catalog = (window.PRODUCTS || []).map(p =>
-    `[${p.id}] ${p.name} (${p.brand}) | ${p.category}${p.subcategory ? '/'+p.subcategory : ''} | £${p.price}${p.discount ? ' ['+p.discount+'% off, was £'+p.originalPrice+']' : ''} | sizes: ${(p.sizes||[]).join('/')} | colours: ${(p.colors||[]).join(',')}`
+    `[${p.id}] ${p.name} (${p.brand}) | ${p.category}${p.subcategory ? '/'+p.subcategory : ''} | ₹${Number(p.price).toLocaleString('en-IN')}${p.discount ? ' ['+p.discount+'% off, was ₹'+Number(p.originalPrice).toLocaleString('en-IN')+']' : ''} | sizes: ${(p.sizes||[]).join('/')} | colours: ${(p.colors||[]).join(',')}`
   ).join('\n');
 
   const cartLines = (window.CART && window.CART.length)
-    ? window.CART.map(i => `  • ${i.name} ×${i.quantity} (${i.size}, ${i.color}) — £${(i.price * i.quantity).toFixed(2)}`).join('\n')
+    ? window.CART.map(i => `  • ${i.name} ×${i.quantity} (${i.size}, ${i.color}) — ₹${(i.price * i.quantity).toLocaleString('en-IN', {maximumFractionDigits:0})}`).join('\n')
     : '  (empty)';
 
   return `You are LUMINO's AI Personal Stylist — a warm, expert fashion assistant for LUMINO luxury fashion at vermawisdom.com.
@@ -4794,7 +4797,7 @@ ${catalog}
 - For visual search: first describe what you see ("I can see a [description]"), then list up to 4 catalog matches.
 - End with 1–2 suggested next actions (e.g., "Add to cart", "Apply BOGO", "Go to checkout").
 - Keep responses under 180 words unless doing a full outfit breakdown.
-- Prices are in GBP (£). Currency symbol is £.`;
+- Prices are in INR (₹). Currency symbol is ₹. Use Indian number formatting (e.g. ₹1,49,999).`;
 }
 
 /* ── Call Anthropic Messages API ─────────────────────────────────── */
