@@ -145,6 +145,48 @@
       100% { transform: scale(1); }
     }
 
+    /* ─── Wishlist ───────────────────────────────────────────────── */
+    .wl-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: #e11d48;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 600;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+    }
+    .product-card-wishlist.wl-active { background: #fef0f0; }
+    .product-card-wishlist.wl-active svg { fill: #e11d48; stroke: #e11d48; }
+    .wl-page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+    }
+    .wl-empty {
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .wl-empty-icon { font-size: 3rem; margin-bottom: 16px; }
+    .wl-item-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    @keyframes heartPop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.5); }
+      70%  { transform: scale(0.85); }
+      100% { transform: scale(1); }
+    }
+    .heart-pop { animation: heartPop 300ms ease; }
+
     /* ─── Inline Search Bar ──────────────────────────────────────── */
     .search-bar-wrapper {
       position: absolute;
@@ -1042,6 +1084,44 @@
   window.SEARCH_QUERY = "";
   window.CHAT_HISTORY = [];
 
+  /* ─── Wishlist ─────────────────────────────────────────────────── */
+  window.WISHLIST = JSON.parse(localStorage.getItem('lumino_wishlist') || '[]');
+
+  window._heartEmpty = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+  window._heartFull  = `<svg width="16" height="16" viewBox="0 0 24 24" fill="#e11d48" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+
+  window.isInWishlist = function(id) { return window.WISHLIST.includes(id); };
+
+  window.saveWishlist = function() {
+    localStorage.setItem('lumino_wishlist', JSON.stringify(window.WISHLIST));
+  };
+
+  window.updateWishlistBadge = function() {
+    const badge = document.getElementById('wl-badge');
+    if (!badge) return;
+    const n = window.WISHLIST.length;
+    badge.textContent = n;
+    badge.style.display = n > 0 ? 'flex' : 'none';
+  };
+
+  window.toggleWishlist = function(id, btn) {
+    const idx = window.WISHLIST.indexOf(id);
+    const adding = idx === -1;
+    if (adding) { window.WISHLIST.push(id); }
+    else         { window.WISHLIST.splice(idx, 1); }
+    window.saveWishlist();
+    window.updateWishlistBadge();
+    showToast(adding ? '❤️ Added to Wishlist' : '🤍 Removed from Wishlist');
+    /* update every heart button for this product on the current page */
+    document.querySelectorAll(`.wl-btn[data-wl="${id}"]`).forEach(b => {
+      b.innerHTML = window.isInWishlist(id) ? window._heartFull : window._heartEmpty;
+      b.classList.toggle('wl-active', window.isInWishlist(id));
+      b.classList.remove('heart-pop');
+      void b.offsetWidth;
+      if (window.isInWishlist(id)) b.classList.add('heart-pop');
+    });
+  };
+
   /* ─── Router ───────────────────────────────────────────────────── */
   function navigate(hash) { window.location.hash = hash; }
 
@@ -1075,6 +1155,8 @@
       renderAccount();
     } else if (hash === '#/search') {
       renderSearch();
+    } else if (hash === '#/wishlist') {
+      renderWishlist();
     } else {
       content.innerHTML = '<div class="container section"><p>Page not found.</p></div>';
     }
@@ -1090,6 +1172,7 @@
   function renderLogin()             { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
   function renderAccount()           { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
   function renderSearch()            { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
+  function renderWishlist()          { document.getElementById('app-content').innerHTML = '<p>Loading...</p>'; }
 
   /* ─── Header ───────────────────────────────────────────────────── */
   function renderHeader() {
@@ -1133,6 +1216,10 @@
             <button class="header-icon-btn" onclick="toggleChat()" aria-label="Chat" title="Chat with us" id="chat-header-btn">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </button>
+            <a href="#/wishlist" class="header-icon-btn" aria-label="Wishlist" title="My Wishlist" style="position:relative;display:flex;align-items:center;justify-content:center;" onclick="navigate('#/wishlist')">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span class="wl-badge" id="wl-badge">0</span>
+            </a>
             <a href="#/cart" class="header-icon-btn" aria-label="Cart" title="Shopping Bag" style="position:relative;display:flex;align-items:center;justify-content:center;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               <span class="cart-badge cart-icon" id="cart-badge">0</span>
@@ -1428,6 +1515,7 @@
     renderChatButton();
     renderPage();
     updateCartBadge();
+    updateWishlistBadge();
   });
 </script>
 
@@ -2721,7 +2809,7 @@ function renderHome() {
           <div class="product-badges">${saleBadge}${newBadge}</div>
           <div class="product-card-actions">
             <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();addToCart('${p.id}','${p.sizes[0]}','${p.colors[0]}',1);showToast('Added to bag!');updateCartBadge();">Add to Bag</button>
-            <button class="product-card-wishlist" onclick="event.stopPropagation();this.textContent=this.textContent==='🤍'?'❤️':'🤍';" title="Wishlist">🤍</button>
+            <button class="product-card-wishlist wl-btn ${isInWishlist(p.id)?'wl-active':''}" data-wl="${p.id}" onclick="event.stopPropagation();toggleWishlist('${p.id}',this);" title="Save to Wishlist">${isInWishlist(p.id)?_heartFull:_heartEmpty}</button>
           </div>
         </div>
         <div class="product-card-info">
@@ -2935,9 +3023,9 @@ function renderPLP(slug) {
             ${p.discount ? `<span class="badge badge-sale">SALE</span>` : ''}
             ${p.tags.includes('new') && !p.discount ? `<span class="badge badge-new">NEW</span>` : ''}
           </div>
-          <button class="product-card-wishlist" style="position:absolute;top:10px;right:10px;z-index:2;" onclick="event.stopPropagation();this.textContent=this.textContent==='🤍'?'❤️':'🤍';" title="Wishlist">🤍</button>
           <div class="product-card-actions">
             <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();addToCart('${p.id}','${p.sizes[0]}','${p.colors[0]}',1);showToast('Added to bag!');updateCartBadge();">Add to Bag</button>
+            <button class="product-card-wishlist wl-btn ${isInWishlist(p.id)?'wl-active':''}" data-wl="${p.id}" onclick="event.stopPropagation();toggleWishlist('${p.id}',this);" title="Save to Wishlist">${isInWishlist(p.id)?_heartFull:_heartEmpty}</button>
           </div>
         </div>
         <div class="product-card-info">
@@ -3247,7 +3335,11 @@ function renderPDP(productId) {
             <!-- CTA Buttons -->
             <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;">
               <button class="btn btn-primary btn-lg btn-full" id="pdp-atb-btn" onclick="pdpAddToBag()">Add to Bag</button>
-              <button class="btn btn-outlined btn-lg btn-full" id="pdp-wl-btn" onclick="this.textContent=this.textContent.includes('🤍')?'❤️  Saved to Wishlist':'🤍  Save to Wishlist';">🤍&nbsp; Save to Wishlist</button>
+              <button class="btn btn-outlined btn-lg btn-full wl-btn ${isInWishlist(p.id)?'wl-active':''}" data-wl="${p.id}" id="pdp-wl-btn"
+                onclick="toggleWishlist('${p.id}',this);this.innerHTML=isInWishlist('${p.id}')?'❤️&nbsp; Saved to Wishlist':'🤍&nbsp; Save to Wishlist';"
+                style="${isInWishlist(p.id)?'border-color:#e11d48;color:#e11d48;':''}">
+                ${isInWishlist(p.id)?'❤️&nbsp; Saved to Wishlist':'🤍&nbsp; Save to Wishlist'}
+              </button>
             </div>
 
             <!-- Description -->
@@ -3415,6 +3507,166 @@ function updateCartQuantity(productId, size, color, newQty) {
   }
   updateCartBadge();
   renderCart();
+}
+
+/* ── renderWishlist ─────────────────────────────────────────────── */
+function renderWishlist() {
+  const el = document.getElementById('app-content');
+  if (!el) return;
+
+  function shareWishlist() {
+    const ids = window.WISHLIST.join(',');
+    const url = window.location.origin + window.location.pathname + '#/wishlist?ids=' + encodeURIComponent(ids);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => showToast('📋 Wishlist link copied!'));
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('📋 Wishlist link copied!');
+    }
+  }
+
+  function removeFromWishlist(id) {
+    const idx = window.WISHLIST.indexOf(id);
+    if (idx > -1) window.WISHLIST.splice(idx, 1);
+    saveWishlist();
+    updateWishlistBadge();
+    renderWishlist();
+    showToast('🤍 Removed from Wishlist');
+  }
+
+  function moveToCart(id) {
+    const p = (window.PRODUCTS || []).find(x => x.id === id);
+    if (!p) return;
+    addToCart(id, p.sizes[0], p.colors[0], 1);
+    removeFromWishlist(id);
+    updateCartBadge();
+    showToast('🛍️ Moved to Bag!');
+  }
+
+  /* Handle shared wishlist URL: #/wishlist?ids=prod_001,prod_002 */
+  const hashQuery = window.location.hash.split('?')[1] || '';
+  const sharedParam = new URLSearchParams(hashQuery).get('ids');
+  if (sharedParam) {
+    const sharedIds = sharedParam.split(',').filter(Boolean);
+    sharedIds.forEach(id => { if (!window.WISHLIST.includes(id)) window.WISHLIST.push(id); });
+    saveWishlist();
+    updateWishlistBadge();
+    /* clean URL */
+    history.replaceState(null, '', '#/wishlist');
+  }
+
+  const products = (window.PRODUCTS || []).filter(p => window.WISHLIST.includes(p.id));
+
+  const emptyHTML = `
+    <div class="wl-empty">
+      <div class="wl-empty-icon">🤍</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:12px;">Your Wishlist is Empty</h2>
+      <p style="color:var(--color-text-muted);margin-bottom:28px;">Save pieces you love by tapping the ♡ on any product.</p>
+      <button class="btn btn-primary" onclick="navigate('#/category/women')">Start Browsing</button>
+    </div>`;
+
+  const shareBtn = products.length > 0 ? `
+    <button onclick="shareWishlist()" class="btn btn-outlined" style="display:inline-flex;align-items:center;gap:6px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share Wishlist
+    </button>` : '';
+
+  const clearBtn = products.length > 0 ? `
+    <button onclick="if(confirm('Clear your entire wishlist?')){window.WISHLIST=[];saveWishlist();updateWishlistBadge();renderWishlist();}" class="btn btn-outlined" style="color:var(--color-error);border-color:var(--color-error);">
+      Clear All
+    </button>` : '';
+
+  const gridHTML = products.map(p => {
+    const inCart = (window.CART || []).some(c => c.id === p.id);
+    return `
+      <div style="position:relative;">
+        <div class="product-card" onclick="navigate('#/product/${p.id}')">
+          <div class="product-card-image-wrap">
+            <img class="img-main" src="${p.images[0]}" alt="${p.name}" loading="lazy"/>
+            ${p.images[1] ? `<img class="img-hover" src="${p.images[1]}" alt="" loading="lazy"/>` : ''}
+            <div class="product-badges">
+              ${p.discount ? '<span class="badge badge-sale">SALE</span>' : ''}
+              ${p.tags.includes('new') && !p.discount ? '<span class="badge badge-new">NEW</span>' : ''}
+            </div>
+            <button class="product-card-wishlist wl-active" style="position:absolute;top:10px;right:10px;z-index:3;background:#fef0f0;"
+              onclick="event.stopPropagation();removeFromWishlist('${p.id}');" title="Remove from Wishlist">
+              ${_heartFull}
+            </button>
+          </div>
+          <div class="product-card-info">
+            <div class="product-card-brand">${p.brand}</div>
+            <div class="product-card-name">${p.name}</div>
+            <div class="product-card-price">
+              ${p.discount
+                ? `<span class="price-current price-sale">${formatPrice(p.price)}</span><span class="price-original">${formatPrice(p.originalPrice)}</span>`
+                : `<span class="price-current">${formatPrice(p.price)}</span>`}
+            </div>
+          </div>
+        </div>
+        <div class="wl-item-actions">
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="moveToCart('${p.id}')">
+            ${inCart ? '✓ In Bag' : 'Move to Bag'}
+          </button>
+          <button class="btn btn-outlined btn-sm" onclick="removeFromWishlist('${p.id}')" title="Remove">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div style="max-width:1200px;margin:0 auto;padding:40px 24px 80px;">
+      <!-- Header row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:32px;">
+        <div>
+          <h1 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:4px;">My Wishlist</h1>
+          <p style="color:var(--color-text-muted);font-size:0.875rem;">${products.length} item${products.length !== 1 ? 's' : ''} saved</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          ${shareBtn}
+          ${clearBtn}
+        </div>
+      </div>
+      ${products.length === 0 ? emptyHTML : `<div class="wl-page-grid">${gridHTML}</div>`}
+
+      <!-- Suggestions when wishlist is not empty -->
+      ${products.length > 0 ? `
+        <div style="margin-top:60px;">
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:24px;">You Might Also Like</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;">
+            ${(window.PRODUCTS || [])
+              .filter(p => !window.WISHLIST.includes(p.id))
+              .sort(() => 0.5 - Math.random())
+              .slice(0, 4)
+              .map(p => `
+                <div class="product-card" onclick="navigate('#/product/${p.id}')">
+                  <div class="product-card-image-wrap">
+                    <img class="img-main" src="${p.images[0]}" alt="${p.name}" loading="lazy"/>
+                    ${p.images[1] ? `<img class="img-hover" src="${p.images[1]}" alt="" loading="lazy"/>` : ''}
+                    <div class="product-card-actions">
+                      <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();addToCart('${p.id}','${p.sizes[0]}','${p.colors[0]}',1);showToast('Added to bag!');updateCartBadge();">Add to Bag</button>
+                      <button class="product-card-wishlist wl-btn ${isInWishlist(p.id)?'wl-active':''}" data-wl="${p.id}" onclick="event.stopPropagation();toggleWishlist('${p.id}',this);" title="Save to Wishlist">${isInWishlist(p.id)?_heartFull:_heartEmpty}</button>
+                    </div>
+                  </div>
+                  <div class="product-card-info">
+                    <div class="product-card-brand">${p.brand}</div>
+                    <div class="product-card-name">${p.name}</div>
+                    <div class="product-card-price">${p.discount?`<span class="price-current price-sale">${formatPrice(p.price)}</span><span class="price-original">${formatPrice(p.originalPrice)}</span>`:`<span class="price-current">${formatPrice(p.price)}</span>`}</div>
+                  </div>
+                </div>`).join('')}
+          </div>
+        </div>` : ''}
+    </div>`;
+
+  /* Expose helpers to onclick strings in this render scope */
+  window.shareWishlist   = shareWishlist;
+  window.removeFromWishlist = removeFromWishlist;
+  window.moveToCart      = moveToCart;
 }
 
 /* ── renderCart ─────────────────────────────────────────────────── */
@@ -4188,6 +4440,7 @@ function renderSearch() {
           <div class="product-badges">${p.discount?'<span class="badge badge-sale">SALE</span>':''}${p.tags.includes('new')&&!p.discount?'<span class="badge badge-new">NEW</span>':''}</div>
           <div class="product-card-actions">
             <button class="btn btn-primary btn-sm" style="flex:1;" onclick="event.stopPropagation();addToCart('${p.id}','${p.sizes[0]}','${p.colors[0]}',1);showToast('Added to bag!');updateCartBadge();">Add to Bag</button>
+            <button class="product-card-wishlist wl-btn ${isInWishlist(p.id)?'wl-active':''}" data-wl="${p.id}" onclick="event.stopPropagation();toggleWishlist('${p.id}',this);" title="Save to Wishlist">${isInWishlist(p.id)?_heartFull:_heartEmpty}</button>
           </div>
         </div>
         <div class="product-card-info">
